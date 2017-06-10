@@ -1,0 +1,69 @@
+{
+  "type":"response",
+  "name":"config",
+  "carousel":{
+    "imagesFolder":"some/path/folder",
+    "keys":[
+      {
+        "symbol":"А",
+        "id": 1,
+        "stimuliId":0,
+        "groupId":0,
+        "speed":1,
+        "coordinates":{"x":0,"y":0}
+      },
+      {
+        "symbol":"Б",
+        "id": 2,
+        "stimuliId":0,
+        "groupId":0,
+        "speed":1,
+        "coordinates":{"x":1,"y":0}
+      },
+      {
+        "symbol":"В",
+        "id": 3,
+        "stimuliId":1,
+        "groupId":0,
+        "speed":1,
+        "coordinates":{"x":2,"y":0}
+      },
+      {
+        "symbol":"Г",
+        "id": 4,
+        "stimuliId":1,
+        "groupId":1,
+        "speed":1,
+        "coordinates":{"x":0,"y":1}
+      },
+      {
+        "symbol":"Д",
+        "id": 5,
+        "stimuliId":2,
+        "groupId":1,
+        "speed":1,
+        "coordinates":{"x":1,"y":1}
+      },
+      {
+        "symbol":"Е",
+        "id": 6,
+        "stimuliId":2,
+        "groupId":1,
+        "speed":1,
+        "coordinates":{"x":2,"y":1}
+      },
+    ]
+  },
+  "movement":{
+    "duration": 10,
+    "easing": "linear"
+  },
+  "stimuli":{
+    "stimulus":{
+      "duration":"200",
+      "pause":"80:120"
+    },
+    "cycles":10,
+    "sequence":"random"
+  }
+}

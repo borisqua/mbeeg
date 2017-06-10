@@ -1,0 +1,9 @@
+//Основные команды NPM
+npm init -> package.json
+npm addu[user]
+npm pu[blish]
+npm s[earch] ключевые слова
+npm i[nstall] имямодуля
+npm up[date]  имямодуля
+npm r[emove] имямодуля
+nmp help

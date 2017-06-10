@@ -1,0 +1,8 @@
+{
+  "type":"response",
+  "name":"dataFlow",
+  "stimulus":{
+    "stimulusId":1,
+    "timestamp":"0901901111"
+  }
+}
