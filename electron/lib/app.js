@@ -1,7 +1,9 @@
 
 (() =>{
   let app = angular.module('mbERP', []);
+  
   let env = {
+    debug: false,
     node: {
       version: process.version
     },
