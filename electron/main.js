@@ -12,21 +12,21 @@ let settingsWindow;
 
 function createSettingsWindow() {
   settingsWindow = new BrowserWindow({
-    width: 300,
-    height: 300,
+    width: 500,
+    height: 500,
     parent: mainWindow,
     frame: false,
     show:false
   });
   
   settingsWindow.loadURL(url.format({
-    pathname: path.join(__dirname, 'index2.html'),
+    pathname: path.join(__dirname, 'carousel/index.html'),
     protocol: 'file',
     shashes: true
   }));
   
   settingsWindow.once('ready-to-show', () => {
-    settingsWindow.show();
+    // settingsWindow.show();
   });
   
 }
