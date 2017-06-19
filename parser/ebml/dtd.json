@@ -1,0 +1,54 @@
+{
+  "header": {
+    "DocType": "OpenViBE_EBML_DTD",
+    "EBMLVersion": "1",
+    "EBMLMaxIDWidth": "10",
+    "EBMLMaxSizeWidth": "8"
+  },
+  "elements": {
+    "Header": {
+      "id": "0x0040F59505AB3684C8D8",
+      "type": "uint",
+      "cardinality":"1",
+      "contents":{
+        "Compression": {
+          "id": "0x00C0358769166380D1",
+          "type": "uint"
+        },
+        "Stream": {
+          "id": "0x00F32EC1D1FE904087",
+          "type": "uint",
+          "cardinality": "*"
+        }
+      }
+    },
+    "Buffer": {
+      "id": "0x00AE60AD1887A29BDF",
+      "type": "container",
+      "cardinality": "*",
+      "contents": {
+        "StreamIndex": {
+          "id": "0x00B0A56D8AB9C12238",
+          "type": "uint",
+          "cardinality": "1"
+        },
+        "StartTime": {
+          "id": "0x00893E6A0AC5A9467B",
+          "type": "uint",
+          "cardinality": "1"
+        },
+        "EndTime": {
+          "id": "0x00408B5CCCD9C5024F29",
+          "type": "uint",
+          "cardinality": "1"
+        },
+        "Content": {
+          "id": "0x00408D4B0BE87051265C",
+          "type": "uint",
+          "cardinality": "1"
+        }
+      }
+    }
+  }
+}
+
