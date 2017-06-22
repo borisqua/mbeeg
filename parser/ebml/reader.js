@@ -1,11 +1,13 @@
 'use strict';
+let TagId = require('parser/ebml/tag');
+
 const
-  Transform = require("stream").Transform,
+  { Transform } = require("stream"),
   STATE_TAG = Symbol('TAG'),
   STATE_SIZE = Symbol('SIZE'),
   STATE_CONTENT = Symbol('CONTENT');
 
-class Decoder extends Transform {
+class Reader extends Transform {
   constructor(options = {}) {
     options.readableObjectMode = true;
     super(options);
@@ -19,10 +21,10 @@ class Decoder extends Transform {
     this._schema = require(('ebml_types'));
   }
   
-  _transform(buffer, encoding, done) {
+  _transform(buffer = this._buffer, encoding, callback) {
     //first - add new portion of data to buffer
     if (this._buffer === null) {
-      this._buffer = chunk;
+      this._buffer = buffer;
     } else {
       this._buffer = Buffer.concat([this._buffer, chunk]);
     }
@@ -39,11 +41,31 @@ class Decoder extends Transform {
       }
     }
     
-    done();
+    callback();
+  }
+  
+  /**
+   * Whether tag with id === tagId is tag of data container or parent for other children tags
+   * @param {TagId} tagId Identity of tag from schema.json for selected model of EBML
+   * @return {boolean} if it is data container returns true else false
+   */
+  isData(tagId){
+    return false;
+  }
+  
+  /**
+   * This function is called when parser has started new EBML node parsing
+   * @param {TagId} tagId Identity of tag from schema.json for selected model of EBML
+   */
+  openTag(tagId){
+  
+  }
+  
+  processTagData(chunk, length){
+  
   }
   
   readTag(){
-    debug('parsing tag');
      if (this._cursor >= this._buffer.length) {
         debug('waiting for more data');
         return false;
@@ -77,6 +99,15 @@ class Decoder extends Transform {
 
     return true;
   }
+  
+  /**
+   * This function tells whether content type of tag with id === TagId is data
+   * or this tag is container for child elements
+   * @param {TagId} tagId Id of the EBML tag
+   */
+  isData(tagId){
+  
+  }
 }
 
-module.exports = Decoder;
+module.exports = Reader;

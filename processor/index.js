@@ -2,7 +2,7 @@ const client = require('net').Socket();
 const transform = require('stream').Transfom;
 // let tcp =dd require('net');
 const tools = require('../parser/ebml/helper');
-const decoder = require('../parser/ebml/decoder');
+const decoder = require('../parser/ebml/reader');
 
 "use strict";
 
