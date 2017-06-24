@@ -4,27 +4,13 @@
  * @see EBML, variable-length integers, UTF, Endianness
  * **/
 class EBMLHelper {
-  /**
-   * constructor of the EBMLHelper class object
-   * @param {Array} buffer stream buffer or string that contains variable-length integers of EBML stream or file
-   */
-  constructor(buffer) {
-    // const ebmlDTD = require('../ebml/dtd.json');
-    // this._maxIdWidth = ebmlDTD.header.EBMLMaxIDWidth;
-    // this._maxSizeWidth = ebmlDTD.header.EBMLMaxSizeWidth;
-    this.buffer = buffer;
-    // let modulo8 = this._maxIdWidth % 8;
-    // this._ebmlIdDescriptorBytesMaxNumber = (this._maxIdWidth - modulo8) / 8 + !!modulo8;
-    // modulo8 = this._maxSizeWidth % 8;
-    // this._ebmlSizeDescriptorBytesMaxNumber = (this._maxSizeWidth - modulo8) / 8 + !!modulo8;
-  }
   
   /**
    * vIntLength function calculates length of variable-length integer
    * @param {number} offset buffer index of the first byte of the variable-length integer
    * @param {Array} buffer stream buffer or string that contains variable-length integers of EBML stream or file
    * **/
-  vIntLength(offset = 0, buffer = this.buffer){
+  static vIntLength(offset = 0, buffer){
     let bytes = 0;
     //noinspection StatementWithEmptyBodyJS
     while (!buffer[offset+bytes++]); //bytes with vInt descriptor
@@ -46,9 +32,8 @@ class EBMLHelper {
    * @param {number} length length of value in bytes
    * @param {Array} buffer stream buffer or string that contains variable-length integers of EBML stream or file
    * **/
-  bigEndian(offset = 0, length = 1, buffer = this.buffer) {
+  static bigEndian(offset = 0, length = 1, buffer) {
     let exp = length - 1;
-    //noinspection JSUnresolvedVariable buffer.length
     if (offset + length > buffer.length) throw new Error(`Length out of buffer boundaries: ${length}`);
     return buffer[offset].toString(16) + (exp === 0 ? "" : this.bigEndian(offset + 1, exp, buffer));
   }
@@ -59,9 +44,8 @@ class EBMLHelper {
    * @param {number} length length of value in bytes
    * @param {Array} buffer stream buffer or string that contains variable-length integers of EBML stream or file
    * **/
-  littleEndian(offset, length, buffer = this.buffer) {
+  static littleEndian(offset, length, buffer) {
     let exp = length - 1;
-    //noinspection JSUnresolvedVariable buffer.length
     if (offset + length > buffer.length) throw new Error(`Length out of buffer boundaries: ${length}`);
     return buffer[offset + exp].toString(16) + (exp === 0 ? "" : this.littleEndian(offset, exp, buffer));
   }

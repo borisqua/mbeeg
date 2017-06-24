@@ -1,0 +1,28 @@
+{
+  "name": "mberp",
+  "version": "1.0.0",
+  "description": "p300 eeg processing and classification software",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/borisqua/mbERP.git"
+  },
+  "keywords": [
+    "eeg",
+    "p300",
+    "bci"
+  ],
+  "author": "Boris Bronovitsky",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/borisqua/mbERP/issues"
+  },
+  "homepage": "https://github.com/borisqua/mbERP#readme",
+  "devDependencies": {
+    "debug": "^2.6.8",
+  },
+  "dependencies": {}
+}

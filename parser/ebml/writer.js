@@ -1,5 +1,5 @@
 "use strict";
-let TagId = require('parser/ebml/tag');
+let TagId = require('parser/ebml/element');
 
 const {Transform} = require('Transform');
 /**

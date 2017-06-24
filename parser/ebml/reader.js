@@ -1,11 +1,8 @@
 'use strict';
-let TagId = require('parser/ebml/tag');
-
 const
-  { Transform } = require("stream"),
-  STATE_TAG = Symbol('TAG'),
-  STATE_SIZE = Symbol('SIZE'),
-  STATE_CONTENT = Symbol('CONTENT');
+  ElementId = require('./element'),
+  {Transform} = require("stream"),
+  Tools = require('./readerhelper');
 
 class Reader extends Transform {
   constructor(options = {}) {
@@ -13,99 +10,115 @@ class Reader extends Transform {
     super(options);
     
     this._buffer = null;
-    this._tag_stack = [];
+    this._element_stack = [];
     this._cursor = 0;
     this._total = 0;
-    this._state = STATE_TAG;
-    this._dtd = require('parser/ebml/dtd');
-    this._schema = require(('ebml_types'));
+    this._dtd = require('./dtd.json');
+    // this._schema = require(('./ebml_types'));
   }
   
-  _transform(buffer = this._buffer, encoding, callback) {
+  _transform(chunk, encoding, callback) {
     //first - add new portion of data to buffer
     if (this._buffer === null) {
-      this._buffer = buffer;
+      this._buffer = chunk;
     } else {
       this._buffer = Buffer.concat([this._buffer, chunk]);
     }
     //then parsing cycle
     while (this._cursor < this._buffer.length) {
-      if (this._state === STATE_TAG && !this.readTag()) {
-        break;
-      }
-      if (this._state === STATE_SIZE && !this.readSize()) {
-        break;
-      }
-      if (this._state === STATE_CONTENT && !this.readContent()) {
-        break;
-      }
+      this.openElement(this.readTag());
     }
-    
-    callback();
+    callback();//do some work with client callback when parsing has finished
   }
   
   /**
-   * Whether tag with id === tagId is tag of data container or parent for other children tags
-   * @param {TagId} tagId Identity of tag from schema.json for selected model of EBML
+   * This function is called when parser has started new EBML node parsing.
+   * It gets element information and decide what next to do whether get data or recursive descend to next child
+   * @param {ElementId} elementId Identity of element from schema.json for selected model of EBML
+   */
+  openElement(elementId) {
+    //first get element data by element
+    //if element type isn't data type then open nested element (recursive call of openElement)
+    //else pass element data to callback object that knows what to do with data of than element type
+  }
+  
+  /**
+   * Whether element with id === elementId is data container or parent for other children elements
+   * @param {ElementId} elementId Identity of element from schema.json for selected model of EBML
    * @return {boolean} if it is data container returns true else false
    */
-  isData(tagId){
+  isData(elementId) {
     return false;
   }
   
   /**
-   * This function is called when parser has started new EBML node parsing
-   * @param {TagId} tagId Identity of tag from schema.json for selected model of EBML
+   *@param chunk
+   *@param length
    */
-  openTag(tagId){
+  processElementData(chunk, length) {
   
   }
   
-  processTagData(chunk, length){
+  /**
+   * Closes last opened element in EBML hierarchy
+   */
+  closeElement() {
   
   }
   
-  readTag(){
-     if (this._cursor >= this._buffer.length) {
-        debug('waiting for more data');
-        return false;
+  /**
+   * takeIdVInt calculates variable-length integer value from buffer
+   * @param {number} offset buffer index of the first byte of the variable-length integer
+   * @param {Array} buffer stream buffer or string that contains variable-length integers of EBML stream or file
+   * **/
+  static takeIdVInt(offset = 0, buffer = this.buffer) {
+    let length = this.vIntLength(offset, buffer);
+    return {
+      length: length,
+      value: this.bigEndian(offset, length, buffer) // % Math.pow(2,length*8)
+    };
+  }
+  
+  readTag() {
+    if (this._cursor >= this._buffer.length) {
+      debug('waiting for more data');
+      return false;
     }
-
+    
     const start = this._total;
-    const tag = tools.readVint(this._buffer, this._cursor);
-
+    const tag = Tools.takeVInt(this._buffer, this._cursor);
+    
     if (tag == null) {
-        debug('waiting for more data');
-        return false;
+      debug('waiting for more data');
+      return false;
     }
-
+    
     const tagStr = this._buffer.toString('hex', this._cursor, this._cursor + tag.length);
-
+    
     this._cursor += tag.length;
     this._total += tag.length;
-    this._state = STATE_SIZE;
-
+    
     let tagObj = {
-        tag: tag.value,
-        tagStr: tagStr,
-        type: this.getSchemaInfo(tagStr).type,
-        name: this.getSchemaInfo(tagStr).name,
-        start: start,
-        end: start + tag.length
+      tag: tag.value,
+      tagStr: tagStr,
+      type: this.getSchemaInfo(tagStr).type,
+      name: this.getSchemaInfo(tagStr).name,
+      start: start,
+      end: start + tag.length
     };
-
+    
     this._tag_stack.push(tagObj);
     debug('read tag: ' + tagStr);
-
+    
     return true;
   }
   
   /**
-   * This function tells whether content type of tag with id === TagId is data
-   * or this tag is container for child elements
-   * @param {TagId} tagId Id of the EBML tag
+   * This function tells whether content type of element with id === ElementId is data
+   * or this element is container for child elements
+   * @param {ElementId} elementId Id of the EBML element
    */
-  isData(tagId){
+  isDataElement(elementId) {
   
   }
 }

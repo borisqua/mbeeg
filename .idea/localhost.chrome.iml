@@ -21,5 +21,6 @@
     <orderEntry type="library" name="compass-library" level="project" />
     <orderEntry type="library" name="mocha-DefinitelyTyped" level="application" />
     <orderEntry type="library" name="chai-DefinitelyTyped" level="application" />
+    <orderEntry type="library" name="localhost.chrome-parser-ebml" level="project" />
   </component>
 </module>

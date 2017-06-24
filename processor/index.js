@@ -1,33 +1,53 @@
-const client = require('net').Socket();
-const transform = require('stream').Transfom;
-// let tcp =dd require('net');
-const tools = require('../parser/ebml/helper');
-const decoder = require('../parser/ebml/reader');
+const
+  Debug = require('debug')('processor'),
+  Client = require('net').Socket(),
+  Tools = require('../parser/ebml/helper'),
+  Reader = require('../parser/ebml/reader');
+
 
 "use strict";
 
-client.connect(1024, '127.0.0.1', () => {
-  console.log('Connected');
+Client.connect(1024, '127.0.0.1', () => {
+  Debug('Connected');
 });
 
-client.on('data', (data) => {
-  //first we should get tcp chunk size (tcpChunkSize) and then write to tcpChunk tcp data of that size by getting it
-  let tcpChunkSize = tools.littleEndian(data, 0, 8);
-  let actualSize = data.length - 8;
-  //from next bytes of current and next tcp chunks until tcpChunkSize will be completed
-  //when tcpChunk will be completed it should be passed to decoder - decoder.write(tcpChunk)
+let reader = new Reader();
+let tcpChunk = new Buffer([]);
+let tcpChunkSize = 0;
+
+Client.on('data', (data) => {
+  //first we should get tcp chunk size (tcpChunkSize) and then write to tcpChunk tcp data of that size
+  if (!tcpChunkSize) {
+    tcpChunkSize = parseInt(Tools.littleEndian(0, 8, data), 16);
+    data = data.slice(8);//trim TCP header, so tcpChunk is pure EBML data
+  }
+  let actualSize = data.length;
+  Debug('========================================================');
+  Debug(`TCP chunk size - ${tcpChunkSize}; raw data size without header - ${actualSize} `);
+  Debug('raw data:');
   
-  let tcpChunk = data;
+  if (actualSize && tcpChunkSize) {
+    if (actualSize <= tcpChunkSize) {
+      tcpChunkSize -= actualSize;
+      tcpChunk = Buffer.concat([tcpChunk, data]);
+      Debug(data);
+      Debug('........................................................');
+      Debug(`trimmed data size: ${tcpChunk.length}`);
+      Debug(`trimmed data:`);
+      Debug(tcpChunk);
+      Debug('========================================================');
+      if (!tcpChunkSize) {
+        // reader.write(tcpChunk);
+        tcpChunk = new Buffer([]);
+      }
+    }
+    else if (actualSize > tcpChunkSize)
+      throw new Error("Input stream error. Last tcp chunk is jammed - incorrect length of.");
+  }
   
-  // if (this._buffer === null) {
-  //   this._buffer = chunk;
-  // } else {
-  //   this._buffer = Buffer.concat([this._buffer, chunk]);
-  // }
-  console.log(`chunk size? ${tcpChunkSize} actual size ${actualSize}`);
-  console.log(data);
+  
 });
 
-client.on('close', () => {
-  console.log('Connection closed');
+Client.on('close', () => {
+  Debug('Connection closed');
 });
