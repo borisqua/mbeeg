@@ -7,14 +7,15 @@ class EBMLHelper {
   
   /**
    * vIntLength function calculates length of variable-length integer
-   * @param {number} offset buffer index of the first byte of the variable-length integer
    * @param {Array} buffer stream buffer or string that contains variable-length integers of EBML stream or file
+   * @param {number} offset buffer index of the first byte of the variable-length integer
    * **/
-  static vIntLength(offset = 0, buffer){
+  static vIntLength(buffer, offset = 0){
     let bytes = 0;
     //noinspection StatementWithEmptyBodyJS
     while (!buffer[offset+bytes++]); //bytes with vInt descriptor
-    return 8 * bytes - (Math.log2(buffer[offset+bytes - 1]) ^ 0);
+    let length = 8 * bytes - (Math.log2(buffer[offset + bytes - 1]) ^ 0);
+    // let value =
     //alternative way to calculate length should be used for testing
     // const value = parseInt(this.bigEndian(offset, bytes, buffer), 16); //value in descriptor
     // return Math.ceil(Math.log2(-(1 + ~(1 << bytes * 8)) / value)); //length of vInt
@@ -27,27 +28,41 @@ class EBMLHelper {
   }
   
   /**
-   * bigEndian calculates value from buffer according to big-endian order of bytes
-   * @param {number} offset buffer index of the first byte of the value
-   * @param {number} length length of value in bytes
+   * takeId calculates variable-length integer Id from buffer
    * @param {Array} buffer stream buffer or string that contains variable-length integers of EBML stream or file
+   * @param {number} offset buffer index of the first byte of the variable-length integer
+   * @return {Object} {length, value} where length is Id field size in octets and value is a pure value of element Id
    * **/
-  static bigEndian(offset = 0, length = 1, buffer) {
+  static vIntValue(buffer, offset = 0) {
+    const length = this.vIntLength(buffer, offset);
+    return {
+      length: length,
+      value: this.bigEndian(buffer, length,  offset) // % Math.pow(2,length*8)
+    };
+  }
+  
+  /**
+   * bigEndian calculates value from buffer according to big-endian order of bytes
+   * @param {Array} buffer stream buffer or string that contains variable-length integers of EBML stream or file
+   * @param {number} length length of value in bytes
+   * @param {number} offset buffer index of the first byte of the value
+   * **/
+  static bigEndian(buffer, length, offset = 0) {
     let exp = length - 1;
     if (offset + length > buffer.length) throw new Error(`Length out of buffer boundaries: ${length}`);
-    return buffer[offset].toString(16) + (exp === 0 ? "" : this.bigEndian(offset + 1, exp, buffer));
+    return buffer[offset].toString(16) + (exp === 0 ? "" : this.bigEndian(buffer, exp, offset + 1));
   }
   
   /**
    * littleEndian calculates value from buffer according to little-endian order of bytes
-   * @param {number} offset buffer index of the first byte of the value
-   * @param {number} length length of value in bytes
    * @param {Array} buffer stream buffer or string that contains variable-length integers of EBML stream or file
+   * @param {number} length length of value in bytes
+   * @param {number} offset buffer index of the first byte of the value
    * **/
-  static littleEndian(offset, length, buffer) {
+  static littleEndian(buffer, length, offset = 0) {
     let exp = length - 1;
     if (offset + length > buffer.length) throw new Error(`Length out of buffer boundaries: ${length}`);
-    return buffer[offset + exp].toString(16) + (exp === 0 ? "" : this.littleEndian(offset, exp, buffer));
+    return buffer[offset + exp].toString(16) + (exp === 0 ? "" : this.littleEndian(buffer, exp, offset));
   }
   
 }

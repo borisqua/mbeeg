@@ -1,5 +1,6 @@
 'use strict';
 const
+  Debug = require('debug')('mberp:ebml:reader'),
   ElementId = require('./element'),
   {Transform} = require("stream"),
   Tools = require('./helper');
@@ -28,24 +29,43 @@ class Reader extends Transform {
     while (this._cursor < this._buffer.length) {
       this.openElement(this.readTag());
     }
-    callback();//do some work with client callback when parsing has finished
+    callback();//do some work arter parsing has finished
+  }
+  
+  /**
+   *
+   * @return {{length: *, value: (*)}}
+   */
+  readTag() {
+    if (this._cursor >= this._buffer.length) {
+      debug('waiting for more data');
+      return {value: null, length: null};
+    }
+  
+    let tag = Tools.vIntValue(this._buffer, this._cursor);
+    tag.start = this._cursor;
+    
+    this._cursor += tag.length;
+    
+    return tag;
   }
   
   /**
    * This function is called when parser has started new EBML node parsing.
    * It gets element information and decide what next to do whether get data or recursive descend to next child
-   * @param {ElementId} elementId Identity of element from schema.json for selected model of EBML
+   * @param {{length: *, value: (*)}} tag descriptor contains Id and Length of ID
    */
-  openElement(elementId) {
+  openElement(tag) {
     //first get element data by element
+    Debug(tag);
     //if element type isn't data type then open nested element (recursive call of openElement)
     //else pass element data to callback object that knows what to do with data of than element type
   }
   
   /**
-   * Whether element with id === elementId is data container or parent for other children elements
+   * Is element is data container or parent for other children elements
    * @param {ElementId} elementId Identity of element from schema.json for selected model of EBML
-   * @return {boolean} if it is data container returns true else false
+   * @return {boolean} true if it is data container, otherwise false
    */
   isData(elementId) {
     return false;
@@ -64,53 +84,6 @@ class Reader extends Transform {
    */
   closeElement() {
   
-  }
-  
-  /**
-   * takeIdVInt calculates variable-length integer value from buffer
-   * @param {number} offset buffer index of the first byte of the variable-length integer
-   * @param {Array} buffer stream buffer or string that contains variable-length integers of EBML stream or file
-   * **/
-  static takeIdVInt(offset = 0, buffer = this.buffer) {
-    let length = this.vIntLength(offset, buffer);
-    return {
-      length: length,
-      value: this.bigEndian(offset, length, buffer) // % Math.pow(2,length*8)
-    };
-  }
-  
-  readTag() {
-    if (this._cursor >= this._buffer.length) {
-      debug('waiting for more data');
-      return false;
-    }
-    
-    const start = this._total;
-    const tag = Tools.takeVInt(this._buffer, this._cursor);
-    
-    if (tag == null) {
-      debug('waiting for more data');
-      return false;
-    }
-    
-    const tagStr = this._buffer.toString('hex', this._cursor, this._cursor + tag.length);
-    
-    this._cursor += tag.length;
-    this._total += tag.length;
-    
-    let tagObj = {
-      tag: tag.value,
-      tagStr: tagStr,
-      type: this.getSchemaInfo(tagStr).type,
-      name: this.getSchemaInfo(tagStr).name,
-      start: start,
-      end: start + tag.length
-    };
-    
-    this._tag_stack.push(tagObj);
-    debug('read tag: ' + tagStr);
-    
-    return true;
   }
   
   /**

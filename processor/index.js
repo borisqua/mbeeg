@@ -1,5 +1,5 @@
 const
-  Debug = require('debug')('processor'),
+  Debug = require('debug')('mberp:processor'),
   Client = require('net').Socket(),
   Tools = require('../parser/ebml/helper'),
   Reader = require('../parser/ebml/reader');
@@ -18,7 +18,7 @@ let tcpChunkSize = 0;
 Client.on('data', (data) => {
   //first we should get tcp chunk size (tcpChunkSize) and then write to tcpChunk tcp data of that size
   if (!tcpChunkSize) {
-    tcpChunkSize = parseInt(Tools.littleEndian(0, 8, data), 16);
+    tcpChunkSize = parseInt(Tools.littleEndian(data, 8, 0), 16);
     data = data.slice(8);//trim TCP header, so tcpChunk is pure EBML data
   }
   let actualSize = data.length;
@@ -37,7 +37,7 @@ Client.on('data', (data) => {
       Debug(tcpChunk);
       Debug('========================================================');
       if (!tcpChunkSize) {
-        // reader.write(tcpChunk);
+        reader.write(tcpChunk);
         tcpChunk = new Buffer([]);
       }
     }

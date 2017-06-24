@@ -22,7 +22,9 @@
   },
   "homepage": "https://github.com/borisqua/mbERP#readme",
   "devDependencies": {
-    "debug": "^2.6.8",
+    "debug": "^2.6.8"
   },
-  "dependencies": {}
+  "dependencies": {
+    "int64-buffer": "^0.1.9"
+  }
 }
