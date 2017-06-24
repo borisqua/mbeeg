@@ -2,7 +2,7 @@
 const
   ElementId = require('./element'),
   {Transform} = require("stream"),
-  Tools = require('./readerhelper');
+  Tools = require('./helper');
 
 class Reader extends Transform {
   constructor(options = {}) {
