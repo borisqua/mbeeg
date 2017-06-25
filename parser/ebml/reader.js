@@ -3,7 +3,10 @@ const
   Debug = require('debug')('mberp:ebml:reader'),
   ElementId = require('./element'),
   {Transform} = require("stream"),
-  Tools = require('./helper');
+  Tools = require('./helper'),
+  ELEMENT_ID = Symbol('ELEMENT_ID'),
+  ELEMENT_SIZE = Symbol('ELEMENT_SIZE'),
+  ELEMENT_DATA = Symbol('ELEMENT_DATA');
 
 class Reader extends Transform {
   constructor(options = {}) {
@@ -36,16 +39,17 @@ class Reader extends Transform {
    *
    * @return {{length: *, value: (*)}}
    */
-  readTag() {
+  readTag(mode) {
     if (this._cursor >= this._buffer.length) {
       debug('waiting for more data');
       return {value: null, length: null};
     }
   
-    let tag = Tools.vIntValue(this._buffer, this._cursor);
+    let tag = Tools.vInt(this._buffer, this._cursor);
     tag.start = this._cursor;
     
     this._cursor += tag.length;
+    this._total += tag.length;
     
     return tag;
   }
@@ -55,9 +59,13 @@ class Reader extends Transform {
    * It gets element information and decide what next to do whether get data or recursive descend to next child
    * @param {{length: *, value: (*)}} tag descriptor contains Id and Length of ID
    */
-  openElement(tag) {
-    //first get element data by element
-    Debug(tag);
+  openElement() {
+    //get element id information
+    let elementId = this.readTag(ELEMENT_ID);
+    Debug(elementId);
+    //get size information
+    let elementSize = this.readTag(ELEMENT_SIZE);
+    Debug(elementSize);
     //if element type isn't data type then open nested element (recursive call of openElement)
     //else pass element data to callback object that knows what to do with data of than element type
   }
@@ -69,6 +77,15 @@ class Reader extends Transform {
    */
   isData(elementId) {
     return false;
+  }
+  
+  /**
+   * This function tells whether content type of element with id === ElementId is data
+   * or this element is container for child elements
+   * @param {ElementId} elementId Id of the EBML element
+   */
+  isDataElement(elementId) {
+  
   }
   
   /**
@@ -86,14 +103,6 @@ class Reader extends Transform {
   
   }
   
-  /**
-   * This function tells whether content type of element with id === ElementId is data
-   * or this element is container for child elements
-   * @param {ElementId} elementId Id of the EBML element
-   */
-  isDataElement(elementId) {
-  
-  }
 }
 
 module.exports = Reader;

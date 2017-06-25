@@ -12,7 +12,7 @@ Client.connect(1024, '127.0.0.1', () => {
 });
 
 let reader = new Reader();
-let tcpChunk = new Buffer([]);
+let tcpChunk = Buffer.alloc(0);
 let tcpChunkSize = 0;
 
 Client.on('data', (data) => {
@@ -38,7 +38,7 @@ Client.on('data', (data) => {
       Debug('========================================================');
       if (!tcpChunkSize) {
         reader.write(tcpChunk);
-        tcpChunk = new Buffer([]);
+        tcpChunk = Buffer.alloc(0);
       }
     }
     else if (actualSize > tcpChunkSize)
