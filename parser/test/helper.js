@@ -39,8 +39,9 @@ for (let i = 0; i < 3; i++) {
     });
     Debug(`${255*i+256-j}. [${buffer}] [${vInt.buffer}]; value==${vInt.value}[${hexBuffer}]; first byte==${vInt.start}; length==${vInt.length} == ${alternativeLengthCalculation}`);
     if(vInt.length !== alternativeLengthCalculation) debugger;
+    if(vInt.value !== hexBuffer.join('')) debugger;
   }
-  debugger;
+  // debugger;
   buffer[i] = j;
   buffer[i + 1] = 255;
 }
