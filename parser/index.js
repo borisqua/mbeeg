@@ -1,15 +1,19 @@
-var ebml = require('ebml');
-var fs = require('fs');
+const
+  // Debug = require('debug')('mberp:processor'),
+  // Client = require('net').Socket(),
+  // Tools = require('../parser/ebml/helper'),
+  fs = require('fs'),
+  Reader = require('../parser/ebml/reader');
 
-var decoder = new ebml.Decoder();
+const reader = new Reader();
 
-decoder.on('data', function(chunk) {
+reader.on('data', function (chunk) {
   console.log(chunk);
 });
 
-fs.readFile('media/tcp_raw01.bin', function(err, data) { //*test.webm*
+fs.readFile('./media/tcp_raw01.bin', function (err, data) { //*test.webm*
   if (err)
     throw err;
   //data might begin with first little endian 8 byte header
-  decoder.write(data);
+  reader.write(data);
 });

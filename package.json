@@ -1,9 +1,10 @@
 {
   "name": "mberp",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "p300 eeg processing and classification software",
-  "main": "index.js",
+  "main": "./app/main.js",
   "scripts": {
+    "start": "electron .",
     "test": "test"
   },
   "repository": {
@@ -22,7 +23,8 @@
   },
   "homepage": "https://github.com/borisqua/mbERP#readme",
   "devDependencies": {
-    "debug": "^2.6.8"
+    "debug": "^2.6.8",
+    "electron": "^1.6.11"
   },
   "dependencies": {
     "int64-buffer": "^0.1.9"

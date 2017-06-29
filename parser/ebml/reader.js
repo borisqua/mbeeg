@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 const
   Debug = require('debug')('mberp:ebml:reader'),
   ElementId = require('./element'),
@@ -30,7 +30,7 @@ class Reader extends Transform {
     }
     //then parsing cycle
     while (this._cursor < this._buffer.length) {
-      this.openElement(this.readTag());
+      this.openElement();
     }
     callback();//do some work arter parsing has finished
   }
@@ -41,10 +41,10 @@ class Reader extends Transform {
    */
   readTag(mode) {
     if (this._cursor >= this._buffer.length) {
-      debug('waiting for more data');
+      Debug('waiting for more data...');
       return {value: null, length: null};
     }
-  
+    
     let tag = Tools.vInt(this._buffer, this._cursor);
     tag.start = this._cursor;
     
@@ -62,46 +62,58 @@ class Reader extends Transform {
   openElement() {
     //get element id information
     let elementId = this.readTag(ELEMENT_ID);
-    Debug(elementId);
     //get size information
     let elementSize = this.readTag(ELEMENT_SIZE);
+    Debug(`Element Id: `);
+    Debug(elementId);
+    Debug(`Element size:`);
     Debug(elementSize);
-    //if element type isn't data type then open nested element (recursive call of openElement)
-    //else pass element data to callback object that knows what to do with data of than element type
-  }
   
-  /**
-   * Is element is data container or parent for other children elements
-   * @param {ElementId} elementId Identity of element from schema.json for selected model of EBML
-   * @return {boolean} true if it is data container, otherwise false
-   */
-  isData(elementId) {
-    return false;
-  }
+  //if element type isn't data type then open nested element (recursive call of openElement)
+  //else pass element data to callback object that knows what to do with data of than element type
+  /*  Типы большинства элементов можно найти в файле plugins\processing\tools\share\config-ebml-stream-spy.txt.
+      Типы binary(float64) и binary(float32) означают, что на уровне EBML данные не парсятся (тип binary),
+    а на уровне OpenViBE содержат массивы чисел float64 и float32 соответственно. При этом порядок байт
+    в числах от младшего к старшему (little-endian), в отличие от формата EBML, где байты в данных типа float
+    расположены в порядке от старшего к младшему (big-endian)*/
+}
+
+/**
+ * Is element is data container or parent for other children elements
+ * @param {ElementId} elementId Identity of element from schema.json for selected model of EBML
+ * @return {boolean} true if it is data container, otherwise false
+ */
+isData(elementId)
+{
+  return false;
+}
+
+/**
+ * This function tells whether content type of element with id === ElementId is data
+ * or this element is container for child elements
+ * @param {ElementId} elementId Id of the EBML element
+ */
+isDataElement(elementId)
+{
   
-  /**
-   * This function tells whether content type of element with id === ElementId is data
-   * or this element is container for child elements
-   * @param {ElementId} elementId Id of the EBML element
-   */
-  isDataElement(elementId) {
+}
+
+/**
+ *@param chunk
+ *@param length
+ */
+processElementData(chunk, length)
+{
   
-  }
+}
+
+/**
+ * Closes last opened element in EBML hierarchy
+ */
+closeElement()
+{
   
-  /**
-   *@param chunk
-   *@param length
-   */
-  processElementData(chunk, length) {
-  
-  }
-  
-  /**
-   * Closes last opened element in EBML hierarchy
-   */
-  closeElement() {
-  
-  }
+}
   
 }
 

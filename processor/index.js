@@ -2,7 +2,8 @@ const
   Debug = require('debug')('mberp:processor'),
   Client = require('net').Socket(),
   Tools = require('../parser/ebml/helper'),
-  Reader = require('../parser/ebml/reader');
+  Reader = require('../parser/ebml/reader'),
+  reader = new Reader();
 
 
 "use strict";
@@ -11,7 +12,6 @@ Client.connect(1024, '127.0.0.1', () => {
   Debug('Connected');
 });
 
-let reader = new Reader();
 let tcpChunk = Buffer.alloc(0);
 let tcpChunkSize = 0;
 
