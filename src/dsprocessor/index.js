@@ -1,5 +1,5 @@
 const
-  Debug = require('debug')('mberp:processor'),
+  Debug = require('debug')('mberp:dsprocessor'),
   Client = require('net').Socket(),
   Tools = require('../parser/ebml/helper'),
   Reader = require('../parser/ebml/reader'),

@@ -2,7 +2,7 @@
   "name": "mberp",
   "version": "0.0.1",
   "description": "p300 eeg processing and classification software",
-  "main": "./app/main.js",
+  "main": "./src/app/main.js",
   "scripts": {
     "start": "electron .",
     "test": "test"

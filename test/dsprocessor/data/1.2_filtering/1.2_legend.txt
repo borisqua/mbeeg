@@ -1,0 +1,24 @@
+Filtering
+(zero-phase lowpass filter sample code is in file "lpfzerophase.m")
+
+
+Input epochs:			epoch_CZ_1.csv
+						epoch_FZ_1.csv
+
+Filtering parameters:	IIR Butterworth zero-phase
+						lowpass
+						order 4
+						cut off frequency "cutOff = 25 Hz"
+
+
+
+Output epochs:
+
+epochFilt_CZ_1.csv
+epochFilt_FZ_1.csv
+
+
+Each epoch file contains 250*1 values
+
+
+
