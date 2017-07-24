@@ -20,10 +20,10 @@
       <option name="workingDir" value="$FileDir$" />
       <envs />
     </TaskOptions>
-    <TaskOptions isEnabled="true">
+    <TaskOptions isEnabled="false">
       <option name="arguments" value="C:\Users\Boris\AppData\Roaming\npm\node_modules\less\bin\lessc $FileName$" />
       <option name="checkSyntaxErrors" value="true" />
-      <option name="description" value="Compiles .less files into .css files" />
+      <option name="description" />
       <option name="exitCodeBehavior" value="ERROR" />
       <option name="fileExtension" value="less" />
       <option name="immediateSync" value="true" />

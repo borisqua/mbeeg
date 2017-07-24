@@ -18,8 +18,8 @@
     <orderEntry type="library" name="electron-DefinitelyTyped" level="application" />
     <orderEntry type="library" name="angular" level="application" />
     <orderEntry type="library" name="jquery" level="application" />
-    <orderEntry type="library" name="compass-library" level="project" />
     <orderEntry type="library" name="mocha-DefinitelyTyped" level="application" />
     <orderEntry type="library" name="chai-DefinitelyTyped" level="application" />
+    <orderEntry type="library" name="compass-library" level="project" />
   </component>
 </module>

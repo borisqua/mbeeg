@@ -2,20 +2,37 @@
   <dictionary name="Boris">
     <words>
       <w>addon</w>
+      <w>butterworth</w>
       <w>cloudflare</w>
+      <w>detrend</w>
+      <w>dsprocessor</w>
       <w>ebml</w>
       <w>endian</w>
       <w>endianness</w>
       <w>endians</w>
+      <w>epoching</w>
+      <w>fili</w>
       <w>fullscreen</w>
       <w>gsap</w>
       <w>lightgrey</w>
+      <w>lowpass</w>
       <w>mberp</w>
+      <w>passthrough</w>
+      <w>passtrough</w>
       <w>precalculate</w>
       <w>precalculated</w>
+      <w>preprocessing</w>
+      <w>rereferenced</w>
+      <w>rerefernce</w>
       <w>revalidate</w>
+      <w>samplingrate</w>
+      <w>sumx</w>
+      <w>sumxx</w>
+      <w>sumxy</w>
+      <w>sumy</w>
       <w>symbox</w>
       <w>timeline</w>
+      <w>timeseries</w>
       <w>xsize</w>
       <w>ysize</w>
     </words>
