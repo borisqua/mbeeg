@@ -1,10 +1,10 @@
 "use strict";
 const fili = require('fili');
 
-/** @class EEG helper contains raw data preprocessing math
- * (filtering, epoching, reshaping, tools, etc...)
+/** @class DSP contains raw EEG data preprocessing functions
+ * (filtering, epoching, reshaping, etc...)
  */
-class EEGHelper {
+class DSP {
   /**
    * epoch function binds stimuli data with EEG data on timestamp by adding to EEG data
    * stimulus ID (keyID), thus the stimulus ID becomes an ID of epoch.

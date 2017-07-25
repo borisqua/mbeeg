@@ -32,7 +32,7 @@ class Reader extends Transform {
     while (this._cursor < this._buffer.length) {
       this.openElement();
     }
-    callback();//do some work arter parsing has finished
+    callback();//do some work after parsing has finished
   }
   
   /**

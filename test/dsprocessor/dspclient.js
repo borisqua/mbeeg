@@ -7,10 +7,10 @@ const server = require(`../dsprocessor`);
 const fs = require('fs');
 let path = `./data/tcp_raw01.bin`;
 
-fs.readFile(path, function (err, data) { //*test.webm*
+fs.readFile(path, function (err, data) {
   if (err)
     throw err;
   //data might begin with first little endian 8 byte header
-  reader.write(data);
+  server.write(data);
 });
 
