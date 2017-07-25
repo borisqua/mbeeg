@@ -1,3 +1,4 @@
+"use strict";
 const
   // Debug = require('debug')('mberp:dsprocessor'),
   // Client = require('net').Socket(),
@@ -7,7 +8,7 @@ const
 
 const reader = new Reader();
 
-reader.on('data', function (chunk) {
+reader.on('data', (chunk)=> {
   console.log(chunk);
 });
 

@@ -1,7 +1,7 @@
 // const Debug = require('debug')('mberp:ebml:helper');
 
 /**
- * EBMLHelper class contains tools & helper functions for operation with EBML subjects, such as variable-length integers
+ * @module EBMLHelper class contains tools & helper functions for operation with EBML subjects, such as variable-length integers
  * binary tags, endians etc.
  * @see EBML, variable-length integers, UTF, Endianness
  * **/
