@@ -3,8 +3,25 @@ const fili = require('fili');
 
 /** @class DSP contains raw EEG data preprocessing functions
  * (filtering, epoching, reshaping, etc...)
+ *
  */
 class DSP {
+  
+  /**
+   * adds timestamp for each row in stimuli array
+   *
+   * @param stimuli
+   * @param {Date} startTime - start time in milliseconds
+   * @param sampingRate - sampling frequency in Hz (1/sec)
+   */
+  static timestamping(stimuli, startTime, sampingRate){
+    let result = stimuli.slice();
+    for (let stimulus in result){
+      stimulus.splice(0, 0, new Date(startTime + 1000 / sampingRate))
+    }
+    return result
+  }
+  
   /**
    * epoch function binds stimuli data with EEG data on timestamp by adding to EEG data
    * stimulus ID (keyID), thus the stimulus ID becomes an ID of epoch.
@@ -12,13 +29,13 @@ class DSP {
    * @param {Array} stimuli - stream, buffer or object that contains set of pairs {id, timestamp}
    * @param {Array} series - stream, buffer or object that contains set of vectors [timestamp, ch0, ch1, ... , chN]
    * with values of N EEG channels
-   * @param sampleRate - sampling rate of digital signal
+   * @param samplingRate - sampling rate of digital signal
    * @param {number} duration - epoch length in seconds (equals to samples number per epoch divided by sample rate)
    * @return {Array} array of epoch objects - {key: id, timestamp: stimulusTime, channels:[ch][values]},
    * where key - selected key (assosiated with epoch), ch - channel of signal, [values] - set of digital signal values
    * for distinct channel
    **/
-  static epochs(stimuli, series, sampleRate, duration) {
+  static epochs(stimuli, series, samplingRate, duration) {
     
     let result = [];
     let epoch = {};
@@ -191,7 +208,7 @@ class DSP {
    */
   static seriesCARExtension(series, start = 0, car = null) {
     let arr = series.slice();
-    if (!car) car = car(series, start);
+    if (!car) car = this.car(series, start);
     for (let i = 0; i < series.length; i++) {
       for (let j = 0; j < car[i][j].length; j++) {
         arr[i][j].push(car[j]);
@@ -223,3 +240,4 @@ class DSP {
   }
 }
 
+module.exports = DSP;

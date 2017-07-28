@@ -5,6 +5,8 @@
       <w>butterworth</w>
       <w>cloudflare</w>
       <w>detrend</w>
+      <w>detrending</w>
+      <w>dspclient</w>
       <w>dsprocessor</w>
       <w>ebml</w>
       <w>endian</w>
@@ -14,9 +16,11 @@
       <w>fili</w>
       <w>fullscreen</w>
       <w>gsap</w>
+      <w>idarray</w>
       <w>lightgrey</w>
       <w>lowpass</w>
       <w>mberp</w>
+      <w>ovprovider</w>
       <w>passthrough</w>
       <w>passtrough</w>
       <w>precalculate</w>

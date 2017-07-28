@@ -1,10 +1,9 @@
 const
-  Debug = require('debug')('mberp:dsprocessor'),
+  Debug = require('debug')('mberp:ovprovider'),
   Client = require('net').Socket(),
   Tools = require('../parser/ebml/helper'),
   Reader = require('../parser/ebml/reader'),
   reader = new Reader();
-
 
 "use strict";
 
@@ -44,7 +43,6 @@ Client.on('data', (data) => {
     else if (actualSize > tcpChunkSize)
       throw new Error("Input stream error. Last tcp chunk is jammed - incorrect length of.");
   }
-  
   
 });
 
