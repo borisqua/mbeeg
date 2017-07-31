@@ -1,20 +1,17 @@
-"use strict";
-const {Writable, Transform} = require('stream');
-const fs = require('fs');
+#!/usr/bin/env node
 
-const writeStream = fs.createWriteStream(`./dsprocessor/data/1.0_sourceEEG/1.1stimule.csv`);
+var cli = require('cli');
 
-let transform = new Transform({
-  objectMode: true,
-  transform(chunk, encoding, callback){
-    chunk.timestamp = new Date();
-    callback(null, JSON.stringify(chunk,null,2)+`\n`);
-  }
-});
+var output_file = function (file) {
+    cli.withInput(file, function (line, sep, eof) {
+        if (!eof) {
+            cli.output(line + sep);
+        } else if (cli.args.length) {
+            output_file(cli.args.shift());
+        }
+    });
+};
 
-transform.pipe(process.stdout);
-
-transform.write({status: 404, message: `Not found`});
-transform.write({status: 500, message: `Internal server error`});
-
-
+if (cli.args.length) {
+    output_file(cli.args.shift());
+}

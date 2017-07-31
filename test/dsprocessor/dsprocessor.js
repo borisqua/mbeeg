@@ -3,52 +3,52 @@ const
   {PassThrough, Transform} = require(`stream`),
   Stimuli = require(`./supply_stimuli`),
   EEG = require('./supply_eeg'),
-  DSP = require(`../../src/dsprocessor/dsplib`);
+  DSP = require(`../../src/dsprocessor/dsplib`),
+  cli = require(`commander`);
+
 
 class DSProcessor {
   constructor(epochOptions = {stimulusDuration: 100, stimulusPause: 100, epochDuration: 1000, samplingRate: 250}) {
     
     this.stimuli = new Stimuli(epochOptions.stimulusDuration, epochOptions.stimulusPause, {objectMode: true});
     this.eeg = new EEG({objectMode: true});
-    this.epochs = new PassThrough();
-    /*this.filtered = new Transform({
+    this.epochs = new PassThrough({objectMode: true});
+    this.filtered = new Transform({
       objectMode: true,
-      transform(chunk, encoding, cb) {
-        // console.log(chunk);
-        let epoch = chunk;
+      transform(epoch, encoding, cb) {
         for (let i = 0, channelsNumber = epoch.channels.length; i < channelsNumber; i++) {
           epoch.channels[i] = DSP.butterworth4Bulanov(epoch.channels[i], epoch.samplingRate, 25);
         }
-        console.log(JSON.stringify(epoch, null, 2));
-        cb(null, epoch);
+        cb(null, JSON.stringify(epoch, null, 2)); //For output into process.stdout (and maybe TCP)
+        // cb(null, epoch);//For output into objectType pipe
       }
     });
+    
     this.detrended = new Transform({
       objectMode: true,
-      transform(chunk, encoding, cb){
-        // console.log(chunk);
-        let epoch = chunk;
+      transform(epoch, encoding, cb){
         for (let i = 0, channelsNumber = epoch.channels.length; i < channelsNumber; i++) {
           epoch.channels[i] = DSP.detrend(epoch.channels[i]);
         }
-        // console.log(JSON.stringify(epoch, null, 2));
-        cb(null, epoch);
+        // cb(null, JSON.stringify(epoch, null, 2)); //For output into process.stdout (and maybe TCP)
+        cb(null, epoch);//For output into objectType pipe
       }
-    });*/
+    });
     
     let epochsFIFO = [];
     let samplesFIFO = [];
     let currentStimulus = [];
     let currentSample = [];
   
-/*    this.filtered.on('data', (epoch) => {
-      this.detrended.write(epoch);
-    });*/
+    this.filtered.on('data', (epoch) => {
+      // this.detrended.write(epoch);
+      // console.log(JSON.stringify(epoch,null,2));
+    });
     
-    // this.epochs.on('data', (epoch) => {
-      // this.filtered.write(epoch);
-      // console.log(JSON.stringify(epoch));
-    // });
+    this.epochs.on('data', (epoch) => {
+      this.filtered.write(epoch);
+      // console.log(JSON.stringify(epoch,null,2));
+    });
  
     this.stimuli.on('data', (stimulus) => {
       // currentStimulus = JSON.parse(stimulus);
@@ -81,8 +81,8 @@ class DSProcessor {
             _addChannels(e, s);
             if (e.channels.length && e.channels[0].length === parseInt(e.epochDuration * e.samplingRate / 1000)) {
               e.full = true;
-              this.epochs.write(JSON.stringify(epochsFIFO.splice(i, 1)[0], null, 2));
-              // this.epochs.write(epochsFIFO.splice(i, 1)[0]);
+              // this.epochs.write(JSON.stringify(epochsFIFO.splice(i, 1)[0], null, 2));
+              this.epochs.write(epochsFIFO.splice(i, 1)[0]);
               i--;
               epochsFIFOlength--;
             }
@@ -112,8 +112,8 @@ class DSProcessor {
           _addChannels(e, currentSample);
           if (e.channels.length && e.channels[0].length === e.epochDuration * e.samplingRate / 1000) {
             e.full = true;
-            this.epochs.write(JSON.stringify(epochsFIFO.splice(i, 1)[0], null, 2));
-            // this.epochs.write(epochsFIFO.splice(i, 1)[0]);
+            // this.epochs.write(JSON.stringify(epochsFIFO.splice(i, 1)[0], null, 2));
+            this.epochs.write(epochsFIFO.splice(i, 1)[0]);
             i--;
             epochsFIFOlength--;
           }
@@ -141,9 +141,8 @@ class DSProcessor {
 if (module.parent) {
   module.exports = DSProcessor;
 } else {
-  console.log('hello');
   let e = new DSProcessor();
-  e.epochs.pipe(process.stdout);
+  e.filtered.pipe(process.stdout);
 }
 
 
