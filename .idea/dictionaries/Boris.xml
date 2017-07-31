@@ -5,6 +5,7 @@
       <w>butterworth</w>
       <w>cloudflare</w>
       <w>detrend</w>
+      <w>detrended</w>
       <w>detrending</w>
       <w>dspclient</w>
       <w>dsprocessor</w>
@@ -20,6 +21,7 @@
       <w>lightgrey</w>
       <w>lowpass</w>
       <w>mberp</w>
+      <w>olength</w>
       <w>ovprovider</w>
       <w>passthrough</w>
       <w>passtrough</w>

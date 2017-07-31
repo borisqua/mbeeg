@@ -8,21 +8,6 @@ const fili = require('fili');
 class DSP {
   
   /**
-   * adds timestamp for each row in stimuli array
-   *
-   * @param stimuli
-   * @param {Date} startTime - start time in milliseconds
-   * @param sampingRate - sampling frequency in Hz (1/sec)
-   */
-  static timestamping(stimuli, startTime, sampingRate){
-    let result = stimuli.slice();
-    for (let stimulus in result){
-      stimulus.splice(0, 0, new Date(startTime + 1000 / sampingRate))
-    }
-    return result
-  }
-  
-  /**
    * epoch function binds stimuli data with EEG data on timestamp by adding to EEG data
    * stimulus ID (keyID), thus the stimulus ID becomes an ID of epoch.
    *
@@ -45,6 +30,8 @@ class DSP {
     for (let stimulus in stimuli) {
       epoch.key = stimulus.id;
       epoch.timestamp = stimulus.timestamp;
+      epoch.samplingRate = samplingRate;
+      epoch.duration = duration;
       for (let entry in series) {
         //  (until timeseries[i].timestamp >= stimulus.timestamp && timeseries[i].timestamp <= stimulus.timestamp + duration)
         if (entry.timestamp >= stimulus.timestamp && entry.timestamp <= stimulus.timestamp + duration) {
@@ -77,13 +64,12 @@ class DSP {
     if (!cutoff || passthrough) return timeseries.slice();
     if (!samplingrate) throw 'Butterworth4 error! Non zero sampling rate parameter is required!';
     if (timeseries.length < 2 / cutoff) throw 'Butterworth4 error! The length of timeseries must be at least as doubled 1/cutoff!';
-    if (samplingrate / 2 > cutoff) throw 'Butterworth4 error! The sampling rate of input time series must be at least as doubled cutoff frequiency!';
+    if (samplingrate / 2 < cutoff) throw 'Butterworth4 error! The sampling rate of input time series must be at least as doubled cutoff frequiency!';
     
     let dF2 = timeseries.length - 1;
-    let dat2 = new Array(dF2 + 4);
-    for (let i = 0; i < dat2.length; i++) dat2.push(0);
-    
-    let arr = timeseries;
+    let dat2 = Array.apply(null, new Array(dF2 + 4)).map(Number.prototype.valueOf,0);
+    //new Array(dF2 + 4);
+    // for (let i = 0; i < dat2.length; i++) dat2.push(0);
     
     for (let r = 0; r <= dF2; r++) dat2[3 + r] = timeseries[r + 1];
     dat2[2] = timeseries[1];
@@ -104,9 +90,10 @@ class DSP {
     let d = -2 * a + k3;
     let e = 1 - (2 * a) - k3;
     
-    //Recursive triggers - enable. Filter is performed (first, last points constant)
-    let datYt = new Array(dF2 + 5);
-    for (let i = 0; i < datYt.length; i++) datYt.push(0);
+    //Recursive triggers - enabled. Filter is performed (first, last points constant)
+    // let datYt = new Array(dF2 + 5);
+    // for (let i = 0, datYtLength = datYt.length; i < datYtLength; i++) datYt.push(0);
+    let datYt = Array.apply(null, new Array(dF2 + 5)).map(Number.prototype.valueOf,0);
     datYt[2] = timeseries[1];
     datYt[1] = timeseries[1];
     for (let i = 2; i <= dF2 + 2; i++)
@@ -129,7 +116,7 @@ class DSP {
    *
    * @param {Array} timeseries - stream, buffer or object with values ot detrend
    * @param {boolean} passtrough if true return trend & detrend equals to input timeseries (default = false)
-   * @return {{trend: Array, detrend: Array}} {trend, detrend} trend and detrend data, the same size as series input is
+   * @return {Array} detrend - detrended data, the same size as series input is
    */
   static detrend(timeseries, passtrough = false) {
     if (passtrough) {
@@ -157,28 +144,7 @@ class DSP {
       detrend[i] = (timeseries[i] / trend[i] - 1) * 100;
     }
     
-    return {trend: trend, detrend: detrend};
-  }
-  
-  /** converts matrix of channels values into sequence (vector) of consecutive chains of channels data
-   *
-   * @param {Array} series - stream, buffer or object that contains set of vectors [timestamp, ch0, ch1, ... , chN]
-   * with values of N EEG channels
-   * @param {number} start - column number which is first channels data column in matrix (default = 0)
-   * @return {Array} - chain of all channels (with or without timestamps and epoch IDs)
-   */
-  static reshape(series, start = 0) {
-    let result = [];
-    for (let i = 0; i < series.length; i++) {
-      let entity = {};
-      for (let j = start; j < series[i].length; j++) {
-        entity.timestamp = series[i][0];
-        entity.channel = j;
-        entity.value = series[i][j];
-      }
-      result.push(entity);
-    }
-    return result;
+    return detrend;
   }
   
   /** common average reference filter (CAR-filter) filters noise common for all channels by subtracting sum of channels
