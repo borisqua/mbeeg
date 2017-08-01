@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "commander": "^2.11.0",
+    "csv": "^1.1.1",
     "electron": "^1.6.11",
     "fili": "^2.0.0",
     "int64-buffer": "^0.1.9"

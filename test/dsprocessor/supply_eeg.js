@@ -9,11 +9,13 @@ class EEG extends Readable {
     super(options);
     this.eegArray = [];
     fs.createReadStream(`./data/1.0_sourceEEG/sourceEEG.csv`)
+      .on('error', (err)=>{
+        throw err;
+      })
       .pipe(split2())
       .on(`data`, (chunk) => {
         let channels = JSON.parse(`[${chunk}]`);
         let sample = [
-          // process.hrtime()[0] * 1000000000 + process.hrtime()[1],
           0,
           channels[0],
           channels[1]
@@ -36,6 +38,7 @@ class EEG extends Readable {
 
 if(module.parent){
   module.exports = EEG;
-}
-// let eeg = new EEG();
-// eeg.pipe(process.stdout);
+}else {
+let eeg = new EEG();
+eeg.pipe(process.stdout);
+  }

@@ -15,7 +15,6 @@ class Stimuli extends Readable {
   _read() {
     setTimeout(() => {
       this.stimulus = [
-        // process.hrtime()[0]*1000000000+process.hrtime()[1],
         new Date().getTime(),
         this.idarray[this.index]
       ];
