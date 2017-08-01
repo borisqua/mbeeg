@@ -19,6 +19,7 @@ class DSProcessor {
         for (let i = 0, channelsNumber = epoch.channels.length; i < channelsNumber; i++) {
           epoch.channels[i] = DSP.butterworth4Bulanov(epoch.channels[i], epoch.samplingRate, 25);
         }
+        epoch.state = `filtered`;
         cb(null, JSON.stringify(epoch, null, 2)); //For output into process.stdout (and maybe TCP)
         // cb(null, epoch);//For output into objectType pipe
       }
@@ -26,10 +27,11 @@ class DSProcessor {
     
     this.detrended = new Transform({
       objectMode: true,
-      transform(epoch, encoding, cb){
+      transform(epoch, encoding, cb) {
         for (let i = 0, channelsNumber = epoch.channels.length; i < channelsNumber; i++) {
           epoch.channels[i] = DSP.detrend(epoch.channels[i]);
         }
+        epoch.state = `detrended`;
         // cb(null, JSON.stringify(epoch, null, 2)); //For output into process.stdout (and maybe TCP)
         cb(null, epoch);//For output into objectType pipe
       }
@@ -39,7 +41,7 @@ class DSProcessor {
     let samplesFIFO = [];
     let currentStimulus = [];
     let currentSample = [];
-  
+    
     this.filtered.on('data', (epoch) => {
       // this.detrended.write(epoch);
       // console.log(JSON.stringify(epoch,null,2));
@@ -49,7 +51,7 @@ class DSProcessor {
       this.filtered.write(epoch);
       // console.log(JSON.stringify(epoch,null,2));
     });
- 
+    
     this.stimuli.on('data', (stimulus) => {
       // currentStimulus = JSON.parse(stimulus);
       currentStimulus = stimulus;
@@ -68,6 +70,7 @@ class DSProcessor {
       epoch.epochDuration = epochOptions.epochDuration;
       epoch.samplingRate = epochOptions.samplingRate;
       epoch.full = false;
+      epoch.state = `raw`;
       epoch.channels = [];
       epochsFIFO.push(epoch);
       
@@ -141,8 +144,30 @@ class DSProcessor {
 if (module.parent) {
   module.exports = DSProcessor;
 } else {
+  cli.version(`0.0.1`)
+    .usage(`[command] [options]`)
+    .option(`-sp --stimuli-port`, 'TCP port of stimuli server')
+    .option(`-eeg --eeg-port`, `TCP port of eeg data emiter`)
+    .option(`-s --state <type>`, `Output epochs type`, /^(raw|filtered|detrended)$/i, `detrended`)
+    .option(`-f --filter <type>`, `DSP filter type`, /^(lowpass|highpass|bandpass|bandstop|peak|lowshelf|highshelf|aweighting)$/i, `lowpass`)
+    .option(`-c --characteristics <type>`,`Filter characteristics type`, /^(butterworth|bessel)$/i, `butterworth`);
+  cli
+    .command(`server <port>`)
+    .description(`run dsprocessor as TCP server`)
+    .action((port, options) => {
+
+    });
+  cli.command(`stdout`)
+    .description(`run dsprocessor with output into process stdout`)
+    .action((options) => {
+    
+    });
+  cli.parse(process.argv);
+  
+  const stimuli = new Stimuli(100, 100, {objectMode: true});
+  // const eeg = new EEG({objectMode: true});
+  
   let e = new DSProcessor();
   e.filtered.pipe(process.stdout);
 }
-
 
