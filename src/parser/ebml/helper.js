@@ -21,20 +21,21 @@ class EBMLHelper {
     let length = 8 * bytes - (Math.log2(buffer[firstByte]) ^ 0);
     let valueBuffer = buffer.slice(firstByte, firstByte + length - bytes + 1);
     valueBuffer[0] = valueBuffer[0] & (Math.pow(2, 8 - length + (bytes - 1) * 8) - 1);
-    //alternative way to calculate length should be used for testing
-    // const value = parseInt(this.bigEndian(offset, bytes, buffer), 16); //value in descriptor
-    // return Math.ceil(Math.log2(-(1 + ~(1 << bytes * 8)) / value)); //length of vInt
     return {
       start: firstByte,
       length: length,
       buffer: valueBuffer,
       value: this.bigEndian(valueBuffer)
     }
+    //TODO Alternative ways to calculate length should be tested
+    // const value = parseInt(this.bigEndian(offset, bytes, buffer), 16); //value in descriptor
+    // return Math.ceil(Math.log2(-(1 + ~(1 << bytes * 8)) / value)); //length of vInt
+    // One more way to calculate length is using javascript Math.clz32(first4bytes)
     //TODO there is much much faster approach to get vInt length, it is the precalculated vector with 256 elements (i.e. 2^8 elements)
     // that contain vectors with length equal to number of bytes of length descriptor
-    //each element of last vector keeps precalculated length of vInt for that specific length of vInt length descriptor
-    //then vInt could be expressed like some thing like this: {let bytes=0; while(!buffer[bytes++]); return table256[buffer[bytes]][bytes];}
-    //in that case current implementation of vInt could be used to precalculate table256 before beginning the parsing process
+    // each element of last vector keeps precalculated length of vInt for that specific length of vInt length descriptor
+    // then vInt could be expressed like some thing like this: {let bytes=0; while(!buffer[bytes++]); return table256[buffer[bytes]][bytes];}
+    // in that case current implementation of vInt could be used to precalculate table256 before beginning the parsing process
   }
   
   /**

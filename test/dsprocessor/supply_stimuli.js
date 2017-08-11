@@ -2,11 +2,12 @@
 const {Readable} = require(`stream`);
 
 class Stimuli extends Readable {
-  constructor(signalDuration = 130, pauseDuration = 170, options = { objectMode: true }) {
-    super(options);
-    this.idarray = [...new Array(13).keys()];
+  constructor({signalDuration = 130, pauseDuration = 170, learning = false, objectMode= true }) {
+    super({objectMode});
+    this.idarray = [...new Array(33).keys()];
     this.stimulus = [];
     this.stimulusCicle = signalDuration + pauseDuration;
+    this.learning = learning;
     this._resetStimuli();
     this.index = 0;
   }
@@ -16,7 +17,8 @@ class Stimuli extends Readable {
     setTimeout(() => {
       this.stimulus = [
         new Date().getTime(),
-        this.idarray[this.index]
+        this.idarray[this.index],
+        !this.learning ? null : Math.random() > 0.1 //target field = in learning mode - true if target key, false if not, and null in online mode
       ];
       // this.push(JSON.stringify(this.stimulus));//+`\r\n`
       this.push(this.stimulus);

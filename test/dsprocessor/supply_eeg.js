@@ -8,8 +8,8 @@ class EEG extends Readable {
   constructor(options = {objectMode: true}) {
     super(options);
     this.eegArray = [];
-    fs.createReadStream(`./data/1.0_sourceEEG/sourceEEG.csv`)
-      .on('error', (err)=>{
+    fs.createReadStream(`../../test/dsprocessor/raweeg.csv`)
+      .on('error', (err) => {
         throw err;
       })
       .pipe(split2())
@@ -28,7 +28,8 @@ class EEG extends Readable {
   // noinspection JSUnusedGlobalSymbols
   _read() {
     setTimeout(() => {
-      this.index++; this.index %= this.eegArray.length;
+      this.index++;
+      this.index %= this.eegArray.length;
       this.eegArray[this.index][0] = new Date().getTime();
       // this.push(JSON.stringify(this.eegArray[this.index]));// + `\r\n`
       this.push(this.eegArray[this.index]);
@@ -36,9 +37,9 @@ class EEG extends Readable {
   }
 }
 
-if(module.parent){
+if (module.parent) {
   module.exports = EEG;
-}else {
-let eeg = new EEG();
-eeg.pipe(process.stdout);
-  }
+} else {
+  let eeg = new EEG();
+  eeg.pipe(process.stdout);
+}

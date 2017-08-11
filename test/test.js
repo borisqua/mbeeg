@@ -1,17 +1,24 @@
-#!/usr/bin/env node
+"use strict";
+const python = require(`child_process`).spawn(`python`,[`./test.py`, [`-u`, `-i`]]);
 
-var cli = require('cli');
+let
+  data = [1,2,3,4,5,6,7,8,9],
+  dataString = '';
 
-var output_file = function (file) {
-    cli.withInput(file, function (line, sep, eof) {
-        if (!eof) {
-            cli.output(line + sep);
-        } else if (cli.args.length) {
-            output_file(cli.args.shift());
-        }
-    });
-};
+python.stdout.on('data', (data) => {
+  dataString += data;
+});
 
-if (cli.args.length) {
-    output_file(cli.args.shift());
-}
+python.stdout.on(`end`, () => {
+  console.log(dataString);
+});
+
+python.stdout.on('data', function(data){
+  dataString += data.toString();
+});
+python.stdout.on('end', function(){
+  console.log('Sum of numbers=',dataString);
+});
+
+python.stdin.write(JSON.stringify(data));
+python.stdin.end();

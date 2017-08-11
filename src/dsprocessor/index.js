@@ -1,46 +1,28 @@
 "use strict";
 const
   {PassThrough, Transform} = require(`stream`),
-  Stimuli = require(`./supply_stimuli`),
-  EEG = require('./supply_eeg'),
-  DSP = require(`../../src/dsprocessor/dsplib`),
-  cli = require(`commander`);
+  lib = require(`./lib`);
 
-
-class DSProcessor {
-  constructor(stimuli, eeg, {
-    epochDuration = 1000,
-    samplingRate = 250,
-    sequence = `filter, detrend`
-  }) {
+class DSProcessor extends Transform {
+  constructor({
+                stimuli, eeg,
+                stimuliNumber = 9,
+                epochDuration = 1000,
+                samplingRate = 250,
+                sequence = `filter`,//, detrend
+                objectMode = true,
+                stringifyOutput = false
+              }) {
+    super({objectMode});
     
     let epochsFIFO = [];
     let samplesFIFO = [];
     let currentStimulus = [];
     let currentSample = [];
-    let steps = sequence.split(/\s*,\s*/);
-    
-    this.processed = new Transform({
-      objectMode: true,
-      transform(epoch, encoding, cb) {
-        for (let i = 0, channelsNumber = epoch.channels.length; i < channelsNumber; i++) {
-          for (let step of steps) {
-            switch (step) {
-              case 'filter':
-                epoch.channels[i] = DSP.butterworth4Bulanov(epoch.channels[i], epoch.samplingRate, 25);
-                epoch.state = `filtered`;
-                break;
-              case 'detrend':
-                epoch.channels[i] = DSP.detrend(epoch.channels[i]);
-                epoch.state = `detrended`;
-                break;
-            }
-          }
-        }
-        cb(null, JSON.stringify(epoch, null, 2)); //For output into process.stdout (and maybe TCP)
-        // cb(null, epoch);//For output into objectType pipe
-      }
-    });
+  
+    this.stimuliNumber = stimuliNumber;
+    this.stringify = stringifyOutput;
+    this.steps = sequence.split(/\s*,\s*/);
     
     stimuli.on('data', (stimulus) => {
       // currentStimulus = JSON.parse(stimulus);
@@ -54,7 +36,9 @@ class DSProcessor {
       
       let epoch = {};
       epoch.key = currentStimulus[1];
+      epoch.target = currentStimulus[2];
       epoch.timestamp = currentStimulus[0];
+      epoch.stimuliNumber = this.stimuliNumber;
       epoch.stimulusDuration = stimuli.signalDuration;
       epoch.stimulusPause = stimuli.pauseDuration;
       epoch.epochDuration = epochDuration;
@@ -70,12 +54,12 @@ class DSProcessor {
         let e = epochsFIFO[i];
         for (let j = 0, samplesFIFOlength = samplesFIFO.length; j < samplesFIFOlength; j++) {
           let s = samplesFIFO[j];
-          if (_ok(e, s[0])) {
+          if (_sampleInsideEpoch(e, s[0])) {
             _addChannels(e, s);
             if (e.channels.length && e.channels[0].length === parseInt(e.epochDuration * e.samplingRate / 1000)) {
               e.full = true;
               // this.epochs.write(JSON.stringify(epochsFIFO.splice(i, 1)[0], null, 2));
-              this.processed.write(epochsFIFO.splice(i, 1)[0]);
+              this.write(epochsFIFO.splice(i, 1)[0]);
               i--;
               epochsFIFOlength--;
             }
@@ -101,12 +85,12 @@ class DSProcessor {
       samplesFIFO.push(currentSample);
       for (let i = 0, epochsFIFOlength = epochsFIFO.length; i < epochsFIFOlength; i++) {
         let e = epochsFIFO[i];
-        if (_ok(e, currentSample[0])) {
+        if (_sampleInsideEpoch(e, currentSample[0])) {
           _addChannels(e, currentSample);
           if (e.channels.length && e.channels[0].length === e.epochDuration * e.samplingRate / 1000) {
             e.full = true;
             // this.epochs.write(JSON.stringify(epochsFIFO.splice(i, 1)[0], null, 2));
-            this.processed.write(epochsFIFO.splice(i, 1)[0]);
+            this.write(epochsFIFO.splice(i, 1)[0]);
             i--;
             epochsFIFOlength--;
           }
@@ -115,49 +99,41 @@ class DSProcessor {
       // console.log(`ssss epochs: ${epochsFIFO.length}; samples: ${samplesFIFO.length}  ${currentStimulus[0]} ${currentSample[0]} delta(e-s): ${currentStimulus[0] - currentSample[0]}`);
     });
     
-    function _ok(epoch, sampleTimestamp) {
+    function _sampleInsideEpoch(epoch, sampleTimestamp) {
       return sampleTimestamp >= epoch.timestamp && sampleTimestamp <= epoch.timestamp + epoch.epochDuration;
     }
     
     function _addChannels(epoch, sample) {
       for (let ch = 1; ch < sample.length; ch++) {
-        if (epoch.channels.length < ch) {
-          epoch.channels.push([]);
+        // if (epoch.channels.length < ch) {
+        if (epoch.channels[ch - 1] === undefined) {
+          epoch.channels[ch - 1] = [];
         }
         epoch.channels[ch - 1].push(sample[ch]);
       }
     }
   }
   
+  _transform(epoch, encoding, cb) {
+    for (let i = 0, channelsNumber = epoch.channels.length; i < channelsNumber; i++) {
+      for (let step of this.steps) {
+        switch (step) {
+          case 'filter':
+            epoch.channels[i] = lib.butterworth4Bulanov(epoch.channels[i], epoch.samplingRate, 25);
+            epoch.state = step;
+            break;
+          case 'detrend':
+            epoch.channels[i] = lib.detrend(epoch.channels[i]);
+            epoch.state = step;
+            break;
+        }
+      }
+    }
+    if (this.stringify)
+      cb(null, JSON.stringify(epoch, null, 2)); //For output into process.stdout (and maybe TCP)
+    else
+      cb(null, epoch);//For output into objectType pipe
+  }
 }
 
-if (module.parent) {
-  module.exports = DSProcessor;
-} else {
-  cli.version(`0.0.1`)
-    .usage(`[command] [options]`)
-    .option(`-sp --stimuli-port`, 'TCP port of stimuli server')
-    .option(`-eeg --eeg-port`, `TCP port of eeg data emiter`)
-    .option(`-s --state <type>`, `Output epochs type`, /^(raw|filtered|detrended)$/i, `detrended`)
-    .option(`-f --filter <type>`, `DSP filter type`, /^(lowpass|highpass|bandpass|bandstop|peak|lowshelf|highshelf|aweighting)$/i, `lowpass`)
-    .option(`-c --characteristics <type>`, `Filter characteristics type`, /^(butterworth|bessel)$/i, `butterworth`);
-  cli
-    .command(`server <port>`)
-    .description(`run dsprocessor as TCP server`)
-    .action((port, options) => {
-    
-    });
-  cli.command(`stdout`)
-    .description(`run dsprocessor with output into process stdout`)
-    .action((options) => {
-    
-    });
-  cli.parse(process.argv);
-  
-  const stimuli = new Stimuli(100, 100);
-  const eeg = new EEG();
-  
-  let e = new DSProcessor(stimuli, eeg, {sequence: `filter`});
-  e.processed.pipe(process.stdout);
-}
-
+module.exports = DSProcessor;

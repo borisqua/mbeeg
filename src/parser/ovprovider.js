@@ -1,8 +1,8 @@
 const
   Debug = require('debug')('mberp:ovprovider'),
   Client = require('net').Socket(),
-  Tools = require('../parser/ebml/helper'),
-  Reader = require('../parser/ebml/reader'),
+  Tools = require('./ebml/helper'),
+  Reader = require('./ebml/reader'),
   reader = new Reader();
 
 "use strict";
