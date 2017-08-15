@@ -8,24 +8,32 @@ $mainFont: sans-serif;
 html {
   text-align: left;
   vertical-align: top;
-  //@include drawBorder(lightgrey);
+  @include drawBorder(lightgrey);
   body {
-    //@include drawBorder(lightgrey);
+    @include drawBorder(lightgrey);
     font: normal 100% $mainFont;
+    min-height: 100%;
 
     header {
-      //@include drawBorder(grey);
-      display: none; //removes with layout
+      @include drawBorder(grey);
+      //display: none; //removes with layout
+      text-align: center;
     }
     main {
-      //@include drawBorder(grey);
-      position: relative; //to move carousel objects inside keyboard box
+      @include drawBorder(grey);
+      position: relative; //to move keyboard objects inside keyboard box
       overflow: hidden; //if no element with float: clear; available after floating elements
       margin: $divMargin;
       padding: $divPadding;
 
+      article {
+        @include drawBorder(blue);
+        //display: none;
+        text-align: left;
+        min-height: 100%;
+      }
       #monitor {
-        //@include drawBorder(blue);
+        @include drawBorder(blue);
         //display: none;
         text-align: left;
 
@@ -43,13 +51,13 @@ html {
         min-width: 50px;
         width: $leftBarWidth;
         height: $minBoxSize;
-        //@include drawBorder(lightgreen);
+        @include drawBorder(lightgreen);
         float: left;
         display: none;
       }
 
       #viewport {
-        //@include drawBorder(lightgreen);
+        @include drawBorder(lightgreen);
         //display: inline-table;
         min-width: $minBoxSize;
         min-height: $minBoxSize;
@@ -76,12 +84,13 @@ html {
 
       .controller {
         clear: both;
-        //@include drawBorder(blue);
+        @include drawBorder(blue);
       }
     }
     footer {
-      //@include drawBorder(grey);
-      display: none; //removes with layout
+      @include drawBorder(grey);
+      //display: none; //removes with layout
+      text-align: center;
     }
   }
 }

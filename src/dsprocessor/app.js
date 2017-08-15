@@ -28,6 +28,12 @@ cli.parse(process.argv);
 const stimuli = new Stimuli(100, 100, true);
 const eeg = new EEG();
 
-let e = new DSProcessor({stringifyOutput: true,stimuli: stimuli, eeg: eeg, sequence: `filter, detrend`});
+let e = new DSProcessor({
+  stringifyOutput: true,
+  stimuli: stimuli,
+  eeg: eeg,
+  sequence: `filter, detrend`,
+  learning: true
+});
 e.pipe(process.stdout);
 

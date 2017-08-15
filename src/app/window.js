@@ -6,9 +6,9 @@ const url = require('url');
 function window(options = {}) {
   
   let win = new BrowserWindow({
-    width: options.width
-    , height: options.height
-    , show: options.show
+    width: options.width,
+    height: options.height,
+    show: options.show
   });
   
   // and load the html file for the window.
@@ -25,8 +25,8 @@ function window(options = {}) {
     // when you should delete the corresponding element.
     win = null;
   });
-  
-  return win;
+
+return win;
 }
 
 module.exports = window;

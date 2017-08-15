@@ -6,6 +6,7 @@ const
 class DSProcessor extends Transform {
   constructor({
                 stimuli, eeg,
+                learning = false,
                 stimuliNumber = 9,
                 epochDuration = 1000,
                 samplingRate = 250,
@@ -14,15 +15,25 @@ class DSProcessor extends Transform {
                 stringifyOutput = false
               }) {
     super({objectMode});
-    
+  
     let epochsFIFO = [];
     let samplesFIFO = [];
     let currentStimulus = [];
     let currentSample = [];
-  
+    
+    this.learning = null;
     this.stimuliNumber = stimuliNumber;
     this.stringify = stringifyOutput;
     this.steps = sequence.split(/\s*,\s*/);
+    
+    if (learning) {
+      // first - save raw epochs data with targets
+      // second - vary preprocessing parameters as it prescribed in learning.json file
+      // third - write resulting stream to _transform callback writable
+      // learning in accordance with policy from file 'learning.json'
+      const fs = require(`fs`);
+      this.learning = JSON.parse(fs.readFileSync(`./learning.json`));
+    }
     
     stimuli.on('data', (stimulus) => {
       // currentStimulus = JSON.parse(stimulus);
@@ -115,6 +126,7 @@ class DSProcessor extends Transform {
   }
   
   _transform(epoch, encoding, cb) {
+    
     for (let i = 0, channelsNumber = epoch.channels.length; i < channelsNumber; i++) {
       for (let step of this.steps) {
         switch (step) {

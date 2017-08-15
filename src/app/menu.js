@@ -1,5 +1,7 @@
 "use strict";
-const electron = require('electron');
+const
+  electron = require('electron'),
+  BrowserWindow = electron.BrowserWindow;
 
 let template = [
   {

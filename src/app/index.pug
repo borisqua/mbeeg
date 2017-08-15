@@ -1,21 +1,21 @@
 doctype html
 html
 	head
-		title mbERP
+		title mbERP2.0
+		meta(http-equiv="content-type", content="text/html; charset=UTF-8")
+		script window.$ = window.jQuery = window.jquery = require(`jquery`);
+		script(src=`index.js`)
+		link(href = `style/styles.css` media=`all` rel = `stylesheet` type = `text/css` )
 	body
 		header
-			h3 header
-		main
-			h1 This is the main mbERP window
-			article
-				| This window should be some kind of control window <br/>
-				| Global settings, running and stopping mbERP services,<br/>
-				| working with dictionaries etc.
-		//aside
-		//	h3 aside
-		//	textarea.
-		//		sdfasfasl
-		//		asdfasdf sadlfkjasdla
-		//		asdflasjdkl
+			h1
+		main.centered
+			div
+				button#carousel.button
+					.big launch keyboard
+			div
+				button#console.button
+					.big launch console
+			div#message
 		footer
-			h3 footer
+

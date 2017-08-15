@@ -16,6 +16,7 @@
       <excludeFolder url="file://$MODULE_DIR$/jquery-ui-1.12.1" />
       <excludeFolder url="file://$MODULE_DIR$/node.screencast" />
       <excludeFolder url="file://$MODULE_DIR$/nodecpp" />
+      <excludeFolder url="file://$MODULE_DIR$/src/app/lib" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
