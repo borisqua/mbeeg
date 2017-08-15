@@ -39,7 +39,7 @@ function createWindows() {
     frame: false,
     url: 'gui/keyboard/index.html'
   });
-  winKeyboard.setMenu(null);
+  // winKeyboard.setMenu(null);
   winKeyboard.on(`close`, (e) => {
     if (!forceCloseApp) {
       e.preventDefault();
