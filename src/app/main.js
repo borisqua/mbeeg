@@ -1,19 +1,16 @@
 "use strict";
 // require('electron-debug');
 const
-  util = require('util'),
-  {app, Menu, ipcMain, globalShortcut} = require('electron'),
-  template = require('./menu');
+  appRoot = require(`app-root-path`),
+  {app, BrowserWindow, Menu, ipcMain, webContents, globalShortcut} = require('electron'),
+  template = require(`${appRoot}/src/app/menu`);
 
-// Keep a global reference of the windows objects, if you don't, the window will
-// be closed automatically when the JavaScript object is garbage collected.
-let winMain, winKeyboard, winConsole,//, winConsole, winDebuggerLog;
+let winMain, winKeyboard, winConsole,//, winConsole, winDebuggerLog;// Keep a global reference of the windows objects, if you don't, the window will be closed automatically when the JavaScript object is garbage collected.
   menuTemplate = Menu.buildFromTemplate(template),
-  forceCloseApp = false,
-  focudeWindow;
+  forceCloseApp = false;
 
 function createWindows() {
-  const window = require('./window');
+  const window = require(`${appRoot}/src/app/window`);
   // Menu.setApplicationMenu(menu);
   
   winMain = window({
@@ -35,8 +32,9 @@ function createWindows() {
     width: 1700,
     height: 700,
     show: false,
-    parent: winMain,
-    frame: false,
+    // parent: winMain,
+    // frame: false,
+    // resizable: false,
     url: 'gui/keyboard/index.html'
   });
   // winKeyboard.setMenu(null);
@@ -49,22 +47,44 @@ function createWindows() {
   });
   
   winConsole = window({
-    width: 700,
+    width: 900,
     height: 400,
-    parent: winMain,
+    // parent: winMain,
     show: false,
-    url: "./console/index.html"
+    url: "gui/console/index.html"
   });
+  // winConsole.setMenu(null);
+  winConsole.on(`close`, (e) => {
+    if (!forceCloseApp) {
+      e.preventDefault();
+      winConsole.hide();
+      winMain.focus();
+    }
+  });
+  
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
+  if (winMain) {
+    if (winMain.isMinimized()) winMain.restore();
+    winMain.focus();
+  }
+});
+if (isSecondInstance) {
+  app.quit();
+}
+
 app.on('ready', () => {
-  globalShortcut.register(`CommandOrCtrl+W`, () => {
-    focusedWindow.hide();
-  });
   createWindows();
+  globalShortcut.register(`CommandOrControl+W`, () => {
+    BrowserWindow.getFocusedWindow().close();
+  });
+  globalShortcut.register(`CommandOrControl+Shift+K`, () => {
+    winKeyboard.show();
+  });
+  globalShortcut.register(`CommandOrControl+Shift+C`, () => {
+    winConsole.show();
+  });
 });
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
@@ -73,24 +93,32 @@ app.on('window-all-closed', () => {
     app.quit()
   }
 });
+
+app.on('will-quit', function () {
+  globalShortcut.unregisterAll();
+});
+
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   if (winMain === null) createWindows();
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
-ipcMain.on(`asynchronous-message`, (e, arg) => {
-  e.sender.send(`asynchronous-reply`, arg);
-  switch (arg) {
-    case 'keyboard-launch':
-      // winKeyboard.setFullScreen(!winKeyboard.isFullScreen());
-      winKeyboard.show();
-      break;
-    case 'console-launch':
-    
-  }
-});
+ipcMain
+  .on(`ipcRenderer-message`, (e, arg) => {//asynchronous-message
+    e.sender.send(`ipcMain-reply`, arg);//asynchronous-reply
+    switch (arg) {
+      case 'keyboard-launch':
+        // winKeyboard.setFullScreen(!winKeyboard.isFullScreen());
+        winKeyboard.show();
+        break;
+      case 'console-launch':
+        winConsole.show();
+        break;
+    }
+  })
+  .on(`ipcConsole-command`, (e, arg) => {
+    winKeyboard.webContents.send(`ipcConsole-command`, arg);
+  });
 
 

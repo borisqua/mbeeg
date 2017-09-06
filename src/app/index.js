@@ -1,16 +1,18 @@
 "use strict";
 const
-  {BrowserWindow, ipcRenderer } = require(`electron`);
+  {ipcRenderer} = require(`electron`);
 
 $(()=> {
   $(`.button#carousel`).focus();
   $(`.button#carousel`).on(`click`, () => {
-    ipcRenderer.send(`asynchronous-message`, `keyboard-launch`);
+    ipcRenderer.send(`ipcRenderer-message`, `keyboard-launch`);
+    e.preventDefault();
   });
-  $(`.button#console`).on(`click`, () => {
-    ipcRenderer.send(`asynchronous-message`, `console-launch`);
+  $(`.button#console`).on(`click`, (e) => {
+    ipcRenderer.send(`ipcRenderer-message`, `console-launch`);
+    e.preventDefault();
   });
-  ipcRenderer.on(`asynchronous-reply`, (e, arg) => {
+  ipcRenderer.on(`ipcMain-reply`, (e, arg) => {//asynchronous-reply
     let answer = `Asynchronous message reply ${arg}`;
     // if (!$(`#message`).html()) $(`#message`).html(answer);
     // else $(`#message`).html(``);

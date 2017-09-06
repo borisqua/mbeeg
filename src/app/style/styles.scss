@@ -8,36 +8,36 @@ $mainFont: sans-serif;
 html {
   text-align: left;
   vertical-align: top;
-  @include drawBorder(lightgrey);
+  //@include drawBorder(lightgrey);
   body {
-    @include drawBorder(lightgrey);
+    //@include drawBorder(lightgrey);
     font: normal 100% $mainFont;
     min-height: 100%;
 
     header {
-      @include drawBorder(grey);
+      //@include drawBorder(grey);
       //display: none; //removes with layout
       text-align: center;
     }
     main {
-      @include drawBorder(grey);
+      //@include drawBorder(grey);
       position: relative; //to move keyboard objects inside keyboard box
       overflow: hidden; //if no element with float: clear; available after floating elements
       margin: $divMargin;
       padding: $divPadding;
 
       article {
-        @include drawBorder(blue);
+        //@include drawBorder(blue);
         //display: none;
         text-align: left;
         min-height: 100%;
       }
       #monitor {
-        @include drawBorder(blue);
+        //@include drawBorder(blue);
         //display: none;
         text-align: left;
 
-        .output {
+        .line {
           text-align: left;
           position: relative;
           font-size: xx-large;
@@ -51,13 +51,13 @@ html {
         min-width: 50px;
         width: $leftBarWidth;
         height: $minBoxSize;
-        @include drawBorder(lightgreen);
+        //@include drawBorder(lightgreen);
         float: left;
         display: none;
       }
 
       #viewport {
-        @include drawBorder(lightgreen);
+        //@include drawBorder(lightgreen);
         //display: inline-table;
         min-width: $minBoxSize;
         min-height: $minBoxSize;
@@ -73,7 +73,7 @@ html {
           max-width: $symbolBoxSize;
           min-height: $symbolBoxSize;
           max-height: $symbolBoxSize;
-          //@include drawBorder(lightgrey);
+          @include drawBorder(lightgrey);
           text-align: center;
           vertical-align: middle;
           margin: $divMargin;
@@ -84,11 +84,11 @@ html {
 
       .controller {
         clear: both;
-        @include drawBorder(blue);
+        //@include drawBorder(blue);
       }
     }
     footer {
-      @include drawBorder(grey);
+      //@include drawBorder(grey);
       //display: none; //removes with layout
       text-align: center;
     }

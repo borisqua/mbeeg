@@ -81,7 +81,7 @@
       "duration": "200",
       "pause": "80:120"
     },
-    "cycles": 10,
+    "depth": 10,
     "sequence": "random"
   }
 }

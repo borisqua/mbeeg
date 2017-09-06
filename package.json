@@ -36,12 +36,14 @@
     "through2": "^2.0.3"
   },
   "dependencies": {
+    "app-root-path": "^2.0.1",
     "commander": "^2.11.0",
-    "csv": "^1.1.1",
+    "csv-streamify": "^3.0.4",
     "electron": "^1.6.11",
     "fili": "^2.0.0",
     "gsap": "^1.20.2",
     "int64-buffer": "^0.1.9",
-    "jquery": "^3.2.1"
+    "jquery": "^3.2.1",
+    "merge2": "^1.1.0"
   }
 }

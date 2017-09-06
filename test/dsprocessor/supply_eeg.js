@@ -1,6 +1,10 @@
 "use strict";
 
-const {Readable} = require(`stream`),
+const
+  appRoot = require(`app-root-path`),
+  csv = require(`csv-streamify`),
+  parser = csv({ objectMode: true }),
+  {Readable} = require(`stream`),
   fs = require(`fs`),
   split2 = require(`split2`);
 
@@ -8,11 +12,12 @@ class EEG extends Readable {
   constructor(options = {objectMode: true}) {
     super(options);
     this.eegArray = [];
-    fs.createReadStream(`../../test/dsprocessor/raweeg.csv`)
+    fs.createReadStream(`${appRoot}/test/dsprocessor/data/raweeg.csv`)
       .on('error', (err) => {
         throw err;
       })
-      .pipe(split2())
+      // .pipe(split2())
+      .pipe(parser)
       .on(`data`, (chunk) => {
         let channels = JSON.parse(`[${chunk}]`);
         let sample = [
@@ -29,6 +34,7 @@ class EEG extends Readable {
   _read() {
     setTimeout(() => {
       this.index++;
+      if(this.index >= this.eegArray.length) throw "That's all folks";
       this.index %= this.eegArray.length;
       this.eegArray[this.index][0] = new Date().getTime();
       // this.push(JSON.stringify(this.eegArray[this.index]));// + `\r\n`

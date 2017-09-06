@@ -1,5 +1,4 @@
 html, body {
-  min-width: 140mm;
   margin: 0;
   padding: 0; }
 
@@ -46,7 +45,8 @@ button {
   background-color: lightgrey;
   color: grey;
   vertical-align: middle;
-  text-align: center; }
+  text-align: center;
+  border: 1px solid darkgrey; }
   button .big {
     font-size: 24px;
     width: 300px;
@@ -72,7 +72,7 @@ html {
         min-height: 100%; }
       html body main #monitor {
         text-align: left; }
-        html body main #monitor .output {
+        html body main #monitor .line {
           text-align: left;
           position: relative;
           font-size: xx-large;
@@ -100,6 +100,7 @@ html {
           max-width: 140px;
           min-height: 140px;
           max-height: 140px;
+          border: 1px solid lightgrey;
           text-align: center;
           vertical-align: middle;
           margin: 5px; }

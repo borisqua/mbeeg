@@ -2,29 +2,21 @@
 const
   {ipcRenderer} = require(`electron`);
 
-$(function () {
-  let carousel, viewport, timestamp, keys, speedValue, speedSlider,
-    length, velocity, boxDelay;
-  let timeLines;
-  
-  // function pad(l, v) {// l - length of zero-leading string number, v - number value
-  // str = str.toString();
-  // return str.length < max ? pad("0" + str, max) : str;
-  // return pad = len => n =>
-  //   [...Array(len).keys()].map(i => 0).concat([n]).join('').substr(-len)
-  // return a = (l, v) => [...new Array(l).keys()].map(i => 0).concat(v).join('').substr(v.toString().length > l ? -v.toString().length : -l);
-  // }
+$(() => {
+  let
+    carousel, viewport, timestamp, keys, groups, stimuli,
+    length, velocity, boxDelay,
+    timeLines;
   
   function init() {
     viewport = $("#viewport");
     timestamp = $("#timestamp");
+    groups = [];
+    stimuli = [];
     keys = [];
     
-    speedSlider = $(".ui-slider");
-    speedValue = $(".value");
-    
-    let easing = "linear";
-    switch ($("#easing").val()) {
+    let easing = "slow motion";
+    switch (easing) {
       case "linear":
         easing = "linear";
         break;
@@ -50,21 +42,35 @@ $(function () {
     
     carousel = {
       viewport: {//viewport geometry
-        width: viewport.width(),
+        width: viewport.width() * 0.8,
         height: 600,
         rows: 3, //TODO rows & columns are depended from keys array length
-        columns: 10
+        columns: 11
       },
       keys: keys, //keys array
-      keybox: {//keybox geometry
+      groups: groups, //array of groups. Each group has the same movement properties, such as direction, trajectory, speed, etc.
+      stimulation: {//array of stimuli. Each stimulus consists from keys array, stimulus duration and pause duration, time of stimulus
+        duration: 200,
+        pause: 200,
+        sequence: {
+          type: "random", //consecutive, rule-driven
+          repetition: false, //
+          stimuli: stimuli, //[{keys[id1,id2,id3...idN], repetition: 1}]
+          dimensions: 1 //should be number for reduce dimensions search
+        },
+      learning: {
+          type: `consecutive`, //`word-driven`
+        }
+      },
+      keybox: {
         width: viewport.height() / 3,
         height: viewport.height() / 3
       },
-      duration: 10, //seconds to go trough full path (determines the speed of motion)
-      easing: easing
-      // , easing: CustomEase.create("custom", "M0,0 C0.04,0.062 -0.002,0.12 0.034,0.175 0.053,0.205 0.192,0.22 0.212,0.248 0.245,0.294 0.274,0.404 0.301,0.446 0.335,0.497 0.446,0.5 0.472,0.536 0.54,0.63 0.541,0.697 0.6,0.752 0.626,0.776 0.704,0.789 0.804,0.846 0.872,0.884 0.91,1 1,1")
-      // , interval: 10 //
-      // , tweenlets:
+      duration: 10, //sec. time to go full path (determines the speed of motion)
+      easing: easing,
+      // easing: CustomEase.create("custom", "M0,0 C0.04,0.062 -0.002,0.12 0.034,0.175 0.053,0.205 0.192,0.22 0.212,0.248 0.245,0.294 0.274,0.404 0.301,0.446 0.335,0.497 0.446,0.5 0.472,0.536 0.54,0.63 0.541,0.697 0.6,0.752 0.626,0.776 0.704,0.789 0.804,0.846 0.872,0.884 0.91,1 1,1"),
+      // interval: 10,
+      // tweenlets:
       // {//to (spin, trajectory and end point of movement)
       //     left: this.keybox.width * this.viewport.columns
       //     , bezier:{
@@ -75,18 +81,38 @@ $(function () {
       //     , ease: keyboard.easing
       //     , repeat: -1
       // }
+      bezier: false
     };
-    
     //make keys array
-    for (let j = 0; j < carousel.viewport.columns; j++)//columns //TODO rows & columns are depended from keys array length
-      for (let i = 0; i < carousel.viewport.rows; i++) {//rows
+    let alphabet = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФXЦЧШЩЪЫЬЭЮЯ";
+    for (let j = 0, rows = carousel.viewport.rows; j < rows; j++) {//rows//TODO rows & columns count depends on keys array length
+      groups.push({
+        id: j,
+        speedScale: 1, //1 - full speed  , 0 - pause; actual speed is (viewport.width/duration)*speedscale
+        reverse: false,
+        easing: "slow motion",
+        randomSpeed: false
+      });
+      for (let columns = carousel.viewport.columns, i = 0; i < columns; i++) {//columns
+        let id = j * columns + i;
         keys.push({
-          row: i,
-          column: j
+          id: id, //key id
+          symbol: alphabet[id],
+          row: j,
+          column: columns - i - 1, //i - for back alphabet order (right to left); columns-i-1 - for straight alphabet order (left to right)
+          top: j * carousel.keybox.height,
+          left: -carousel.keybox.width,
+          stimuliId: 0, //
+          groupId: 0
         });
       }
+    }
+    const fs = require(`fs`);
+    fs.writeFile(`config.json`, JSON.stringify(carousel, null, 2), (err) => {
+      if (err) throw err;
+    });
     
-    // V=S/T => T=S/V
+    // t=S/V
     length = carousel.keybox.width * carousel.viewport.columns;
     velocity = length / carousel.duration;
     boxDelay = carousel.keybox.width / velocity;
@@ -95,7 +121,8 @@ $(function () {
   function getKeybox(i) {//i - key index in Keys array
     
     //create div & tween for it
-    let keybox = $('<div class="key" index="' + i + '">{' + carousel.keys[i].column + ';' + carousel.keys[i].row + '}</div>');
+    let keybox = $(`<div class="key" index="${i}"></div>`);
+    
     keybox
       .css({
         "background": "url('pics/" + i + ".png') no-repeat center",// rgba(0,0,0,0.1)hsla(180,0%,50%,0.25)",
@@ -110,12 +137,15 @@ $(function () {
           $(this).css({"background-size": "60%"});
         }
       );
+    
     viewport.append(keybox);
+    
     TweenLite.set(keybox, {
-      left: -carousel.keybox.width, // * carousel.keys[i].column,
-      top: carousel.keys[i].row * carousel.keybox.height
+      left: carousel.keys[i].left,
+      top: carousel.keys[i].top
     });
-    let lets = $("#bezier").is(":checked") ?
+    
+    let lets = carousel.bezier ?
       {//to
         left: length
         , bezier: {
@@ -125,14 +155,14 @@ $(function () {
           y: 320 * Math.random() + 50
         }, {x: 700, y: 100}, {x: 850, y: 500}],
         autoRotate: true
-      }
-        , ease: carousel.easing
-        , repeat: -1
+      },
+        ease: carousel.easing,
+        repeat: -1
       } :
       {//to
-        left: length
-        , ease: carousel.easing
-        , repeat: -1
+        left: length,
+        ease: carousel.easing,
+        repeat: -1
       };
     
     return new TweenMax(keybox
@@ -142,7 +172,7 @@ $(function () {
   
   function buildTimeline(row) {
     let timeline = new TimelineMax({delay: 0, repeat: 0, repeatDelay: -8});
-    for (let i = 0; i < carousel.keys.length; i++) {
+    for (let keys = carousel.keys.length, i = 0; i < keys; i++) {
       if (carousel.keys[i].row === row)
         timeline.add(getKeybox(i), carousel.keys[i].column * boxDelay);
     }
@@ -154,65 +184,43 @@ $(function () {
     timeLines.length = 0;
     for (let i = 0; i < 3; i++) {
       timeLines.push(buildTimeline(i).timeScale(100));
-      setTimeout(()=>{
-        timeLines[i].timeScale($("#speedValue" + i).val());
+      setTimeout(() => {
+        timeLines[i].timeScale(carousel.groups[i].speedScale);
         timeLines[i].resume();
-      },100);
+      }, 100);
     }
     
-    $(".key").on("click", function (e) {
-      let output = $('.output');
-      output.val(output.val() + e.currentTarget.innerHTML);
+    $(".key").on("click", (e) => {
+      let output = $('.line');
+      output.val(output.val() + carousel.keys[($(e.currentTarget).attr(`index`))].symbol);
     });
     
-    $(".ui-slider").on("input", function (e) {
-      let index = $(e.target).attr("index");
-      speedValue = $("#speedValue" + index);
-      speedSlider = $("#speedSlider" + index);
-      
-      speedValue.val(speedSlider.val());
-      if (speedSlider.val() === 0) {
-        timeLines[index].pause();
-      }
-      else {
-        timeLines[index].timeScale(speedSlider.val());
-        timeLines[index].resume();
-      }
-      e.stopPropagation();
-    });
-    
-    $(".value").on("input", function (e) {
-      let index = $(e.target).attr("index");
-      speedValue = $("#speedValue" + index);
-      speedSlider = $("#speedSlider" + index);
-      
-      speedSlider.val(speedValue.val());
-      if (speedSlider.val() === 0) {
-        timeLines[index].pause();
-      }
-      else {
-        timeLines[index].timeScale(speedSlider.val());
-        timeLines[index].resume();
-      }
-      e.stopPropagation();
-    });
-    
-    $("#restart").on('click', function (e) {
-      e.preventDefault();
-      viewport.html("");
-      init();
-      run();
-    });
-    
-    $("#reverse").on('click', function (e) {
-      e.preventDefault();
-    });
-    
-    $(".rnd").on('click', function (e) {
-      e.preventDefault();
-      alert('UNDER CONSTRUCTION!!! \nOption not available yet...');
-    })
   }
+  
+  ipcRenderer
+    .on(`ipcConsole-command`, (e, arg) => {
+      switch (arg.command) {
+        case `change`:
+          // if (arg.value === 0) {
+          //   timeLines[arg.index].pause();
+          // } else {
+          timeLines[+arg.index].timeScale(+arg.value);
+          timeLines[+arg.index].resume();
+          // }
+          break;
+        case `restart`:
+          viewport.html("");
+          init();
+          run();
+          break;
+        case `reverse`:
+          if (timeLines[+arg.index].reversed())
+            timeLines[+arg.index].play();
+          else
+            timeLines[+arg.index].reverse();
+          break;
+      }
+    });
   
   // $(window).resize((e) => {
   //     $(`#windowsize`).html(`${e.target.outerWidth} x ${e.target.outerHeight}`);
@@ -222,4 +230,3 @@ $(function () {
   run();
   
 });
-
