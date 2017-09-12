@@ -1,25 +1,21 @@
 "use strict";
 const
-  // merge2 = require(`merge2`),
   appRoot = require(`app-root-path`),
-  lib = require(`${appRoot}/src/tools/lib`),
   fs = require(`fs`),
   stimuliCSV = require(`csv-streamify`)({objectMode: true}),
   eegCSV = require(`csv-streamify`)({objectMode: true}),
   EEG = require(`${appRoot}/src/core/dsprocessor/eeg.js`),
   Stimuli = require(`${appRoot}/src/core/dsprocessor/stimuli.js`),
-  Classifier = require(`${appRoot}/src/core/classifier`),
   DSProcessor = require(`${appRoot}/src/core/dsprocessor`),
-  EpochsProcessor = require(`${appRoot}/src/core/epprocessor`);
+  EpochsProcessor = require(`${appRoot}/src/core/epprocessor`)
+;
 
 let eeg = new EEG({
-  // stringify: true,
   // samplingRate: 250,
   objectMode: true
 });
 
 let stimuli = new Stimuli({
-  // stringify: true,
   // signalDuration: 120,
   // pauseDuration: 230,
   objectMode: true
@@ -33,32 +29,25 @@ const epochs = new DSProcessor({
     eeg:
       fs.createReadStream(`${appRoot}/test/dsprocessor/data/integral/eeg45.csv`)
         .pipe(eegCSV)
-        .pipe(eeg),
-    learning: false,
-    stimuliNumber: 4,
-    epochDuration: 1000,
-    samplingRate: 250,
-    sequence: `filter, detrend`,
-    objectMode: true //set false to output result as string (through process.stdout e.g.); set true to pass js objects
+        .pipe(eeg)
+    , learning: false
+    , stimuliNumber: 4
+    , epochDuration: 1000
+    , samplingRate: 250
+    , sequence: `filter, detrend`
+    , objectMode: true
     
   })
-  // .pipe(process.stdout)
 ;
 
-const classifier = new Classifier({
-  // method: lib.absIntegral,
-  objectMode: true
-});
-
+// noinspection JSUnusedLocalSymbols
 const epochProcessor = new EpochsProcessor({
-    epochs,
-    moving: false,
-    depth: 5,
-    stimuliNumber: 4,
-    objectMode: true
+    epochs: epochs
+    , moving: false
+    , depth: 5
+    , stimuliNumber: 4
+    , objectMode: false
   })
-    .pipe(classifier)
-    .on(`data`, classification => console.log(classification.reduce((ac, v, i, ar) => ar[ac] < v ? ac = i : ac, 0)))
-    // .pipe(process.stdout)
+  .pipe(process.stdout)
 ;
 

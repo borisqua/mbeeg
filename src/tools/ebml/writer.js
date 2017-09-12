@@ -1,5 +1,5 @@
 "use strict";
-let TagId = require('element');
+let TagId = require('tools/ebml/parser');
 
 const {Transform} = require('Transform');
 /**
@@ -27,7 +27,7 @@ class Writer extends Transform{
     this._cursor = 0;
     this._total = 0;
     this._state = STATE_TAG;
-    this._dtd = require('dtd');
+    this._dtd = require('tools/ebml/dtd');
     this._schema = require(('ebml_types'));
   };
   

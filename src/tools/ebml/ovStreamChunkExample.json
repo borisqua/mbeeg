@@ -1,0 +1,2002 @@
+{
+  "OVTK_NodeId_Header": {
+    "type": "master",
+    "size": 907,
+    "OVTK_NodeId_Header_StreamType": {
+      "type": "uinteger",
+      "size": 0,
+      "buffer": {
+        "type": "Buffer",
+        "data": []
+      }
+    },
+    "OVTK_NodeId_Header_StreamVersion": {
+      "type": "uinteger",
+      "size": 0,
+      "buffer": {
+        "type": "Buffer",
+        "data": []
+      }
+    },
+    "OVTK_NodeId_Acquisition_Header_BufferDuration": {
+      "type": "uinteger",
+      "size": 4,
+      "value": 1073741824,
+      "buffer": {
+        "type": "Buffer",
+        "data": [
+          64,
+          0,
+          0,
+          0
+        ]
+      }
+    },
+    "OVTK_NodeId_Acquisition_Header_ExperimentInformation": {
+      "type": "master",
+      "size": 156,
+      "OVTK_NodeId_Header": {
+        "type": "master",
+        "size": 146,
+        "OVTK_NodeId_Header_StreamType": {
+          "type": "uinteger",
+          "size": 0,
+          "buffer": {
+            "type": "Buffer",
+            "data": []
+          }
+        },
+        "OVTK_NodeId_Header_StreamVersion": {
+          "type": "uinteger",
+          "size": 0,
+          "buffer": {
+            "type": "Buffer",
+            "data": []
+          }
+        },
+        "OVTK_NodeId_Header_ExperimentInformation": {
+          "type": "master",
+          "size": 119,
+          "OVTK_NodeId_Header_ExperimentInformation_Experiment": {
+            "type": "master",
+            "size": 18,
+            "OVTK_NodeId_Header_ExperimentInformation_Experiment_Identifier": {
+              "type": "uinteger",
+              "size": 0,
+              "buffer": {
+                "type": "Buffer",
+                "data": []
+              }
+            },
+            "OVTK_NodeId_Header_ExperimentInformation_Experiment_Date": {
+              "type": "date",
+              "size": 0,
+              "value": null,
+              "buffer": {
+                "type": "Buffer",
+                "data": []
+              }
+            }
+          },
+          "OVTK_NodeId_Header_ExperimentInformation_Subject": {
+            "type": "master",
+            "size": 38,
+            "OVTK_NodeId_Header_ExperimentInformation_Subject_Identifier": {
+              "type": "uinteger",
+              "size": 0,
+              "buffer": {
+                "type": "Buffer",
+                "data": []
+              }
+            },
+            "OVTK_NodeId_Header_ExperimentInformation_Subject_Name": {
+              "type": "string",
+              "size": 0,
+              "value": "",
+              "buffer": {
+                "type": "Buffer",
+                "data": []
+              }
+            },
+            "OVTK_NodeId_Header_ExperimentInformation_Subject_Age": {
+              "type": "uinteger",
+              "size": 1,
+              "value": 18,
+              "buffer": {
+                "type": "Buffer",
+                "data": [
+                  18
+                ]
+              }
+            },
+            "OVTK_NodeId_Header_ExperimentInformation_Subject_Gender": {
+              "type": "uinteger",
+              "size": 1,
+              "value": 9,
+              "buffer": {
+                "type": "Buffer",
+                "data": [
+                  9
+                ]
+              }
+            }
+          },
+          "OVTK_NodeId_Header_ExperimentInformation_Context": {
+            "type": "master",
+            "size": 36,
+            "OVTK_NodeId_Header_ExperimentInformation_Context_LaboratoryIdentifier": {
+              "type": "uinteger",
+              "size": 0,
+              "buffer": {
+                "type": "Buffer",
+                "data": []
+              }
+            },
+            "OVTK_NodeId_Header_ExperimentInformation_Context_LaboratoryName": {
+              "type": "string",
+              "size": 0,
+              "value": "",
+              "buffer": {
+                "type": "Buffer",
+                "data": []
+              }
+            },
+            "OVTK_NodeId_Header_ExperimentInformation_Context_TechnicianIdentifier": {
+              "type": "uinteger",
+              "size": 0,
+              "buffer": {
+                "type": "Buffer",
+                "data": []
+              }
+            },
+            "OVTK_NodeId_Header_ExperimentInformation_Context_TechnicianName": {
+              "type": "string",
+              "size": 0,
+              "value": "",
+              "buffer": {
+                "type": "Buffer",
+                "data": []
+              }
+            }
+          }
+        }
+      }
+    },
+    "OVTK_NodeId_Acquisition_Header_Signal": {
+      "type": "master",
+      "size": 438,
+      "OVTK_NodeId_Header": {
+        "type": "master",
+        "size": 428,
+        "OVTK_NodeId_Header_StreamType": {
+          "type": "uinteger",
+          "size": 0,
+          "buffer": {
+            "type": "Buffer",
+            "data": []
+          }
+        },
+        "OVTK_NodeId_Header_StreamVersion": {
+          "type": "uinteger",
+          "size": 0,
+          "buffer": {
+            "type": "Buffer",
+            "data": []
+          }
+        },
+        "OVTK_NodeId_Header_Signal": {
+          "type": "master",
+          "size": 10,
+          "OVTK_NodeId_Header_Signal_SamplingRate": {
+            "type": "uinteger",
+            "size": 1,
+            "value": 128,
+            "buffer": {
+              "type": "Buffer",
+              "data": [
+                128
+              ]
+            }
+          }
+        },
+        "OVTK_NodeId_Header_StreamedMatrix": {
+          "type": "master",
+          "size": 381,
+          "OVTK_NodeId_Header_StreamedMatrix_DimensionCount": {
+            "type": "uinteger",
+            "size": 1,
+            "value": 2,
+            "buffer": {
+              "type": "Buffer",
+              "data": [
+                2
+              ]
+            }
+          },
+          "OVTK_NodeId_Header_StreamedMatrix_Dimension": [
+            {
+              "type": "master",
+              "size": 56,
+              "OVTK_NodeId_Header_StreamedMatrix_Dimension_Size": {
+                "type": "uinteger",
+                "size": 1,
+                "value": 4,
+                "buffer": {
+                  "type": "Buffer",
+                  "data": [
+                    4
+                  ]
+                }
+              },
+              "OVTK_NodeId_Header_StreamedMatrix_Dimension_Label": [
+                {
+                  "type": "string",
+                  "size": 2,
+                  "value": "Nz",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": [
+                      78,
+                      122
+                    ]
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 3,
+                  "value": "FP1",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": [
+                      70,
+                      80,
+                      49
+                    ]
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 3,
+                  "value": "AF7",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": [
+                      65,
+                      70,
+                      55
+                    ]
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 2,
+                  "value": "F9",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": [
+                      70,
+                      57
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "master",
+              "size": 298,
+              "OVTK_NodeId_Header_StreamedMatrix_Dimension_Size": {
+                "type": "uinteger",
+                "size": 1,
+                "value": 32,
+                "buffer": {
+                  "type": "Buffer",
+                  "data": [
+                    32
+                  ]
+                }
+              },
+              "OVTK_NodeId_Header_StreamedMatrix_Dimension_Label": [
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 0,
+                  "value": "",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": []
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+    },
+    "OVTK_NodeId_Acquisition_Header_Stimulation": {
+      "type": "master",
+      "size": 27,
+      "OVTK_NodeId_Header": {
+        "type": "master",
+        "size": 18,
+        "OVTK_NodeId_Header_StreamType": {
+          "type": "uinteger",
+          "size": 0,
+          "buffer": {
+            "type": "Buffer",
+            "data": []
+          }
+        },
+        "OVTK_NodeId_Header_StreamVersion": {
+          "type": "uinteger",
+          "size": 0,
+          "buffer": {
+            "type": "Buffer",
+            "data": []
+          }
+        }
+      }
+    },
+    "OVTK_NodeId_Acquisition_Header_ChannelLocalisation": {
+      "type": "master",
+      "size": 66,
+      "OVTK_NodeId_Header": {
+        "type": "master",
+        "size": 57,
+        "OVTK_NodeId_Header_StreamType": {
+          "type": "uinteger",
+          "size": 0,
+          "buffer": {
+            "type": "Buffer",
+            "data": []
+          }
+        },
+        "OVTK_NodeId_Header_StreamVersion": {
+          "type": "uinteger",
+          "size": 0,
+          "buffer": {
+            "type": "Buffer",
+            "data": []
+          }
+        },
+        "OVTK_NodeId_Header_StreamedMatrix": {
+          "type": "master",
+          "size": 9,
+          "OVTK_NodeId_Header_StreamedMatrix_DimensionCount": {
+            "type": "uinteger",
+            "size": 0,
+            "buffer": {
+              "type": "Buffer",
+              "data": []
+            }
+          }
+        },
+        "OVTK_NodeId_Header_ChannelLocalisation": {
+          "type": "master",
+          "size": 10,
+          "OVTK_NodeId_Header_ChannelLocalisation_Dynamic": {
+            "type": "uinteger",
+            "size": 0,
+            "buffer": {
+              "type": "Buffer",
+              "data": []
+            }
+          }
+        }
+      }
+    },
+    "OVTK_NodeId_Acquisition_Header_ChannelUnits": {
+      "type": "master",
+      "size": 177,
+      "OVTK_NodeId_Header": {
+        "type": "master",
+        "size": 167,
+        "OVTK_NodeId_Header_StreamType": {
+          "type": "uinteger",
+          "size": 0,
+          "buffer": {
+            "type": "Buffer",
+            "data": []
+          }
+        },
+        "OVTK_NodeId_Header_StreamVersion": {
+          "type": "uinteger",
+          "size": 0,
+          "buffer": {
+            "type": "Buffer",
+            "data": []
+          }
+        },
+        "OVTK_NodeId_Header_StreamedMatrix": {
+          "type": "master",
+          "size": 120,
+          "OVTK_NodeId_Header_StreamedMatrix_DimensionCount": {
+            "type": "uinteger",
+            "size": 1,
+            "value": 2,
+            "buffer": {
+              "type": "Buffer",
+              "data": [
+                2
+              ]
+            }
+          },
+          "OVTK_NodeId_Header_StreamedMatrix_Dimension": [
+            {
+              "type": "master",
+              "size": 56,
+              "OVTK_NodeId_Header_StreamedMatrix_Dimension_Size": {
+                "type": "uinteger",
+                "size": 1,
+                "value": 4,
+                "buffer": {
+                  "type": "Buffer",
+                  "data": [
+                    4
+                  ]
+                }
+              },
+              "OVTK_NodeId_Header_StreamedMatrix_Dimension_Label": [
+                {
+                  "type": "string",
+                  "size": 2,
+                  "value": "Nz",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": [
+                      78,
+                      122
+                    ]
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 3,
+                  "value": "FP1",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": [
+                      70,
+                      80,
+                      49
+                    ]
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 3,
+                  "value": "AF7",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": [
+                      65,
+                      70,
+                      55
+                    ]
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 2,
+                  "value": "F9",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": [
+                      70,
+                      57
+                    ]
+                  }
+                }
+              ]
+            },
+            {
+              "type": "master",
+              "size": 38,
+              "OVTK_NodeId_Header_StreamedMatrix_Dimension_Size": {
+                "type": "uinteger",
+                "size": 1,
+                "value": 2,
+                "buffer": {
+                  "type": "Buffer",
+                  "data": [
+                    2
+                  ]
+                }
+              },
+              "OVTK_NodeId_Header_StreamedMatrix_Dimension_Label": [
+                {
+                  "type": "string",
+                  "size": 4,
+                  "value": "Unit",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": [
+                      85,
+                      110,
+                      105,
+                      116
+                    ]
+                  }
+                },
+                {
+                  "type": "string",
+                  "size": 6,
+                  "value": "Factor",
+                  "buffer": {
+                    "type": "Buffer",
+                    "data": [
+                      70,
+                      97,
+                      99,
+                      116,
+                      111,
+                      114
+                    ]
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "OVTK_NodeId_Header_ChannelUnits": {
+          "type": "master",
+          "size": 10,
+          "OVTK_NodeId_Header_ChannelUnits_Dynamic": {
+            "type": "uinteger",
+            "size": 0,
+            "buffer": {
+              "type": "Buffer",
+              "data": []
+            }
+          }
+        }
+      }
+    }
+  },
+  "OVTK_NodeId_Buffer": {
+    "type": "master",
+    "size": 1192,
+    "OVTK_NodeId_Acquisition_Buffer_ExperimentInformation": {
+      "type": "master",
+      "size": 9,
+      "OVTK_NodeId_Buffer": {
+        "type": "master",
+        "size": 0
+      }
+    },
+    "OVTK_NodeId_Acquisition_Buffer_Signal": {
+      "type": "master",
+      "size": 1054,
+      "OVTK_NodeId_Buffer": {
+        "type": "master",
+        "size": 1044,
+        "OVTK_NodeId_Buffer_StreamedMatrix": {
+          "type": "master",
+          "size": 1034,
+          "OVTK_NodeId_Buffer_StreamedMatrix_RawBuffer": {
+            "type": "binary(float64)",
+            "size": 1024,
+            "value": "matrix",
+            "buffer": {
+              "type": "Buffer",
+              "data": [
+                0,
+                0,
+                0,
+                160,
+                196,
+                168,
+                217,
+                191,
+                0,
+                0,
+                0,
+                96,
+                16,
+                172,
+                230,
+                191,
+                0,
+                0,
+                0,
+                32,
+                105,
+                188,
+                231,
+                191,
+                0,
+                0,
+                0,
+                224,
+                227,
+                84,
+                224,
+                191,
+                0,
+                0,
+                0,
+                224,
+                68,
+                82,
+                184,
+                191,
+                0,
+                0,
+                0,
+                224,
+                37,
+                255,
+                215,
+                63,
+                0,
+                0,
+                0,
+                64,
+                70,
+                57,
+                232,
+                63,
+                0,
+                0,
+                0,
+                128,
+                163,
+                232,
+                237,
+                63,
+                0,
+                0,
+                0,
+                64,
+                234,
+                46,
+                235,
+                63,
+                0,
+                0,
+                0,
+                224,
+                127,
+                140,
+                224,
+                63,
+                0,
+                0,
+                0,
+                128,
+                148,
+                194,
+                151,
+                63,
+                0,
+                0,
+                0,
+                192,
+                62,
+                3,
+                224,
+                191,
+                0,
+                0,
+                0,
+                192,
+                76,
+                42,
+                237,
+                191,
+                0,
+                0,
+                0,
+                160,
+                175,
+                138,
+                241,
+                191,
+                0,
+                0,
+                0,
+                0,
+                181,
+                6,
+                240,
+                191,
+                0,
+                0,
+                0,
+                192,
+                238,
+                190,
+                228,
+                191,
+                0,
+                0,
+                0,
+                32,
+                200,
+                45,
+                192,
+                191,
+                0,
+                0,
+                0,
+                0,
+                133,
+                127,
+                219,
+                63,
+                0,
+                0,
+                0,
+                128,
+                103,
+                22,
+                236,
+                63,
+                0,
+                0,
+                0,
+                224,
+                143,
+                181,
+                241,
+                63,
+                0,
+                0,
+                0,
+                0,
+                176,
+                19,
+                241,
+                63,
+                0,
+                0,
+                0,
+                96,
+                106,
+                25,
+                233,
+                63,
+                0,
+                0,
+                0,
+                128,
+                118,
+                116,
+                214,
+                63,
+                0,
+                0,
+                0,
+                224,
+                80,
+                37,
+                185,
+                191,
+                0,
+                0,
+                0,
+                64,
+                220,
+                19,
+                219,
+                191,
+                0,
+                0,
+                0,
+                192,
+                16,
+                144,
+                224,
+                191,
+                0,
+                0,
+                0,
+                224,
+                13,
+                171,
+                213,
+                191,
+                0,
+                0,
+                0,
+                160,
+                91,
+                4,
+                181,
+                63,
+                0,
+                0,
+                0,
+                64,
+                14,
+                172,
+                228,
+                63,
+                0,
+                0,
+                0,
+                64,
+                135,
+                112,
+                243,
+                63,
+                0,
+                0,
+                0,
+                160,
+                22,
+                97,
+                250,
+                63,
+                0,
+                0,
+                0,
+                0,
+                241,
+                124,
+                253,
+                63,
+                0,
+                0,
+                0,
+                0,
+                245,
+                52,
+                251,
+                63,
+                0,
+                0,
+                0,
+                224,
+                76,
+                138,
+                240,
+                63,
+                0,
+                0,
+                0,
+                96,
+                27,
+                221,
+                170,
+                191,
+                0,
+                0,
+                0,
+                96,
+                15,
+                38,
+                225,
+                191,
+                0,
+                0,
+                0,
+                160,
+                242,
+                22,
+                166,
+                191,
+                0,
+                0,
+                0,
+                160,
+                63,
+                174,
+                232,
+                63,
+                0,
+                0,
+                0,
+                96,
+                124,
+                179,
+                236,
+                63,
+                0,
+                0,
+                0,
+                128,
+                192,
+                34,
+                112,
+                63,
+                0,
+                0,
+                0,
+                192,
+                74,
+                110,
+                243,
+                191,
+                0,
+                0,
+                0,
+                128,
+                41,
+                229,
+                251,
+                191,
+                0,
+                0,
+                0,
+                192,
+                83,
+                107,
+                244,
+                191,
+                0,
+                0,
+                0,
+                192,
+                206,
+                162,
+                224,
+                191,
+                0,
+                0,
+                0,
+                128,
+                99,
+                218,
+                221,
+                191,
+                0,
+                0,
+                0,
+                32,
+                68,
+                247,
+                245,
+                191,
+                0,
+                0,
+                0,
+                224,
+                12,
+                240,
+                3,
+                192,
+                0,
+                0,
+                0,
+                0,
+                124,
+                165,
+                6,
+                192,
+                0,
+                0,
+                0,
+                192,
+                230,
+                67,
+                1,
+                192,
+                0,
+                0,
+                0,
+                32,
+                196,
+                209,
+                243,
+                191,
+                0,
+                0,
+                0,
+                160,
+                252,
+                199,
+                240,
+                191,
+                0,
+                0,
+                0,
+                224,
+                91,
+                117,
+                252,
+                191,
+                0,
+                0,
+                0,
+                224,
+                37,
+                27,
+                5,
+                192,
+                0,
+                0,
+                0,
+                128,
+                185,
+                83,
+                5,
+                192,
+                0,
+                0,
+                0,
+                32,
+                91,
+                104,
+                251,
+                191,
+                0,
+                0,
+                0,
+                0,
+                18,
+                51,
+                227,
+                191,
+                0,
+                0,
+                0,
+                160,
+                77,
+                39,
+                210,
+                191,
+                0,
+                0,
+                0,
+                32,
+                24,
+                90,
+                236,
+                191,
+                0,
+                0,
+                0,
+                160,
+                159,
+                56,
+                249,
+                191,
+                0,
+                0,
+                0,
+                224,
+                203,
+                210,
+                246,
+                191,
+                0,
+                0,
+                0,
+                160,
+                33,
+                104,
+                215,
+                191,
+                0,
+                0,
+                0,
+                64,
+                61,
+                173,
+                231,
+                63,
+                0,
+                0,
+                0,
+                224,
+                247,
+                228,
+                238,
+                63,
+                0,
+                0,
+                0,
+                0,
+                196,
+                253,
+                208,
+                63,
+                0,
+                0,
+                0,
+                128,
+                165,
+                194,
+                2,
+                192,
+                0,
+                0,
+                0,
+                224,
+                224,
+                20,
+                231,
+                191,
+                0,
+                0,
+                0,
+                160,
+                53,
+                136,
+                231,
+                191,
+                0,
+                0,
+                0,
+                160,
+                200,
+                145,
+                252,
+                191,
+                0,
+                0,
+                0,
+                32,
+                29,
+                22,
+                241,
+                191,
+                0,
+                0,
+                0,
+                96,
+                181,
+                98,
+                229,
+                63,
+                0,
+                0,
+                0,
+                192,
+                215,
+                37,
+                227,
+                63,
+                0,
+                0,
+                0,
+                64,
+                208,
+                51,
+                222,
+                191,
+                0,
+                0,
+                0,
+                64,
+                36,
+                249,
+                202,
+                63,
+                0,
+                0,
+                0,
+                64,
+                171,
+                76,
+                251,
+                63,
+                0,
+                0,
+                0,
+                224,
+                36,
+                93,
+                244,
+                63,
+                0,
+                0,
+                0,
+                64,
+                200,
+                156,
+                174,
+                191,
+                0,
+                0,
+                0,
+                160,
+                197,
+                155,
+                218,
+                63,
+                0,
+                0,
+                0,
+                96,
+                181,
+                97,
+                249,
+                63,
+                0,
+                0,
+                0,
+                64,
+                126,
+                1,
+                234,
+                63,
+                0,
+                0,
+                0,
+                128,
+                72,
+                28,
+                229,
+                191,
+                0,
+                0,
+                0,
+                64,
+                133,
+                247,
+                200,
+                191,
+                0,
+                0,
+                0,
+                192,
+                193,
+                21,
+                237,
+                63,
+                0,
+                0,
+                0,
+                128,
+                139,
+                57,
+                187,
+                63,
+                0,
+                0,
+                0,
+                160,
+                213,
+                203,
+                242,
+                191,
+                0,
+                0,
+                0,
+                160,
+                51,
+                94,
+                218,
+                191,
+                0,
+                0,
+                0,
+                96,
+                197,
+                141,
+                236,
+                63,
+                0,
+                0,
+                0,
+                0,
+                230,
+                166,
+                209,
+                63,
+                0,
+                0,
+                0,
+                0,
+                199,
+                170,
+                229,
+                191,
+                0,
+                0,
+                0,
+                128,
+                249,
+                185,
+                218,
+                63,
+                0,
+                0,
+                0,
+                160,
+                129,
+                182,
+                253,
+                63,
+                0,
+                0,
+                0,
+                160,
+                150,
+                121,
+                244,
+                63,
+                0,
+                0,
+                0,
+                0,
+                184,
+                127,
+                219,
+                63,
+                0,
+                0,
+                0,
+                160,
+                139,
+                239,
+                248,
+                63,
+                0,
+                0,
+                0,
+                64,
+                118,
+                93,
+                6,
+                64,
+                0,
+                0,
+                0,
+                32,
+                16,
+                184,
+                254,
+                63,
+                0,
+                0,
+                0,
+                224,
+                10,
+                85,
+                235,
+                63,
+                0,
+                0,
+                0,
+                224,
+                240,
+                56,
+                228,
+                63,
+                0,
+                0,
+                0,
+                192,
+                154,
+                158,
+                180,
+                191,
+                0,
+                0,
+                0,
+                160,
+                211,
+                30,
+                245,
+                63,
+                0,
+                0,
+                0,
+                32,
+                205,
+                207,
+                201,
+                191,
+                0,
+                0,
+                0,
+                96,
+                108,
+                90,
+                229,
+                191,
+                0,
+                0,
+                0,
+                192,
+                77,
+                31,
+                238,
+                63,
+                0,
+                0,
+                0,
+                224,
+                152,
+                34,
+                213,
+                191,
+                0,
+                0,
+                0,
+                128,
+                104,
+                206,
+                211,
+                191,
+                0,
+                0,
+                0,
+                128,
+                143,
+                67,
+                249,
+                63,
+                0,
+                0,
+                0,
+                192,
+                130,
+                106,
+                222,
+                63,
+                0,
+                0,
+                0,
+                160,
+                81,
+                141,
+                231,
+                63,
+                0,
+                0,
+                0,
+                96,
+                12,
+                54,
+                4,
+                64,
+                0,
+                0,
+                0,
+                128,
+                106,
+                146,
+                242,
+                63,
+                0,
+                0,
+                0,
+                96,
+                162,
+                136,
+                243,
+                63,
+                0,
+                0,
+                0,
+                64,
+                222,
+                52,
+                4,
+                64,
+                0,
+                0,
+                0,
+                224,
+                82,
+                169,
+                228,
+                63,
+                0,
+                0,
+                0,
+                32,
+                114,
+                194,
+                217,
+                63,
+                0,
+                0,
+                0,
+                96,
+                157,
+                152,
+                244,
+                63,
+                0,
+                0,
+                0,
+                0,
+                101,
+                123,
+                235,
+                191,
+                0,
+                0,
+                0,
+                32,
+                90,
+                128,
+                240,
+                191,
+                0,
+                0,
+                0,
+                96,
+                159,
+                200,
+                189,
+                191,
+                0,
+                0,
+                0,
+                224,
+                149,
+                87,
+                0,
+                192,
+                0,
+                0,
+                0,
+                96,
+                8,
+                120,
+                251,
+                191,
+                0,
+                0,
+                0,
+                96,
+                4,
+                48,
+                221,
+                191,
+                0,
+                0,
+                0,
+                224,
+                0,
+                184,
+                255,
+                191,
+                0,
+                0,
+                0,
+                32,
+                205,
+                150,
+                242,
+                191,
+                0,
+                0,
+                0,
+                32,
+                2,
+                17,
+                209,
+                63,
+                0,
+                0,
+                0,
+                96,
+                180,
+                161,
+                242,
+                191,
+                0,
+                0,
+                0,
+                64,
+                46,
+                169,
+                208,
+                191,
+                0,
+                0,
+                0,
+                64,
+                163,
+                115,
+                236,
+                63,
+                0,
+                0,
+                0,
+                64,
+                124,
+                10,
+                235,
+                191,
+                0,
+                0,
+                0,
+                64,
+                62,
+                78,
+                198,
+                191
+              ]
+            }
+          }
+        }
+      }
+    },
+    "OVTK_NodeId_Acquisition_Buffer_Stimulation": {
+      "type": "master",
+      "size": 27,
+      "OVTK_NodeId_Buffer": {
+        "type": "master",
+        "size": 18,
+        "OVTK_NodeId_Buffer_Stimulation": {
+          "type": "master",
+          "size": 9,
+          "OVTK_NodeId_Buffer_Stimulation_NumberOfStimulations": {
+            "type": "uinteger",
+            "size": 0,
+            "buffer": {
+              "type": "Buffer",
+              "data": []
+            }
+          }
+        }
+      }
+    },
+    "OVTK_NodeId_Acquisition_Buffer_ChannelLocalisation": {
+      "type": "master",
+      "size": 0
+    },
+    "OVTK_NodeId_Acquisition_Buffer_ChannelUnits": {
+      "type": "master",
+      "size": 91,
+      "OVTK_NodeId_Buffer": {
+        "type": "master",
+        "size": 82,
+        "OVTK_NodeId_Buffer_StreamedMatrix": {
+          "type": "master",
+          "size": 73,
+          "OVTK_NodeId_Buffer_StreamedMatrix_RawBuffer": {
+            "type": "binary(float64)",
+            "size": 64,
+            "value": "matrix",
+            "buffer": {
+              "type": "Buffer",
+              "data": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                160,
+                176,
+                64,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                160,
+                176,
+                64,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                160,
+                176,
+                64,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                160,
+                176,
+                64,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

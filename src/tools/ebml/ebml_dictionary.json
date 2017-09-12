@@ -28,7 +28,8 @@
   "name": "OVTK_NodeId_Acquisition_StimulationsCount"
  },
  "62": {
-  "type": "master", "name": "OVTK_NodeId_Acquisition_Stimulation"
+  "type": "master",
+  "name": "OVTK_NodeId_Acquisition_Stimulation"
  },
  "63": {
   "type": "uinteger",

@@ -2,24 +2,20 @@
 
 class Stimuli extends require(`stream`).Transform {
   constructor({
-                // stringify = false,
                 signalDuration = 0,
                 pauseDuration = 0,
                 objectMode = true
               }) {
-    super({objectMode});
+    super({objectMode: true});
     this.signalDuration = signalDuration;
     this.pauseDuration = pauseDuration;
     this.objectMode = objectMode;
-    // this.stringify = stringify;
   }
   
   // noinspection JSUnusedGlobalSymbols
   /**
    *
-   * @param stimulus - eeg vector of channels samples.
-   * If this.timestampFieldIndex != -1 then vector[timestampFieldIndex] contains
-   * vector samples timestamp.
+   * @param {{timestamp, stimulusID, isTarget}} stimulus - vector of stimulus with timestamp and target flag (use in learning mode only)
    * @param encoding
    * @param cb
    * @private
@@ -29,11 +25,11 @@ class Stimuli extends require(`stream`).Transform {
     if (this.signalDuration + this.pauseDuration)
       setTimeout(() => {
         if (this.objectMode) cb(null, [+stimulus[0], +stimulus[1], +stimulus[2]]);
-        else cb(null, JSON.stringify([+stimulus[0], +stimulus[1], +stimulus[2]], null, 2));
+        else cb(null, `${JSON.stringify([+stimulus[0], +stimulus[1], +stimulus[2]])}\n`);
       }, this.signalDuration + this.pauseDuration);
     else {
       if (this.objectMode) cb(null, [+stimulus[0], +stimulus[1], +stimulus[2]]);
-      else cb(null, JSON.stringify([+stimulus[0], +stimulus[1], +stimulus[2]], null, 2));
+      else cb(null, `${JSON.stringify([+stimulus[0], +stimulus[1], +stimulus[2]])}\n`);
     }
   }
 }

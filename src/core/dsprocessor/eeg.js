@@ -3,13 +3,11 @@
 class EEG extends require(`stream`).Transform {
   constructor({
                 samplingRate = 0,
-                // stringify = false,
                 objectMode = true
               }) {
-    super({objectMode});
+    super({objectMode: true});
     this.objectMode = objectMode;
     this.samplingRate = samplingRate;
-    // this.stringify = stringify;
   }
   
   // noinspection JSUnusedGlobalSymbols
@@ -32,14 +30,14 @@ class EEG extends require(`stream`).Transform {
         if (this.objectMode) {
           cb(null, sample);
         } else {
-          cb(null, JSON.stringify(sample, null, 2));
+          cb(null, `${JSON.stringify(sample)}\n`);
         }
       }, 1000 / this.samplingRate);
     else {
       if (this.objectMode) {
         cb(null, sample);
       } else {
-        cb(null, JSON.stringify(sample, null, 2));
+        cb(null, `${JSON.stringify(sample)}\n`);
       }
     }
   }

@@ -10,67 +10,12 @@
  * @see EBML, variable-length integers, UTF, Endianness, DSP, EEG
  */
 class mbTools {
-  /**
-   
-   * vInt function calculates length, value and uint8 buffer of variable-length integer
-   * @param {Array} buffer stream buffer or string that contains variable-length integers of EBML stream or file
-   * @param {number} offset buffer index of the first byte of the variable-length integer
-   * @return {{start: number, length: number, buffer: Array.<*>, value: *}} {offset, length, value buffer, value}
-   * **/
-  static vInt(buffer, offset = 0) {
-    let bytes = 0;
-    //noinspection StatementWithEmptyBodyJS
-    while (!buffer[offset + bytes++]) ; //bytes with vInt descriptor
-    let firstByte = offset + bytes - 1;
-    let length = 8 * bytes - (Math.log2(buffer[firstByte]) ^ 0);
-    let valueBuffer = buffer.slice(firstByte, firstByte + length - bytes + 1);
-    valueBuffer[0] = valueBuffer[0] & (Math.pow(2, 8 - length + (bytes - 1) * 8) - 1);
-    return {
-      start: firstByte,
-      length: length,
-      buffer: valueBuffer,
-      hexString: this.bigEndian(valueBuffer)
-    }
-    //TODO Alternative ways to calculate length should be tested and assessed
-    // const value = parseInt(this.bigEndian(offset, bytes, buffer), 16); //value in descriptor
-    // return Math.ceil(Math.log2(-(1 + ~(1 << bytes * 8)) / value)); //length of vInt
-    // One more way to calculate length is using javascript Math.clz32(first4bytes)
-    // let length2 = 8 * (bytes - 1) + Math.clz32(buffer[firstByte]) - 23;
-    //TODO there is much much faster approach to get vInt length, it is the precalculated vector with 256 elements (i.e. 2^8 elements)
-    // that contain vectors with length equal to number of bytes of length descriptor
-    // each element of last vector keeps precalculated length of vInt for that specific length of vInt length descriptor
-    // then vInt could be expressed like some thing like this: {let bytes=0; while(!buffer[bytes++]); return table256[buffer[bytes]][bytes];}
-    // in that case current implementation of vInt could be used to precalculate table256 before beginning the parsing process
-  }
-  
-  /**
-   * bigEndian calculates value from buffer according to big-endian order of bytes
-   * @param {Array} buffer stream buffer or string that contains variable-length integers of EBML stream or file
-   * @param {number} length length of value in bytes
-   * @param {number} offset buffer index of the first byte of the value
-   * **/
-  static bigEndian(buffer, length = buffer.length, offset = 0) {
-    let exp = length - 1;
-    if (offset + length > buffer.length) throw new Error(`Length out of buffer boundaries: ${length}`);
-    return buffer[offset].toString(16) + (exp === 0 ? "" : this.bigEndian(buffer, exp, offset + 1));
-  }
-  
-  /**
-   * littleEndian calculates value from buffer according to little-endian order of bytes
-   * @param {Array} buffer stream buffer or string that contains variable-length integers of EBML stream or file
-   * @param {number} length length of value in bytes
-   * @param {number} offset buffer index of the first byte of the value
-   * **/
-  static littleEndian(buffer, length, offset = 0) {
-    let exp = length - 1;
-    if (offset + length > buffer.length) throw new Error(`Length out of buffer boundaries: ${length}`);
-    return buffer[offset + exp].toString(16) + (exp === 0 ? "" : this.littleEndian(buffer, exp, offset));
-  }
   
   /**
    * deleteLeadZeros - deletes leading zeros from the string that represents uint64
    *
    * @param uint64hexString
+   * @param deleteZeroFromFirstByte
    * @return {string}
    */
   static deleteLeadZeros(uint64hexString, deleteZeroFromFirstByte = false) {//if alignByte=true then leading zero of first byte won't be deleted
@@ -81,6 +26,7 @@ class mbTools {
     else return idH.length ? `${'0'.repeat(idH.length % 2)}${idH}${'0'.repeat(idL.length % 2)}${idL}` : `${'0'.repeat(idL.length % 2)}${idL}`;
   }
   
+  // noinspection JSUnusedGlobalSymbols
   /**
    * idxOfMax - returns index of max element of array
    *
@@ -88,6 +34,7 @@ class mbTools {
    * @return {*}
    */
   static idxOfMax(arr) {
+    // noinspection JSUnusedAssignment
     return arr.reduce((ac, v, i, ar) => ar[ac] < v ? ac = i : ac, 0);
   }
   
@@ -98,7 +45,7 @@ class mbTools {
    * @return {number} - number of dimensions of array
    */
   static nD(arr) {
-    return Array.isArray(arr) ? 1 + nD(arr[0]) : 0;
+    return Array.isArray(arr) ? 1 + this.nD(arr[0]) : 0;
   }
   
   /**
@@ -183,8 +130,7 @@ class mbTools {
    */
   static detrend(timeseries, passtrough = false) {
     if (passtrough) {
-      let arr = timeseries.slice();
-      return {trend: arr, detrend: arr};
+      return timeseries.slice();
     }
     if (!timeseries) throw `Detrend error! No input data!`;
     let n = timeseries.length;
@@ -219,13 +165,16 @@ class mbTools {
     let bytes = 0;
     //noinspection StatementWithEmptyBodyJS
     while (!buffer[offset + bytes++]) ; //bytes with vInt descriptor
-    let firstByte = offset + bytes - 1;
-    let length = 8 * bytes - (Math.log2(buffer[firstByte]) ^ 0);
-    let valueBuffer = buffer.slice(firstByte, firstByte + length - bytes + 1);
-    valueBuffer[0] = valueBuffer[0] & (Math.pow(2, 8 - length + (bytes - 1) * 8) - 1);
+    let
+      firstByte = offset + bytes - 1, //index of byte with alignment part of vInt data
+      vIntAlignmentLength = Math.floor(Math.log2(buffer[firstByte])),
+      vIntFullLength = 8 * bytes - vIntAlignmentLength, // vInt full langth in bytes === number of bits of vInt descriptor
+      valueBuffer = buffer.slice(firstByte, firstByte + vIntFullLength - bytes + 1);
+    valueBuffer[0] = valueBuffer[0] & (Math.pow(2, vIntAlignmentLength) - 1);
+    // valueBuffer[0] = valueBuffer[0] & (Math.pow(2, 8 - vIntFullLength + (bytes - 1) * 8) - 1);
     return {
-      start: firstByte,
-      length: length,
+      start: offset,//firstByte,
+      length: vIntFullLength,
       buffer: valueBuffer,
       hexString: this.bigEndian(valueBuffer)
     }
@@ -243,7 +192,6 @@ class mbTools {
   
   /**
    * bigEndian calculates value from buffer according to big-endian order of bytes
-   *
    * @param {Array} buffer stream buffer or string that contains variable-length integers of EBML stream or file
    * @param {number} length length of value in bytes
    * @param {number} offset buffer index of the first byte of the value
@@ -256,7 +204,6 @@ class mbTools {
   
   /**
    * littleEndian calculates value from buffer according to little-endian order of bytes
-   *
    * @param {Array} buffer stream buffer or string that contains variable-length integers of EBML stream or file
    * @param {number} length length of value in bytes
    * @param {number} offset buffer index of the first byte of the value
@@ -264,8 +211,9 @@ class mbTools {
   static littleEndian(buffer, length, offset = 0) {
     let exp = length - 1;
     if (offset + length > buffer.length) throw new Error(`Length out of buffer boundaries: ${length}`);
-    return buffer[offset + exp].toString(16) + (exp === 0 ? "" : this.littleEndian(buffer, exp, offset));
+    return `0${buffer[offset + exp].toString(16)}`.substr(-2) + (exp === 0 ? "" : this.littleEndian(buffer, exp, offset));
   }
+  
 }
 
 module.exports = mbTools;
