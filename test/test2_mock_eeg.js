@@ -7,8 +7,8 @@ const
 ;
 
 let eeg = new EEG({
-  stringify: true,
-  samplingRate: 250,
+  // stringify: true,
+  // samplingRate: 250,
   objectMode: false
 });
 

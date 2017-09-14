@@ -55,7 +55,7 @@ const epochProcessor = new EpochsProcessor({
     , objectMode: true
   })
     .pipe(classifier)
-    // .on(`data`, classification => console.log(classification.reduce((ac, v, i, ar) => ar[ac] < v ? ac = i : ac, 0)))
-    .pipe(process.stdout)
+    .on(`data`, classification => console.log(classification.reduce((ac, v, i, ar) => ar[ac] < v ? ac = i : ac, 0)))
+    // .pipe(process.stdout)
 ;
 
