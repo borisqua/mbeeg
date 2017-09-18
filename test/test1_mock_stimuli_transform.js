@@ -6,7 +6,7 @@ const
   Stimuli = require(`${appRoot}/src/core/dsprocessor/stimuli.js`)
 ;
 
-let stimuli = new Stimuli({
+let stimuli = new Stimuli.Transform({
   signalDuration: 120,
   pauseDuration: 230,
   objectMode: false

@@ -1,11 +1,12 @@
 "use strict";
-// require('electron-debug');
 const
-  appRoot = require(`app-root-path`),
-  {app, BrowserWindow, Menu, ipcMain, webContents, globalShortcut} = require('electron'),
-  template = require(`${appRoot}/src/app/menu`);
+  appRoot = require(`app-root-path`)
+  , {app, BrowserWindow, Menu, ipcMain, webContents, globalShortcut} = require('electron')
+  , template = require(`${appRoot}/src/app/menu`)
+  , ipcController = require(`child_process`).fork(`${appRoot}/src/core/controller/index.js`)
+;
 
-let winMain, winKeyboard, winConsole,//, winConsole, winDebuggerLog;// Keep a global reference of the windows objects, if you don't, the window will be closed automatically when the JavaScript object is garbage collected.
+let winMain, winKeyboard, winConsole,//winDebuggerLog;// Keep a global reference of the windows objects, if you don't, the window will be closed automatically when the JavaScript object is garbage collected.
   menuTemplate = Menu.buildFromTemplate(template),
   forceCloseApp = false;
 
@@ -38,10 +39,17 @@ function createWindows() {
     url: 'gui/keyboard/index.html'
   });
   // winKeyboard.setMenu(null);
-  winKeyboard.on(`close`, (e) => {
+  winKeyboard.on(`show`, e => {
+    ipcController.send(`start-stimuli`);
+    ipcController.send(`start-P300-recognition`);
+  });
+  
+  winKeyboard.on(`close`, e => {
     if (!forceCloseApp) {
       e.preventDefault();
       winKeyboard.hide();
+      ipcController.send(`stop-stimuli`);
+      ipcController.send(`stop-P300-recognition`);
       winMain.focus();
     }
   });
@@ -58,6 +66,7 @@ function createWindows() {
     if (!forceCloseApp) {
       e.preventDefault();
       winConsole.hide();
+      //controller.saveConfiguration()
       winMain.focus();
     }
   });
@@ -75,7 +84,21 @@ if (isSecondInstance) {
 }
 
 app.on('ready', () => {
+  //createAppInfrastructure();
+  ipcController.on(`message`,
+    msg => {
+      switch (msg) {
+        case "verdict":
+          break;
+        case "ipc-controller-listen":
+          console.log(msg);
+          break;
+        default:
+          console.log(msg.text);
+      }
+    });
   createWindows();
+  
   globalShortcut.register(`CommandOrControl+W`, () => {
     BrowserWindow.getFocusedWindow().close();
   });
@@ -84,8 +107,10 @@ app.on('ready', () => {
   });
   globalShortcut.register(`CommandOrControl+Shift+C`, () => {
     winConsole.show();
+    //controller.readConfiguration()
   });
 });
+
 app.on('window-all-closed', () => {
   // On macOS it is common for applications and their menu bar
   // to stay active until the user quits explicitly with Cmd + Q
@@ -94,9 +119,7 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.on('will-quit', function () {
-  globalShortcut.unregisterAll();
-});
+app.on('will-quit', () => globalShortcut.unregisterAll());
 
 app.on('activate', () => {
   // On macOS it's common to re-create a window in the app when the

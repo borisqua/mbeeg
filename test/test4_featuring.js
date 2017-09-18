@@ -15,7 +15,7 @@ let eeg = new EEG({
   objectMode: true
 });
 
-let stimuli = new Stimuli({
+let stimuli = new Stimuli.Transform({
   // signalDuration: 120,
   // pauseDuration: 230,
   objectMode: true

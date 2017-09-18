@@ -1,6 +1,9 @@
 "use strict";
 const
-  {ipcRenderer} = require(`electron`);
+  appRoot = require(`app-root-path`)
+  , {ipcRenderer} = require(`electron`)
+  // , Stimuli = require(`${appRoot}/src/core/dsprocessor/stimuli`)
+;
 
 $(() => {
   let
@@ -50,15 +53,15 @@ $(() => {
       keys: keys, //keys array
       groups: groups, //array of groups. Each group has the same movement properties, such as direction, trajectory, speed, etc.
       stimulation: {//array of stimuli. Each stimulus consists from keys array, stimulus duration and pause duration, time of stimulus
-        duration: 200,
+        duration: 100,
         pause: 200,
         sequence: {
           type: "random", //consecutive, rule-driven
           repetition: false, //
           stimuli: stimuli, //[{keys[id1,id2,id3...idN], repetition: 1}]
-          dimensions: 1 //should be number for reduce dimensions search
+          dimensions: 1 //should be number for reduce-dimensions search
         },
-      learning: {
+        learning: {
           type: `consecutive`, //`word-driven`
         }
       },
@@ -129,14 +132,15 @@ $(() => {
         "background-size": "60%"
         // "left":  carousel.keybox.width //* carousel.keys[i].column
       })
-      .hover(
-        function () {
-          $(this).css({"background-size": "100%"});
-        },
-        function () {
-          $(this).css({"background-size": "60%"});
-        }
-      );
+    // .hover(
+    //   function () {
+    //     $(this).css({"background-size": "100%"});
+    //   },
+    //   function () {
+    //     $(this).css({"background-size": "60%"});
+    //   }
+    // )
+    ;
     
     viewport.append(keybox);
     

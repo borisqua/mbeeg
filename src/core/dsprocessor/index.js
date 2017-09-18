@@ -1,4 +1,5 @@
 "use strict";
+//TODO refactor to use writable capabilities of the DSProcessor stream, by writing merged stream of stimuli and eeg data. For this purpose DSProcess should have capability to distinguish chunks of this two streams.
 const
   appRoot = require(`app-root-path`),
   Helpers = require(`${appRoot}/src/tools/helpers`);

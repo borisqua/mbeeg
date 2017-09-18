@@ -17,7 +17,7 @@ let eeg = new EEG({
   objectMode: true
 });
 
-let stimuli = new Stimuli({
+let stimuli = new Stimuli.Transform({
   // signalDuration: 120,
   // pauseDuration: 230,
   objectMode: true
@@ -55,7 +55,7 @@ const epochProcessor = new EpochsProcessor({
     , objectMode: true
   })
     .pipe(classifier)
-    .on(`data`, classification => console.log(classification.reduce((ac, v, i, ar) => ar[ac] < v ? ac = i : ac, 0)))
-    // .pipe(process.stdout)
+    // .on(`data`, classification => console.log(classification.reduce((ac, v, i, ar) => ar[ac] < v ? ac = i : ac, 0)))
+    .pipe(process.stdout)
 ;
 

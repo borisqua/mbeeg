@@ -11,6 +11,16 @@
  */
 class mbTools {
   
+  // noinspection JSUnusedGlobalSymbols
+  /**
+   * randomizeArray returns randomly sequenced arr
+   * @param {Array} arr - array to randomize
+   * @return {Array} - randomized arr
+   */
+  static randomizeArray(arr){
+    return arr.sort(() => { return Math.random() - 0.5; })
+  }
+  
   /**
    * deleteLeadZeros - deletes leading zeros from the string that represents uint64
    *

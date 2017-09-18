@@ -6,7 +6,7 @@ const
 class Classifier extends require(`stream`).Transform {
   constructor({
                 method = (feature, start = 0, end = feature.length, channel = 0) =>
-                  feature[channel].slice(start, end).reduce((acc, val) => Math.abs(acc + val), 0 ),
+                  feature[channel].slice(start, end).reduce((acc, val) => Math.abs(acc + val), 0),
                 objectMode = true
               }) {
     super({objectMode: true});
@@ -22,8 +22,10 @@ class Classifier extends require(`stream`).Transform {
       // method = (feature, start = 0, end = feature.length) => feature.slice(start, end).reduce((acc, val) => {
       // classification[features.indexOf(feature)] = this.method(feature);
       classification[features.indexOf(feature)] = Helpers.absIntegral(feature[0], 250, 200, 300)//(feature, start = 0,
-                      // end = feature.length) => feature.slice(start, end).reduce((acc, val) => Math.abs(acc + val));
-  
+    // end = feature.length) => feature.slice(start, end).reduce((acc, val) => Math.abs(acc + val));
+    let sum = classification.reduce((a, b) => a + b);
+    classification.forEach((v, i, arr) => arr[i] = v / sum);//normalization
+    
     if (this.objectMode)
       cb(null, classification);
     else

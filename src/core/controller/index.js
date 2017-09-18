@@ -1,7 +1,8 @@
 "use strict";
 const
   appRoot = require(`app-root-path`)
-  , Client = require('net').Socket()
+  , Stimuli = require(`${appRoot}/src/core/dsprocessor/stimuli.js`)
+  , Net = require('net')
   , EBMLReader = require(`${appRoot}/src/tools/ebml/reader`)
   , OVReader = require(`${appRoot}/src/tools/openvibe/reader`)
   , provideTCP = (context, data) => {
@@ -54,161 +55,38 @@ const
       }
     }
   }
-  , eegCSV = require(`csv-streamify`)({objectMode: true})
-  , EEG = require(`${appRoot}/src/core/dsprocessor/eeg.js`)
-  , stimuliCSV = require(`csv-streamify`)({
-    // objectMode: false
-    objectMode: true
-  })
-  , Stimuli = require(`${appRoot}/src/core/dsprocessor/stimuli.js`)
   , DSProcessor = require(`${appRoot}/src/core/dsprocessor`)
   , EpochsProcessor = require(`${appRoot}/src/core/epprocessor`)
   , Classifier = require(`${appRoot}/src/core/classifier`)
   // , Helpers = require(`${appRoot}/src/tools/helpers`)
   , fs = require(`fs`)
 ;
-//EBML
-//11111111111111111111111111
-/*
-Client.on('close', () => {
-  console.log('Connection closed');
-})
-// .pipe(process.stdout)
-;
-//22222222222222222222222222
-const ebmlReader = new EBMLReader({
-    ebmlSource: Client.connect(1024, '127.0.0.1', () => {
-    })
-    , ebmlCallback: provideTCP
-    // , objectMode: false
-    , objectMode: true
-  })
-  // .pipe(process.stdout)
-;
-//333333333333333333333333333
-const ovReader = new OVReader({
-    ovStream: ebmlReader
-    , objectMode: false
-    // , objectMode: true
-  })
-  // .pipe(process.stdout)
-;
-*/
 
-let stimuli = new Stimuli({
-  // stringify: true
-  // , signalDuration: 120
-  // , pauseDuration: 230
-  // objectMode: false
-  objectMode: true
+let server = Net.createServer(connection => {
+  connection.on('connect', () => console.log(`client connected`));
+  connection.on(`disconnect`, () => console.log(`client disconnected`));
+});
+server.on(`close`, () => console.log(`client disconnected`));
+server.listen(`\\\\?\\pipe\\ipcController`, () => {
+  process.send(`ipc-controller-listen`);
 });
 
-let eeg = new EEG({
-  // stringify: true,
-  // samplingRate: 250,
-  objectMode: true
-});
-
-const epochs = new DSProcessor({
-    stimuli:
-      fs.createReadStream(`${appRoot}/test/dsprocessor/data/integral/stimuli45.csv`)
-        .pipe(stimuliCSV)
-        .pipe(stimuli),
-    // eeg: ovReader,
-    eeg:
-    fs.createReadStream(`${appRoot}/test/dsprocessor/data/integral/eeg45.csv`)
-      .pipe(eegCSV)
-      .pipe(eeg),
-    learning: false,
-    stimuliNumber: 4,
-    epochDuration: 1000,
-    samplingRate: 250,
-    sequence: `filter, detrend`,
-    objectMode: false
-    // objectMode: true
-    
-  })
-    .pipe(process.stdout)
-;
-/*
-
-const classifier = new Classifier({
-  // method: lib.absIntegral,
-  objectMode: true
-});
-
-const epochProcessor = new EpochsProcessor({
-    epochs: epochs,
-    moving: false,
-    depth: 5,
-    stimuliNumber: 4,
-    objectMode: false
-  })
-    // .pipe(classifier)
-    // .on(`data`, classification => console.log(classification.reduce((ac, v, i, ar) => ar[ac] < v ? ac = i : ac, 0)))
-  // .pipe(process.stdout)
-;
-*/
-
-/*class Controller {
-  constructor({
-                stimuli, eeg,
-                learning = false
-              }) {
-    this.eeg = new EEG({
-      // stringify: true,
-      // samplingRate: 250,
-      objectMode: true
-    });
-    
-    this.stimuli = new Stimuli({
-      // stringify: true,
-      // signalDuration: 120,
-      // pauseDuration: 230,
-      objectMode: true
-    });
-    
-    if (learning) {
-      //preparing data for learning according to learning policy from file learning.json
-      // first - save raw epochs data with targets (see
-      // second - vary preprocessing parameters as it prescribed in learning.json file
-      // third - write resulting stream to _transform callback writable
-      // this.learning = JSON.parse(fs.readFileSync(`../learning.json`));
-    } else {//online mode - recognizing and classification
-      const epochs = new DSProcessor({
-        stimuli, eeg,
-        learning: false,
-        stimuliNumber: 4,
-        epochDuration: 1000,
-        samplingRate: 250,
-        sequence: `filter, detrend`,
-        objectMode: true //set false to output result as string (through process.stdout e.g.); set true to pass js objects
-      });
-      
-      const epochProcessor = new EpochsProcessor({
-        epochs,
-        moving: false,
-        depth: 5,
-        stimuliNumber: 4,
-        objectMode: true
-      });
-      
-      const classifier = new Classifier({
-          objectMode: false
-        })
-      ;
-      
-      epochProcessor
-        .pipe(classifier)
-    }
-    
+process.on(`message`, message => {
+  switch (message){
+    case `start-stimuli`:
+      console.log(`start stimuli`);
+      break;
+    case `stop-stimuli`:
+      console.log(`stop stimuli`);
+      break;
+    case `start-P300-recognition`:
+      console.log(`start p300`);
+      break;
+    case `stop-P300-recognition`:
+      console.log(`stop p300`);
+      break;
+    default:
   }
-  
-  run({learning = false}) {
-    this.dsprocessor = new DSProcessor({stimuli, eeg, learning: true});
-    this.classifier = new Classifier({});
-  }
-  
-}
+});
 
-module.exports = Controller;*/
+process.send({id: 0, text: `hello electron`});

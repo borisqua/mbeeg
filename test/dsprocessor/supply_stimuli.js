@@ -9,7 +9,6 @@ class Stimuli extends Readable {
     this.stimulusCicle = signalDuration + pauseDuration;
     this.learning = learning;
     this._resetStimuli();
-    this.index = 0;
   }
   
   // noinspection JSUnusedGlobalSymbols
@@ -17,19 +16,19 @@ class Stimuli extends Readable {
     setTimeout(() => {
       this.stimulus = [
         new Date().getTime(),
-        this.idarray[this.index],
+        this.idarray[this.currentStimulus],
         !this.learning ? null : Math.random() > 0.1 //target field = in learning mode - true if target key, false if not, and null in online mode
       ];
       // this.push(JSON.stringify(this.stimulus));//+`\r\n`
       this.push(this.stimulus);
-      if (this.index++ === this.idarray.length - 1) {
+      if (this.currentStimulus++ === this.idarray.length - 1) {
         this._resetStimuli();
       }
     }, this.stimulusCicle);
   }
   
   _resetStimuli() {
-    this.index = 0;
+    this.currentStimulus = 0;
     return this.idarray.sort(() => { return Math.random() - 0.5; });//randomize idarray order
   }
 }
