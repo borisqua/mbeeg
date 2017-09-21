@@ -2,12 +2,11 @@
 const
   // merge2 = require(`merge2`),
   appRoot = require(`app-root-path`),
-  // lib = require(`${appRoot}/src/tools/helpers`),
   fs = require(`fs`),
   stimuliCSV = require(`csv-streamify`)({objectMode: true}),
   eegCSV = require(`csv-streamify`)({objectMode: true}),
   EEG = require(`${appRoot}/src/core/dsprocessor/eeg.js`),
-  Stimuli = require(`${appRoot}/src/core/dsprocessor/stimuli.js`),
+  Stimuli = require(`${appRoot}/test/mock_stimuli_transform.js`),
   Classifier = require(`${appRoot}/src/core/classifier`),
   DSProcessor = require(`${appRoot}/src/core/dsprocessor`),
   EpochsProcessor = require(`${appRoot}/src/core/epprocessor`);
@@ -17,7 +16,7 @@ let eeg = new EEG({
   objectMode: true
 });
 
-let stimuli = new Stimuli.Transform({
+let stimuli = new Stimuli({
   // signalDuration: 120,
   // pauseDuration: 230,
   objectMode: true

@@ -1,14 +1,16 @@
 "use strict";
 const
   appRoot = require(`app-root-path`)
-  , {app, BrowserWindow, Menu, ipcMain, webContents, globalShortcut} = require('electron')
+  , {app, BrowserWindow, Menu, ipcMain, globalShortcut} = require('electron')
   , template = require(`${appRoot}/src/app/menu`)
-  , ipcController = require(`child_process`).fork(`${appRoot}/src/core/controller/index.js`)
+  // , ipcController = require(`child_process`).fork(`${appRoot}/src/core/controller/index.js`)
 ;
 
-let winMain, winKeyboard, winConsole,//winDebuggerLog;// Keep a global reference of the windows objects, if you don't, the window will be closed automatically when the JavaScript object is garbage collected.
-  menuTemplate = Menu.buildFromTemplate(template),
-  forceCloseApp = false;
+let winMain, winKeyboard, winConsole //winDebuggerLog;// Keep a global reference of the windows objects, if you don't, the window will be closed automatically when the JavaScript object is garbage collected.
+  , menuTemplate = Menu.buildFromTemplate(template)
+  , forceCloseApp = false
+  , keyboardRuns = false
+;
 
 function createWindows() {
   const window = require(`${appRoot}/src/app/window`);
@@ -39,17 +41,22 @@ function createWindows() {
     url: 'gui/keyboard/index.html'
   });
   // winKeyboard.setMenu(null);
-  winKeyboard.on(`show`, e => {
-    ipcController.send(`start-stimuli`);
-    ipcController.send(`start-P300-recognition`);
+  winKeyboard.on(`show`, () => {
+    //TODO check out if already runs and send message only if not
+    if(!keyboardRuns){
+      keyboardRuns = true;
+      // ipcController.send(`start-stimuli`);
+      // ipcController.send(`start-classification`);
+    }
   });
   
   winKeyboard.on(`close`, e => {
     if (!forceCloseApp) {
       e.preventDefault();
       winKeyboard.hide();
-      ipcController.send(`stop-stimuli`);
-      ipcController.send(`stop-P300-recognition`);
+      keyboardRuns = false;
+      // ipcController.send(`stop-stimuli`);
+      // ipcController.send(`stop-classification`);
       winMain.focus();
     }
   });
@@ -73,6 +80,7 @@ function createWindows() {
   
 }
 
+// noinspection JSUnusedLocalSymbols
 const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
   if (winMain) {
     if (winMain.isMinimized()) winMain.restore();
@@ -85,25 +93,26 @@ if (isSecondInstance) {
 
 app.on('ready', () => {
   //createAppInfrastructure();
-  ipcController.on(`message`,
-    msg => {
-      switch (msg) {
-        case "verdict":
-          break;
-        case "ipc-controller-listen":
-          console.log(msg);
-          break;
-        default:
-          console.log(msg.text);
-      }
-    });
+  // ipcController.on(`message`,
+  //   msg => {
+  //     switch (msg) {
+  //       case "verdict":
+  //         break;
+  //       case "ipc-controller-listen":
+  //         console.log(msg);
+  //         break;
+  //       default:
+  //         console.log(msg);
+  //     }
+  //   });
   createWindows();
   
   globalShortcut.register(`CommandOrControl+W`, () => {
     BrowserWindow.getFocusedWindow().close();
   });
   globalShortcut.register(`CommandOrControl+Shift+K`, () => {
-    winKeyboard.show();
+    // if (!winKeyboard.isVisible())
+      winKeyboard.show();
   });
   globalShortcut.register(`CommandOrControl+Shift+C`, () => {
     winConsole.show();
@@ -133,7 +142,8 @@ ipcMain
     switch (arg) {
       case 'keyboard-launch':
         // winKeyboard.setFullScreen(!winKeyboard.isFullScreen());
-        winKeyboard.show();
+        // if (!winKeyboard.isVisible())
+          winKeyboard.show();
         break;
       case 'console-launch':
         winConsole.show();

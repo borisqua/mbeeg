@@ -5,8 +5,9 @@ const
   stimuliCSV = require(`csv-streamify`)({objectMode: true}),
   eegCSV = require(`csv-streamify`)({objectMode: true}),
   EEG = require(`${appRoot}/src/core/dsprocessor/eeg.js`),
-  Stimuli = require(`${appRoot}/src/core/dsprocessor/stimuli.js`),
-  DSProcessor = require(`${appRoot}/src/core/dsprocessor`)
+  Stimuli = require(`${appRoot}/test/mock_stimuli_transform.js`),
+  DSProcessor = require(`${appRoot}/src/core/dsprocessor`),
+  EpochsProcessor = require(`${appRoot}/src/core/epprocessor`)
 ;
 
 let eeg = new EEG({
@@ -14,13 +15,12 @@ let eeg = new EEG({
   objectMode: true
 });
 
-let stimuli = new Stimuli.Transform({
+let stimuli = new Stimuli({
   // signalDuration: 120,
   // pauseDuration: 230,
   objectMode: true
 });
 
-// noinspection JSUnusedLocalSymbols
 const epochs = new DSProcessor({
     stimuli:
       fs.createReadStream(`${appRoot}/test/dsprocessor/data/integral/stimuli45.csv`)
@@ -35,10 +35,19 @@ const epochs = new DSProcessor({
     , epochDuration: 1000
     , samplingRate: 250
     , sequence: `filter, detrend`
-    // , objectMode: true
-    , objectMode: false
+    , objectMode: true
     
   })
-    .pipe(process.stdout)
+;
+
+// noinspection JSUnusedLocalSymbols
+const epochProcessor = new EpochsProcessor({
+    epochs: epochs
+    , moving: false
+    , depth: 5
+    , stimuliNumber: 4
+    , objectMode: false
+  })
+  .pipe(process.stdout)
 ;
 

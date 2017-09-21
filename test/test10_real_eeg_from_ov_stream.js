@@ -1,6 +1,7 @@
 "use strict";
 const
   appRoot = require(`app-root-path`)
+  , stringifier = require(`${appRoot}/src/tools/helpers`).objectsStringifier
   , Client = require('net').Socket()
   , EBMLReader = require(`${appRoot}/src/tools/ebml/reader`)
   , OVReader = require(`${appRoot}/src/tools/openvibe/reader`)
@@ -54,15 +55,22 @@ const
       }
     }
   }
+  , EEGSampler = require(`${appRoot}/src/core/dsprocessor/eeg`)
+  , ebmlReader = new EBMLReader({
+    ebmlSource: Client.connect(1024, 'localhost', () => { }),
+    ebmlCallback: provideTCP,
+    objectMode: true
+  })
+  , ovReader = new OVReader({
+    ovStream: ebmlReader
+  })
+  , samplingRate = ovReader.header.samplingRate //TODO publish in app common information about openViBE stream when it starts (current line doesn't work)
+  , eegSampler = new EEGSampler({
+    channels: [6]
+    //, samplingRate: samplingRate
+  })
 ;
-
 Client.on('close', () => { console.log('Connection closed'); });
 
-const ebmlReader = new EBMLReader({
-  ebmlSource: Client.connect(1024, '127.0.0.1', () => { }),
-  ebmlCallback: provideTCP,
-  objectMode: true
-});
-const ovReader = new OVReader({ovStream: ebmlReader, objectMode: false});
-ovReader.pipe(process.stdout);
+ovReader.pipe(eegSampler).pipe(stringifier).pipe(process.stdout);
 

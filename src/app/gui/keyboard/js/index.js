@@ -105,15 +105,17 @@ $(() => {
           column: columns - i - 1, //i - for back alphabet order (right to left); columns-i-1 - for straight alphabet order (left to right)
           top: j * carousel.keybox.height,
           left: -carousel.keybox.width,
-          stimuliId: 0, //
-          groupId: 0
+          stimuliId: id, //
+          groupId: j
         });
+        stimuli.push(id);
       }
     }
-    const fs = require(`fs`);
-    fs.writeFile(`config.json`, JSON.stringify(carousel, null, 2), (err) => {
-      if (err) throw err;
-    });
+    //TODO LOADING & SAVING CONFIGURATION SHOULD BE THE RESPONSIBILITY OF CONTROLLER IN COOPERATION WITH CONSOLE RENDERER
+    // const fs = require(`fs`);
+    // fs.writeFile(`config.json`, JSON.stringify(carousel, null, 2), (err) => {
+    //   if (err) throw err;
+    // });
     
     // t=S/V
     length = carousel.keybox.width * carousel.viewport.columns;

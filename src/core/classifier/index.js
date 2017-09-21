@@ -1,7 +1,7 @@
 "use strict";
 const
   appRoot = require(`app-root-path`),
-  Helpers = require(`${appRoot}/src/tools/helpers`);
+  Tools = require(`${appRoot}/src/tools/helpers`).mbTools;
 
 class Classifier extends require(`stream`).Transform {
   constructor({
@@ -21,7 +21,7 @@ class Classifier extends require(`stream`).Transform {
     for (let feature of features)
       // method = (feature, start = 0, end = feature.length) => feature.slice(start, end).reduce((acc, val) => {
       // classification[features.indexOf(feature)] = this.method(feature);
-      classification[features.indexOf(feature)] = Helpers.absIntegral(feature[0], 250, 200, 300)//(feature, start = 0,
+      classification[features.indexOf(feature)] = Tools.absIntegral(feature[0], 250, 200, 300)//(feature, start = 0,
     // end = feature.length) => feature.slice(start, end).reduce((acc, val) => Math.abs(acc + val));
     let sum = classification.reduce((a, b) => a + b);
     classification.forEach((v, i, arr) => arr[i] = v / sum);//normalization

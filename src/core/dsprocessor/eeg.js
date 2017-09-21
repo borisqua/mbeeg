@@ -1,13 +1,21 @@
 "use strict";
 
 class EEG extends require(`stream`).Transform {
+  /**
+   *
+   * @param {Number} samplingRate - digital signal sampling rate
+   * @param {Array} channels - subset of channels id from all available to listen
+   * @param {Boolean} objectMode - whether stream should work in object mode or not
+   */
   constructor({
                 samplingRate = 0,
+                channels = [0],
                 objectMode = true
               }) {
     super({objectMode: true});
     this.objectMode = objectMode;
     this.samplingRate = samplingRate;
+    this.channels = channels;
   }
   
   // noinspection JSUnusedGlobalSymbols
@@ -24,7 +32,8 @@ class EEG extends require(`stream`).Transform {
     //first field of sample vector always contains timestamp
     let sample = [+channels[0]];//timestamp
     for (let i = 1; i < channels.length; i++)
-      sample.push(+channels[i]);//samples from channels
+      if (this.channels.includes(i))
+        sample.push(+channels[i]);//samples from channels
     if (this.samplingRate)
       setTimeout(() => {
         if (this.objectMode) {

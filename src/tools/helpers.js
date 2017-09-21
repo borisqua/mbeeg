@@ -226,4 +226,14 @@ class mbTools {
   
 }
 
-module.exports = mbTools;
+const stringifier = new require(`stream`).Transform({
+  objectMode: true,
+  transform(chunk, encoding, cb) {
+    cb(null, `${JSON.stringify(chunk,null,2)}\n\r`);
+  }
+});
+
+module.exports = {
+  mbTools: mbTools
+  , objectsStringifier: stringifier
+};

@@ -1,12 +1,12 @@
 "use strict";
 
 const
-  appRoot = require(`app-root-path`),
-  csv = require(`csv-streamify`),
-  parser = csv({ objectMode: true }),
-  {Readable} = require(`stream`),
-  fs = require(`fs`),
-  split2 = require(`split2`);
+  appRoot = require(`app-root-path`)
+  , csv = require(`csv-streamify`)
+  , parser = csv({ objectMode: true })
+  , {Readable} = require(`stream`)
+  , fs = require(`fs`)
+;
 
 class EEG extends Readable {
   constructor(options = {objectMode: true}) {
@@ -16,7 +16,6 @@ class EEG extends Readable {
       .on('error', (err) => {
         throw err;
       })
-      // .pipe(split2())
       .pipe(parser)
       .on(`data`, (chunk) => {
         let channels = JSON.parse(`[${chunk}]`);

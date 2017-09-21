@@ -14,8 +14,13 @@ class Stimuli extends require(`stream`).Transform {
                     return Math.random() - 0.5;
                   })
                 },
-                nextTarget = (arr, previousTarget) => {
-                  return arr.length - 1 ? 0 : previousTarget++;
+                nextTarget = (arr, previousTarget, learningCycle) => {
+                  if (previousTarget++ > arr.length - 1)
+                    return previousTarget = learningCycle = 0;
+                  else {
+                    learningCycle++;
+                    return previousTarget;
+                  }
                 }
               }) {
     super({objectMode: true});
@@ -24,15 +29,36 @@ class Stimuli extends require(`stream`).Transform {
     this.signalDuration = signalDuration;
     this.pauseDuration = pauseDuration;
     this.stimulusCicle = signalDuration + pauseDuration;
+    this.currentStimulus = 0;
     this.objectMode = objectMode;
     this.learning = learning;
     this.learningDuration = learningCycleDuration;
     this.currentLearningCycle = 0;
     this.learningArray = learningArray;
+    this.currentTargetStimulus = 0;
     this._nextSequence = nextSequence;
     this._nextTarget = nextTarget;
     
     this._resetStimuli();
+  }
+  
+  // noinspection JSUnusedGlobalSymbols
+  _read(size) {
+    setTimeout(() => {
+      
+      this.stimulus = [
+        new Date().getTime(),
+        this.idarray[this.currentStimulus],
+        this.learning && this.currentStimulus === this.currentTargetStimulus ? 1 : 0 //target field = in learning mode - true if target key, false if not, and null in online mode
+      ];
+      
+      if (this.objectMode) {
+        this.push(this.stimulus);
+      } else
+        this.push(`${JSON.stringify(this.stimulus)}\n\r`);
+      
+      this._checkCycles();
+    }, this.stimulusCicle);
   }
   
   _resetStimuli() {
@@ -40,52 +66,14 @@ class Stimuli extends require(`stream`).Transform {
     return this._nextSequence(this.idarray); //randomize idarray order
   }
   
-}
-
-class Transform extends Stimuli {
-  constructor(options) {
-    super(options);
-  }
-  
-  // noinspection JSUnusedGlobalSymbols
-  _transform(stimulus, encoding, cb) {
-    //first field of sample vector always contains timestamp
-    if (this.signalDuration + this.pauseDuration)
-      setTimeout(() => {
-        if (this.objectMode) cb(null, [+stimulus[0], +stimulus[1], +stimulus[2]]);
-        else cb(null, `${JSON.stringify([+stimulus[0], +stimulus[1], +stimulus[2]])}\n`);
-      }, this.signalDuration + this.pauseDuration);
-    else {
-      if (this.objectMode) cb(null, [+stimulus[0], +stimulus[1], +stimulus[2]]);
-      else cb(null, `${JSON.stringify([+stimulus[0], +stimulus[1], +stimulus[2]])}\n`);
+  _checkCycles() {
+    if (this.currentStimulus++ === this.idarray.length - 1) {
+      this._resetStimuli();
+      if (this.learning && this.currentLearningCycle > this.learningDuration - 1)
+        this._nextTarget(this.learningArray, this.currentTargetStimulus, this.currentLearningCycle);
     }
   }
 }
 
-class Readable extends Stimuli {
-  constructor(options) {
-    super(options);
-  }
-  
-  _read(size) {
-    setTimeout(() => {
-      
-      this.stimulus = [
-        new Date().getTime(),
-        this.idarray[this.currentStimulus],
-        !this.learning ? null : Math.random() > 0.1 //target field = in learning mode - true if target key, false if not, and null in online mode
-      ];
-      
-      if (this.objectMode) this.push(this.stimulus);
-      else this.push(`${JSON.stringify(this.stimulus)}\n`);
-      
-      if (this.currentStimulus++ === this.idarray.length - 1) {
-        this._resetStimuli();
-        if (this.learning && this.currentLearningCycle > this.learningDuration - 1)
-          this._nextTarget(this.learningArray, this.currentLearningCycle);
-      }
-    }, this.stimulusCicle);
-  }
-}
+module.exports = Stimuli;
 
-module.exports = {Transform: Transform, Readable: Readable};

@@ -2,7 +2,7 @@
 
 const
   appRoot = require(`app-root-path`),
-  Tools = require(`${appRoot}/src/tools/helpers`),
+  Tools = require(`${appRoot}/src/tools/helpers`).mbTools,
   ebmlDictionary = require(`${appRoot}/src/tools/ebml/ebml_dictionary`)
 ;
 
@@ -15,8 +15,7 @@ class EBMLReader extends require(`stream`).Transform {
   constructor({
                 ebmlSource, //some input stream e.g. TCP or fs readable stream
                 ebmlCallback, //input stream parser. It should return pure & aligned ebml byte-stream
-                objectMode = false
-    
+                objectMode = true
               }) {
     // options.readableObjectMode = true;
     super({objectMode: true});

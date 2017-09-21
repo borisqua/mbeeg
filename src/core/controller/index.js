@@ -1,8 +1,9 @@
 "use strict";
 const
   appRoot = require(`app-root-path`)
-  , Stimuli = require(`${appRoot}/src/core/dsprocessor/stimuli.js`)
   , Net = require('net')
+  , {Transform, PassThrough} = require(`stream`)
+  , Stimuli = require(`${appRoot}/src/core/dsprocessor/stimuli.js`)
   , EBMLReader = require(`${appRoot}/src/tools/ebml/reader`)
   , OVReader = require(`${appRoot}/src/tools/openvibe/reader`)
   , provideTCP = (context, data) => {
@@ -11,30 +12,14 @@ const
     if (!context.expectedEBMLChunkSize) {//first or new, after previous completion, openViBE chunk received by tcp client
       context.ebmlChunk = Buffer.alloc(0);
       context.expectedEBMLChunkSize = 0;
-      //first we should get tcp chunk size (ebmlChunkSize) and then write to ebmlChunk tcp data of that size
-      //1.Get tcp data
-      // console.log('tcp data:');
-      // console.log(data);
-      //2.read openViBE ebml chunk length
       context.expectedEBMLChunkSize = data.readUIntLE(start, 8);//first Uint64LE contains length of ebml data sent by openViBE
-      //3.get pure ov ebml chunk data
       data = data.slice(8);//trim openViBE specific TCP header, so now ebmlChunk is pure EBML data
     }
     let actualSizeOfTCPData = data.length;//actualSize of ebml data presented in current tcp data chunk
     
-    // console.log('========================================================');
-    // console.log(`Expected chunk size - ${context.expectedEBMLChunkSize}; actual raw data size without header - ${actualSizeOfTCPData} `);
-    // console.log('raw data:');
-    // console.log(data);
-    
     if (actualSizeOfTCPData && context.expectedEBMLChunkSize) {//if ebml data present and ebml chunk size from openViBE tcp pack header present too
       while (actualSizeOfTCPData > context.expectedEBMLChunkSize) {
         context.ebmlChunk = Buffer.from(data, start, context.expectedEBMLChunkSize);
-        // console.log('........................................................');
-        // console.log(`extracted ebml chunk data size: ${context.ebmlChunk.length}`);
-        // console.log(`extracted ebml chunk data:`);
-        // console.log(context.ebmlChunk);
-        // console.log('========================================================');
         context.write(context.ebmlChunk);
         start += context.expectedEBMLChunkSize;
         context.expectedEBMLChunkSize = data.readUIntLE(start, 8);//first Uint64LE contains length of ebml data sent by openViBE
@@ -42,11 +27,6 @@ const
       if (actualSizeOfTCPData <= context.expectedEBMLChunkSize) {//actual chunk length is less then required as prescribed in ov tcp pack header (due some network problems e.g.)
         context.expectedEBMLChunkSize -= actualSizeOfTCPData;//decrease size of expected but not received ebml data by amount of received data
         context.ebmlChunk = Buffer.concat([context.ebmlChunk, data]);//assemble chunk to the full ebmlChunkSize before write ebmlChunk into ebml reader
-        // console.log('........................................................');
-        // console.log(`assembled ebml chunk data size: ${context.ebmlChunk.length}`);
-        // console.log(`assembled ebml chunk data:`);
-        // console.log(context.ebmlChunk);
-        // console.log('========================================================');
         if (!context.expectedEBMLChunkSize) {
           // reader.write(context.ebmlChunk);
           context.write(context.ebmlChunk);
@@ -58,35 +38,69 @@ const
   , DSProcessor = require(`${appRoot}/src/core/dsprocessor`)
   , EpochsProcessor = require(`${appRoot}/src/core/epprocessor`)
   , Classifier = require(`${appRoot}/src/core/classifier`)
-  // , Helpers = require(`${appRoot}/src/tools/helpers`)
-  , fs = require(`fs`)
+  , config = require(`${appRoot}/config`) //json with configuration data
 ;
 
-let server = Net.createServer(connection => {
+//1. Load configuration - config.json file with stimuli, dsp and carousel parameters
+//2. Create and run IPC server to communicate between main process of app and renderer process of keyboard (carousel)
+const ipcServer = Net.createServer(connection => {
   connection.on('connect', () => console.log(`client connected`));
   connection.on(`disconnect`, () => console.log(`client disconnected`));
 });
-server.on(`close`, () => console.log(`client disconnected`));
-server.listen(`\\\\?\\pipe\\ipcController`, () => {
+ipcServer.on(`close`, () => console.log(`client disconnected`));
+ipcServer.listen(`\\\\?\\pipe\\ipcController`, () => {
   process.send(`ipc-controller-listen`);
 });
 
+//3. Create TCP client for openViBE eeg data provider TCP server
+const openvibeClient = Net.Socket();
+openvibeClient.on(`close`, () => console.log(`Open ViBE connection closed`));
+
+//4. Create openViBE parser
+const ovReader = new OVReader({
+  ovStream: new EBMLReader({
+    ebmlSource: openvibeClient.connect(config.eeg.port, config.eeg.host, () => {
+      console.log(`openViBE connection established`)
+    }),
+    ebmlCallback: provideTCP
+  })
+});
+
+//5. Create stimuli provider for keyboard(carousel) and eeg/P300 classifier
+const
+  stimuli = new Stimuli.Readable({ //should pipe simultaneously to the dsprocessor and to the carousel
+    signalDuration: config.stimulation.duration,
+    pauseDuration: config.stimulation.pause,
+    stimuliArray: config.stimulation.sequence.stimuli
+  }),
+  caster = new Transform({
+    objectMode: true,
+    transform(stimulus, encoding, cb) {
+      process.send(`stimulus sent`);
+      cb(null, stimulus);
+    }
+  }),
+  pass = new PassThrough
+;
+// stimuli.pipe(caster);
+stimuli.pipe(pass);
+// stimuli.pause();
+
 process.on(`message`, message => {
-  switch (message){
+  switch (message) {
     case `start-stimuli`:
       console.log(`start stimuli`);
       break;
     case `stop-stimuli`:
       console.log(`stop stimuli`);
       break;
-    case `start-P300-recognition`:
+    case `start-classification`:
       console.log(`start p300`);
       break;
-    case `stop-P300-recognition`:
+    case `stop-classification`:
       console.log(`stop p300`);
       break;
     default:
   }
 });
-
-process.send({id: 0, text: `hello electron`});
+// process.send({id: 0, text: `hello electron`});
