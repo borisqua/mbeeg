@@ -1,12 +1,12 @@
-#mbEEG 2.0
+# mbEEG 2.0
 
 js tools and library to prepare and classify EEG dataflow from 
 openViBE acquisition server and associated by timestamps with 
 stimuli dataflow from some stimuli source by abstract interface
 
-###TODO
+### TODO
 
-####keyboard
+#### keyboard
 1. Stimuli generator
     - ~~console-keyboard IPC~~
     - data structure that describes stimulation scheme
@@ -29,15 +29,15 @@ stimuli dataflow from some stimuli source by abstract interface
       - commands & functions
       - phrases
  
-####controller
+#### controller
 1. Learning
 2. Evaluation
  
-####dsprocessor
+#### dsprocessor
 1. Test on gauge dataset
 2. Pipe stimuli from keyboard
 3. Using external Math/Stat/NN libraries
  
-####ebml
+#### ebml
 1. Parser/Reader
 2. Coder/Writer

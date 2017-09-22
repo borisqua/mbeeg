@@ -17,7 +17,7 @@
       "column": 9,
       "top": 0,
       "left": -160,
-      "stimuliId": 1,
+      "stimuliId": -1,
       "groupId": 0
     },
     {
@@ -27,7 +27,7 @@
       "column": 8,
       "top": 0,
       "left": -160,
-      "stimuliId": 2,
+      "stimuliId": -1,
       "groupId": 0
     },
     {
@@ -37,7 +37,7 @@
       "column": 7,
       "top": 0,
       "left": -160,
-      "stimuliId": 3,
+      "stimuliId": -1,
       "groupId": 0
     },
     {
@@ -47,7 +47,7 @@
       "column": 6,
       "top": 0,
       "left": -160,
-      "stimuliId": 4,
+      "stimuliId": -1,
       "groupId": 0
     },
     {
@@ -57,7 +57,7 @@
       "column": 5,
       "top": 0,
       "left": -160,
-      "stimuliId": 5,
+      "stimuliId": -1,
       "groupId": 0
     },
     {
@@ -67,7 +67,7 @@
       "column": 4,
       "top": 0,
       "left": -160,
-      "stimuliId": 6,
+      "stimuliId": -1,
       "groupId": 0
     },
     {
@@ -77,7 +77,7 @@
       "column": 3,
       "top": 0,
       "left": -160,
-      "stimuliId": 7,
+      "stimuliId": -1,
       "groupId": 0
     },
     {
@@ -87,7 +87,7 @@
       "column": 2,
       "top": 0,
       "left": -160,
-      "stimuliId": 8,
+      "stimuliId": 1,
       "groupId": 0
     },
     {
@@ -97,7 +97,7 @@
       "column": 1,
       "top": 0,
       "left": -160,
-      "stimuliId": 9,
+      "stimuliId": 2,
       "groupId": 0
     },
     {
@@ -107,7 +107,7 @@
       "column": 0,
       "top": 0,
       "left": -160,
-      "stimuliId": 10,
+      "stimuliId": -1,
       "groupId": 0
     },
     {
@@ -117,7 +117,7 @@
       "column": 10,
       "top": 160,
       "left": -160,
-      "stimuliId": 11,
+      "stimuliId": -1,
       "groupId": 1
     },
     {
@@ -127,7 +127,7 @@
       "column": 9,
       "top": 160,
       "left": -160,
-      "stimuliId": 12,
+      "stimuliId": -1,
       "groupId": 1
     },
     {
@@ -137,7 +137,7 @@
       "column": 8,
       "top": 160,
       "left": -160,
-      "stimuliId": 13,
+      "stimuliId": -1,
       "groupId": 1
     },
     {
@@ -147,7 +147,7 @@
       "column": 7,
       "top": 160,
       "left": -160,
-      "stimuliId": 14,
+      "stimuliId": -1,
       "groupId": 1
     },
     {
@@ -157,7 +157,7 @@
       "column": 6,
       "top": 160,
       "left": -160,
-      "stimuliId": 15,
+      "stimuliId": -1,
       "groupId": 1
     },
     {
@@ -167,7 +167,7 @@
       "column": 5,
       "top": 160,
       "left": -160,
-      "stimuliId": 16,
+      "stimuliId": -1,
       "groupId": 1
     },
     {
@@ -177,7 +177,7 @@
       "column": 4,
       "top": 160,
       "left": -160,
-      "stimuliId": 17,
+      "stimuliId": -1,
       "groupId": 1
     },
     {
@@ -187,7 +187,7 @@
       "column": 3,
       "top": 160,
       "left": -160,
-      "stimuliId": 18,
+      "stimuliId": -1,
       "groupId": 1
     },
     {
@@ -197,7 +197,7 @@
       "column": 2,
       "top": 160,
       "left": -160,
-      "stimuliId": 19,
+      "stimuliId": -1,
       "groupId": 1
     },
     {
@@ -207,7 +207,7 @@
       "column": 1,
       "top": 160,
       "left": -160,
-      "stimuliId": 20,
+      "stimuliId": -1,
       "groupId": 1
     },
     {
@@ -217,7 +217,7 @@
       "column": 0,
       "top": 160,
       "left": -160,
-      "stimuliId": 21,
+      "stimuliId": -1,
       "groupId": 1
     },
     {
@@ -227,7 +227,7 @@
       "column": 10,
       "top": 320,
       "left": -160,
-      "stimuliId": 22,
+      "stimuliId": -1,
       "groupId": 2
     },
     {
@@ -237,7 +237,7 @@
       "column": 9,
       "top": 320,
       "left": -160,
-      "stimuliId": 23,
+      "stimuliId": -1,
       "groupId": 2
     },
     {
@@ -247,7 +247,7 @@
       "column": 8,
       "top": 320,
       "left": -160,
-      "stimuliId": 24,
+      "stimuliId": -1,
       "groupId": 2
     },
     {
@@ -257,7 +257,7 @@
       "column": 7,
       "top": 320,
       "left": -160,
-      "stimuliId": 25,
+      "stimuliId": -1,
       "groupId": 2
     },
     {
@@ -267,7 +267,7 @@
       "column": 6,
       "top": 320,
       "left": -160,
-      "stimuliId": 26,
+      "stimuliId": -1,
       "groupId": 2
     },
     {
@@ -277,7 +277,7 @@
       "column": 5,
       "top": 320,
       "left": -160,
-      "stimuliId": 27,
+      "stimuliId": -1,
       "groupId": 2
     },
     {
@@ -287,7 +287,7 @@
       "column": 4,
       "top": 320,
       "left": -160,
-      "stimuliId": 28,
+      "stimuliId": -1,
       "groupId": 2
     },
     {
@@ -297,7 +297,7 @@
       "column": 3,
       "top": 320,
       "left": -160,
-      "stimuliId": 29,
+      "stimuliId": -1,
       "groupId": 2
     },
     {
@@ -307,7 +307,7 @@
       "column": 2,
       "top": 320,
       "left": -160,
-      "stimuliId": 30,
+      "stimuliId": -1,
       "groupId": 2
     },
     {
@@ -317,7 +317,7 @@
       "column": 1,
       "top": 320,
       "left": -160,
-      "stimuliId": 31,
+      "stimuliId": -1,
       "groupId": 2
     },
     {
@@ -327,7 +327,7 @@
       "column": 0,
       "top": 320,
       "left": -160,
-      "stimuliId": 32,
+      "stimuliId": 3,
       "groupId": 2
     }
   ],
@@ -365,36 +365,7 @@
         0,
         1,
         2,
-        3,
-        4,
-        5,
-        6,
-        7,
-        8,
-        9,
-        10,
-        11,
-        12,
-        13,
-        14,
-        15,
-        16,
-        17,
-        18,
-        19,
-        20,
-        21,
-        22,
-        23,
-        24,
-        25,
-        26,
-        27,
-        28,
-        29,
-        30,
-        31,
-        32
+        3
       ],
       "dimensions": 1
     },
@@ -402,11 +373,12 @@
       "type": "consecutive"
     }
   },
-  "eeg": {
+  "signal": {
     "provider": "openViBE",
     "protocol": "TCP",
     "host": "localhost",
-    "port": 1024
+    "port": 1024,
+    "channels": [7]
   },
   "service": {
     "provider": "mbEEG",

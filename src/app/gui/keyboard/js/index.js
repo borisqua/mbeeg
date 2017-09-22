@@ -111,7 +111,7 @@ $(() => {
         stimuli.push(id);
       }
     }
-    //TODO LOADING & SAVING CONFIGURATION SHOULD BE THE RESPONSIBILITY OF CONTROLLER IN COOPERATION WITH CONSOLE RENDERER
+    //TODO LOADING & SAVING CONFIGURATION SHOULD BE IN RESPONSIBILITY OF CONTROLLER IN COOPERATION WITH CONSOLE RENDERER
     // const fs = require(`fs`);
     // fs.writeFile(`config.json`, JSON.stringify(carousel, null, 2), (err) => {
     //   if (err) throw err;

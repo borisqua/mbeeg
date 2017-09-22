@@ -85,7 +85,7 @@ class EpochsProcessor extends require(`stream`).Transform {
           features[stimulusIdx][channelIdx] = [];
         for (let samples of channel) {
           let sampleIdx = channel.indexOf(samples);
-          features[stimulusIdx][channelIdx][sampleIdx] = samples.reduce((a, b) => a + b) / samples.length; //push avg sample
+          features[stimulusIdx][channelIdx][sampleIdx] = samples.reduce((a, b) => a + b) / samples.length; //avg sample
         }
       }
     }

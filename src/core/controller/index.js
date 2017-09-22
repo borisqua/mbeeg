@@ -59,7 +59,7 @@ openvibeClient.on(`close`, () => console.log(`Open ViBE connection closed`));
 //4. Create openViBE parser
 const ovReader = new OVReader({
   ovStream: new EBMLReader({
-    ebmlSource: openvibeClient.connect(config.eeg.port, config.eeg.host, () => {
+    ebmlSource: openvibeClient.connect(config.signal.port, config.eeg.host, () => {
       console.log(`openViBE connection established`)
     }),
     ebmlCallback: provideTCP

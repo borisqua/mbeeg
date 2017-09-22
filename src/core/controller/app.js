@@ -3,6 +3,8 @@
 const
   appRoot = require(`app-root-path`)
   , config = require(`${appRoot}/config`) //1. Load configuration - config.json file with stimuli, dsp and carousel parameters
+  // , Signal = require(`${appRoot}/src/core/controller/signal`)
+  // , signalGlobalsDescriptor = new Signal({})
   , stringifier = require(`${appRoot}/src/tools/helpers`).objectsStringifier
   , Net = require('net')
   // , verdictsSocket = new Net.Socket()
@@ -48,6 +50,7 @@ const
   , OVReader = require(`${appRoot}/src/tools/openvibe/reader`) //extract samples from openViBE stream
   , samples = new OVReader({
     ovStream: openVibeJSON
+    // , signalDescriptor: signalGlobalsDescriptor
   })
   , Stimuli = require(`${appRoot}/src/core/dsprocessor/stimuli.js`) //2. Create stimuli provider for keyboard(carousel) and eeg/P300 classifier
   , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
@@ -59,7 +62,9 @@ const
   , epochs = new DSProcessor({
     stimuli: stimuli
     , eeg: samples
-    , channels: [7]
+    // , samplingRate: signalGlobalsDescriptor.samplingRate
+  //TODO to solve problem with passing sampling rate to DSProcessor
+    , channels: config.signal.channels
   })
   , EpochsProcessor = require(`${appRoot}/src/core/epprocessor`)
   , epochsProcessor = new EpochsProcessor({

@@ -12,7 +12,7 @@ class DSProcessor extends require(`stream`).Transform {
                 , channels = [1] //first channel by default
                 , learning = false
                 , epochDuration = 1000
-                , samplingRate = 250
+                , samplingRate = 128
                 , sequence = `filter, detrend`
                 , objectMode = true
               }) {
@@ -24,6 +24,7 @@ class DSProcessor extends require(`stream`).Transform {
     let currentSample = [];
     
     this.channels= channels;
+    this.samplingRate = samplingRate;
     this.learning = null;
     this.objectMode = objectMode;
     this.steps = sequence.split(/\s*,\s*/);
@@ -43,7 +44,7 @@ class DSProcessor extends require(`stream`).Transform {
       epoch.stimulusDuration = stimuli.signalDuration;
       epoch.stimulusPause = stimuli.pauseDuration;
       epoch.epochDuration = epochDuration;
-      epoch.samplingRate = samplingRate;
+      epoch.samplingRate = this.samplingRate;
       epoch.state = `raw`;//[cycle_idx]
       epoch.full = false;//[cycle_idx]
       epoch.timestamp = currentStimulus[0];//[cycle_idx]
@@ -108,11 +109,13 @@ class DSProcessor extends require(`stream`).Transform {
     
     function _addSamples(context, epoch, sample) {
       for (let ch = 1; ch < sample.length; ch++) {
-        if (context.channels.includes(ch))
-          if (epoch.channels[ch - 1] === undefined) {
-            epoch.channels[ch - 1] = [sample[ch]];
+        // if (context.channels.includes(ch))
+        let channelIndex = context.channels.indexOf(ch);
+        if (channelIndex>=0)
+          if (epoch.channels[channelIndex] === undefined) {
+            epoch.channels[channelIndex] = [sample[ch]];
           } else {
-            epoch.channels[ch - 1].push(sample[ch]);
+            epoch.channels[channelIndex].push(sample[ch]);
           }
       }
     }

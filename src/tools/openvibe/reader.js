@@ -12,17 +12,18 @@
 class OVStreamReader extends require(`stream`).Transform {
   constructor({
                 ovStream,
+                signalDescriptor = {},
                 objectMode = true
               }) {
     super({objectMode: true});
     this.objectMode = objectMode;
+    this.signalGlobals = signalDescriptor;
     this.header = {
       starttime: 0,
       samplingRate: 0,
       signal: {matrix: {dimensions: [[]]}},
       channelUnits: {matrix: {dimensions: [[]]}},
-    }
-    ;
+    };
     this.buffer = {
       length: 0,
       valueSize: 8,
@@ -32,6 +33,7 @@ class OVStreamReader extends require(`stream`).Transform {
     ovStream.on(`data`, chunk => {
         this.header.starttime = this._getChildProperties(chunk, `timestamp`).value;
         this.header.samplingRate = this._getChildProperties(chunk, `OVTK_NodeId_Header_Signal_SamplingRate`).value;
+        // console.log(this.header.samplingRate);
         if (!this.header.samplingRate) throw `OpenViBE stream error: Signal sampling rate undefined`;
         let signal = this._getChildObject(chunk, `OVTK_NodeId_Acquisition_Header_Signal`);
         if (!signal) throw `OpenViBE stream error: Signal header undefined`;
@@ -47,9 +49,8 @@ class OVStreamReader extends require(`stream`).Transform {
           this.buffer.data = Buffer.from(bufferProperties.buffer);
           
           // for (let d = 0; d < this.header.signal.matrix.dimensions.length; d++) {
-          let valueSize = this.buffer.valueSize
-          this.cursor = 0
-          ;
+          let valueSize = this.buffer.valueSize;
+          this.cursor = 0;
           for (let row = 0, rows = this.header.signal.matrix.dimensions[1].length; row < rows; row++) {
             let flowRecord = [];
             this.cursor = 0;
@@ -67,11 +68,19 @@ class OVStreamReader extends require(`stream`).Transform {
               }
               this.cursor += valueSize / 8;
             }
+            this._updateSignalDescription();
             this.write(flowRecord);
           }
         }
       }
     )
+  }
+  
+  _updateSignalDescription(){
+    this.signalGlobals = this.header.starttime;
+    this.signalGlobals = this.header.samplingRate;
+    this.signalGlobals = this.header.signal;
+    this.signalGlobals = this.header.channelUnits;
   }
   
   /**
@@ -151,6 +160,7 @@ class OVStreamReader extends require(`stream`).Transform {
     }
   }
   
+  // noinspection JSUnusedGlobalSymbols
   _transform(sampleVector, encoding, cb) {
     if (this.objectMode) {
       cb(null, sampleVector);
