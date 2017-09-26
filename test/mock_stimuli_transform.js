@@ -9,7 +9,7 @@ class Stimuli extends require(`stream`).Transform {
     super({objectMode: true});
     this.signalDuration = signalDuration;
     this.pauseDuration = pauseDuration;
-    this.stimulusCicle = signalDuration + pauseDuration;
+    this.stimulusCycleDuration = signalDuration + pauseDuration;
     this.objectMode = objectMode;
     
   }
@@ -22,7 +22,7 @@ class Stimuli extends require(`stream`).Transform {
       if (this.objectMode) cb(null, [+stimulus[0], +stimulus[1], +stimulus[2]]);
       else cb(null, `${JSON.stringify([+stimulus[0], +stimulus[1], +stimulus[2]])}\n`);
       
-    }, this.stimulusCicle);
+    }, this.stimulusCycleDuration);
   }
   
 }

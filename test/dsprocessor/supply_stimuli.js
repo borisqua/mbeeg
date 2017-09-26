@@ -6,7 +6,7 @@ class Stimuli extends Readable {
     super({objectMode});
     this.idarray = [...new Array(33).keys()];
     this.stimulus = [];
-    this.stimulusCicle = signalDuration + pauseDuration;
+    this.stimulusCycleDuration = signalDuration + pauseDuration;
     this.learning = learning;
     this._resetStimuli();
   }
@@ -24,7 +24,7 @@ class Stimuli extends Readable {
       if (this.currentStimulus++ === this.idarray.length - 1) {
         this._resetStimuli();
       }
-    }, this.stimulusCicle);
+    }, this.stimulusCycleDuration);
   }
   
   _resetStimuli() {

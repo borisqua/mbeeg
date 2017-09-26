@@ -1,6 +1,9 @@
 "use strict";
-// const
-//   fili = require('fili');
+const
+  fili = require(`fili`)
+  , json2csv = require(`json2csv`)
+  , {Transform} = require(`stream`)
+;
 
 /**
  * @class mbTools class contains tools & helper functions for operation with EBML subjects, such as variable-length integers
@@ -17,7 +20,7 @@ class mbTools {
    * @param {Array} arr - array to randomize
    * @return {Array} - randomized arr
    */
-  static randomizeArray(arr){
+  static randomizeArray(arr) {
     return arr.sort(() => { return Math.random() - 0.5; })
   }
   
@@ -132,6 +135,17 @@ class mbTools {
   }
   
   /**
+   * custom rereferencing by subtracting common average
+   * @param timeseries
+   */
+  static rereference(timeseries) {
+    let arr = timeseries.slice();
+    let avgsum = arr.reduce((a, b) => a + b) / arr.length;
+    for (let i = 0; i < arr.length; i++) arr[i] = arr[i] - avgsum;
+    return arr;
+  }
+  
+  /**
    * custom detrend of time series data
    *
    * @param {Array} timeseries - stream, buffer or object with values ot detrend
@@ -149,7 +163,8 @@ class mbTools {
     let sumx = n * (n + 1) / 2; //sum of the first n natural numbers
     let sumy = 0;
     for (let i = 0; i < n; i++) sumy += timeseries[i];
-    let sumxx = Math.pow(n, 3) / 3 + Math.pow(n, 2) / 2 + n / 6; //sum of the squares of the first n natural numbers
+    // let sumxx = Math.pow(n, 3) / 3 + Math.pow(n, 2) / 2 + n / 6; //sum of the squares of the first n natural numbers
+    let sumxx = n * (n + 1) * (2 * n + 1) / 6;//sum of the squares of the first n natural numbers
     let a = (n * sumxy - sumx * sumy) / (n * sumxx - sumx * sumx);
     let b = (sumy - a * sumx) / n;
     
@@ -226,14 +241,37 @@ class mbTools {
   
 }
 
-const stringifier = new require(`stream`).Transform({
-  objectMode: true,
-  transform(chunk, encoding, cb) {
-    cb(null, `${JSON.stringify(chunk,null,2)}\n\r`);
+class Stringifier extends Transform {
+  constructor({
+                beginWith = ``
+                , chunkBegin = ``
+                , chunksDelimiter = ``
+                , chunkEnd = ``
+                , endWith = ``
+                , indentationSpace = 0
+              }) {
+    super({objectMode: true});
+    this.chunkBegin = chunkBegin;
+    this.delimiter = chunksDelimiter;
+    this.chunkEnd = chunkEnd;
+    this.once(`data`, () => this.push(beginWith));
+    this.once(`unpipe`, () => {
+      this.push(endWith);
+      this.running = false;
+    });
+    this.running = false;
+    this.space = indentationSpace;
   }
-});
+  
+  // noinspection JSUnusedGlobalSymbols
+  _transform(chunk, encoding, cb) {
+    cb(null, `${this.running ? this.delimiter : ''}${this.chunkBegin}${JSON.stringify(chunk, null, this.space)}${this.chunkEnd}`);
+    this.running = true;
+  }
+}
+
 
 module.exports = {
   mbTools: mbTools
-  , objectsStringifier: stringifier
+  , objectsStringifier: Stringifier
 };

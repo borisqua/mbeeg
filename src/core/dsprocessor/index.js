@@ -5,15 +5,15 @@ const
   Tools = require(`${appRoot}/src/tools/helpers`).mbTools;
 
 class DSProcessor extends require(`stream`).Transform {
-//TODO channels selecting
   constructor({
                 stimuli
-                , eeg
-                , channels = [1] //first channel by default
-                , learning = false
+                , samples
+                , channels = [1] //channels selector. first channel by default, index 0 reserved for timestamp in samples input stream
+                // , learning = false
                 , epochDuration = 1000
-                , samplingRate = 128
-                , sequence = `filter, detrend`
+                , samplingRate = 128 //TODO sampling rate should be taken from samples input object
+                , processingSequence = `filter, detrend`//rereference`//, detrend` ////filter, detrend rereference``
+                , cyclesLimit = 0
                 , objectMode = true
               }) {
     super({objectMode: true});
@@ -23,24 +23,25 @@ class DSProcessor extends require(`stream`).Transform {
     let currentStimulus = [];
     let currentSample = [];
     
-    this.channels= channels;
+    this.channels = channels;
     this.samplingRate = samplingRate;
     this.learning = null;
     this.objectMode = objectMode;
-    this.steps = sequence.split(/\s*,\s*/);
+    this.processingSteps = processingSequence.split(/\s*,\s*/);
+    this.cyclesLimit = cyclesLimit;
     
     stimuli.on('data', stimulus => {
-      // currentStimulus = JSON.parse(stimulus);
       currentStimulus = stimulus;
       
       // let stimulusPeriod = stimuli.signalDuration + stimuli.pauseDuration;
-      // if (currentStimulus[0] - currentSample[0] < -stimulusPeriod) eeg.pause();
-      // else eeg.resume();
+      // if (currentStimulus[0] - currentSample[0] < -stimulusPeriod) samples.pause();
+      // else samples.resume();
       // if (currentStimulus[0] - currentSample[0] > stimulusPeriod) stimuli.pause();
       // else stimuli.resume();
       
       let epoch = {};
       epoch.key = currentStimulus[1];
+      epoch.cycle = stimuli.stimulusCycle;
       epoch.stimulusDuration = stimuli.signalDuration;
       epoch.stimulusPause = stimuli.pauseDuration;
       epoch.epochDuration = epochDuration;
@@ -62,6 +63,7 @@ class DSProcessor extends require(`stream`).Transform {
             _addSamples(this, e, s);
             if (e.channels.length && e.channels[0].length === parseInt(e.epochDuration * e.samplingRate / 1000)) {
               e.full = true;
+              if (this.cyclesLimit && this.cyclesLimit < e.cycle) this.unpipe(); //stop if output is limited
               this.write(epochsFIFO.splice(i, 1)[0]);
               i--;
               epochsFIFOlength--;
@@ -75,13 +77,13 @@ class DSProcessor extends require(`stream`).Transform {
       // console.log(`---- epochs: ${epochsFIFO.length}; samples: ${samplesFIFO.length}  ${currentStimulus[0]} ${currentSample[0]} delta(e-s): ${currentStimulus[0] - currentSample[0]}`);
     });
     
-    eeg.on('data', sample => {
+    samples.on('data', sample => {
       // currentSample = JSON.parse(sample);
       currentSample = sample;
       
       // let stimulusPeriod = stimuli.signalDuration + stimuli.pauseDuration;
-      // if (currentStimulus[0] - currentSample[0] < -stimulusPeriod) eeg.pause();
-      // else eeg.resume();
+      // if (currentStimulus[0] - currentSample[0] < -stimulusPeriod) samples.pause();
+      // else samples.resume();
       // if (currentStimulus[0] - currentSample[0] > stimulusPeriod) stimuli.pause();
       // else stimuli.resume();
       
@@ -91,6 +93,7 @@ class DSProcessor extends require(`stream`).Transform {
         let e = epochsFIFO[i];
         if (_sampleInsideEpoch(e, currentSample[0])) {
           _addSamples(this, e, currentSample);
+          // if (e.channels.length && e.channels.every(ch => ch.length === e.epochDuration * e.samplingRate / 1000)) {
           if (e.channels.length && e.channels[0].length === e.epochDuration * e.samplingRate / 1000) {
             e.full = true;
             // this.epochs.write(JSON.stringify(epochsFIFO.splice(i, 1)[0], null, 2));
@@ -111,7 +114,7 @@ class DSProcessor extends require(`stream`).Transform {
       for (let ch = 1; ch < sample.length; ch++) {
         // if (context.channels.includes(ch))
         let channelIndex = context.channels.indexOf(ch);
-        if (channelIndex>=0)
+        if (channelIndex >= 0)
           if (epoch.channels[channelIndex] === undefined) {
             epoch.channels[channelIndex] = [sample[ch]];
           } else {
@@ -123,21 +126,23 @@ class DSProcessor extends require(`stream`).Transform {
   
   // noinspection JSUnusedGlobalSymbols
   _transform(epoch, encoding, cb) {
-    
     for (let i = 0, channelsNumber = epoch.channels.length; i < channelsNumber; i++) {
-      for (let step of this.steps) {
+      for (let step of this.processingSteps) {
         switch (step) {
           case 'filter':
-            epoch.channels[i] = Tools.butterworth4Bulanov(epoch.channels[i], epoch.samplingRate, 9);
-            epoch.state = step;
+            epoch.channels[i] = Tools.butterworth4Bulanov(epoch.channels[i], epoch.samplingRate, 25);
             break;
           case 'detrend':
             epoch.channels[i] = Tools.detrend(epoch.channels[i]);
-            epoch.state = step;
+            break;
+          case 'rereference':
+            epoch.channels[i] = Tools.rereference(epoch.channels[i]);
             break;
         }
+        epoch.state = step;
       }
     }
+    // if (epoch.cycle > 0)
     if (this.objectMode)
       cb(null, epoch);//For output into objectType pipe
     else

@@ -27,7 +27,7 @@ const epochs = new DSProcessor({
     fs.createReadStream(`${appRoot}/test/dsprocessor/data/integral/stimuli45.csv`)
       .pipe(stimuliCSV)
       .pipe(stimuli),
-  eeg:
+  samples:
     fs.createReadStream(`${appRoot}/test/dsprocessor/data/integral/eeg45.csv`)
       .pipe(eegCSV)
       .pipe(eeg)

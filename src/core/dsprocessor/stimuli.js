@@ -28,7 +28,8 @@ class Stimuli extends require(`stream`).Transform {
     this.stimulus = [];
     this.signalDuration = signalDuration;
     this.pauseDuration = pauseDuration;
-    this.stimulusCicle = signalDuration + pauseDuration;
+    this.stimulusCycleDuration = signalDuration + pauseDuration;
+    this.stimulusCycle = -1;
     this.currentStimulus = 0;
     this.objectMode = objectMode;
     this.learning = learning;
@@ -58,10 +59,11 @@ class Stimuli extends require(`stream`).Transform {
         this.push(`${JSON.stringify(this.stimulus)}\n\r`);
       
       this._checkCycles();
-    }, this.stimulusCicle);
+    }, this.stimulusCycleDuration);
   }
   
   _resetStimuli() {
+    this.stimulusCycle++;
     this.currentStimulus = 0;
     return this._nextSequence(this.idarray); //randomize idarray order
   }
@@ -73,6 +75,7 @@ class Stimuli extends require(`stream`).Transform {
         this._nextTarget(this.learningArray, this.currentTargetStimulus, this.currentLearningCycle);
     }
   }
+  
 }
 
 module.exports = Stimuli;

@@ -23,13 +23,15 @@ let stimuli = new Stimuli({
 // noinspection JSUnusedLocalSymbols
 const epochs = new DSProcessor({
     stimuli:
-      fs.createReadStream(`${appRoot}/test/dsprocessor/data/integral/stimuli45.csv`)
-        .pipe(stimuliCSV)
-        .pipe(stimuli),
-    eeg:
-      fs.createReadStream(`${appRoot}/test/dsprocessor/data/integral/eeg45.csv`)
-        .pipe(eegCSV)
-        .pipe(eeg)
+    // stimuli
+    fs.createReadStream(`${appRoot}/test/dsprocessor/data/integral/stimuli45.csv`)
+      .pipe(stimuliCSV)
+      .pipe(stimuli)
+    , samples:
+    // eeg
+    fs.createReadStream(`${appRoot}/test/dsprocessor/data/integral/eeg45.csv`)
+      .pipe(eegCSV)
+      .pipe(eeg)
     , learning: false
     , stimuliNumber: 4
     , epochDuration: 1000
@@ -39,6 +41,6 @@ const epochs = new DSProcessor({
     , objectMode: false
     
   })
-    .pipe(process.stdout)
+  .pipe(process.stdout)
 ;
 

@@ -68,7 +68,7 @@ class OVStreamReader extends require(`stream`).Transform {
               }
               this.cursor += valueSize / 8;
             }
-            this._updateSignalDescription();
+            // this._updateSignalDescription();
             this.write(flowRecord);
           }
         }
@@ -76,12 +76,12 @@ class OVStreamReader extends require(`stream`).Transform {
     )
   }
   
-  _updateSignalDescription(){
-    this.signalGlobals = this.header.starttime;
-    this.signalGlobals = this.header.samplingRate;
-    this.signalGlobals = this.header.signal;
-    this.signalGlobals = this.header.channelUnits;
-  }
+  // _updateSignalDescription(){
+  //   this.signalGlobals = this.header.starttime;
+  //   this.signalGlobals = this.header.samplingRate;
+  //   this.signalGlobals = this.header.signal;
+  //   this.signalGlobals = this.header.channelUnits;
+  // }
   
   /**
    * getChildProperties looks for propertyName in the element hierarchy and returns {type, size, value} of first found
