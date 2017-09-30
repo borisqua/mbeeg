@@ -1,6 +1,7 @@
 "use strict";
+// C:/Users/Boris/YandexDisk/localhost.chrome
 // const
-//   appRoot = require(`app-root-path`)
+//   appRoot = require('app-root-path')
 // ;
 
 
@@ -9,7 +10,7 @@
  * into simple eeg samples stream {timestamp, ch0, ch1, ch2, ..., chN} and provides methods that returns properties of
  * openViBE stream, such as samplingRate, data matrix and description of its dimensions, sizes, column/row names etc.
  */
-class OVStreamReader extends require(`stream`).Transform {
+class OVStreamReader extends require('stream').Transform {
   constructor({
                 ovStream,
                 signalDescriptor = {},

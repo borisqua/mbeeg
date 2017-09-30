@@ -1,6 +1,6 @@
 "use strict";
 
-class Stimuli extends require(`stream`).Transform {
+class Stimuli extends require('stream').Transform {
   constructor({
                 objectMode = true,
                 signalDuration = 0,

@@ -1,10 +1,10 @@
 "use strict";
 let result = {};
 const
-  fs = require(`fs`),
-  split2 = require(`split2`),
-  decoder = require(`string_decoder`),
-  {Transform, Writable} = require(`stream`),
+  fs = require('fs'),
+  split2 = require('split2'),
+  decoder = require('string_decoder'),
+  {Transform, Writable} = require('stream'),
   lineToArray = new Transform({
     objectMode: true,
     transform(line, encoding, callback) {

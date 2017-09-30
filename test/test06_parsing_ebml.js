@@ -1,6 +1,6 @@
 "use strict";
 const
-  appRoot = require(`app-root-path`)
+  appRoot = require('app-root-path')
   , Client = require('net').Socket()
   , EBMLReader = require(`${appRoot}/src/tools/ebml/reader`)
   , OVReader = require(`${appRoot}/src/tools/openvibe/reader`)

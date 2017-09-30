@@ -1,8 +1,8 @@
 "use strict";
 const
-  appRoot = require(`app-root-path`)
-  , fs = require(`fs`)
-  , json2csv = require(`json2csv`)
+  appRoot = require('app-root-path')
+  , fs = require('fs')
+  , json2csv = require('json2csv')
   , log = require(`${appRoot}/epochs`);
 
 let

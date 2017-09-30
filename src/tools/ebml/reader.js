@@ -1,9 +1,9 @@
 "use strict";
 
 const
-  appRoot = require(`app-root-path`),
-  Tools = require(`${appRoot}/src/tools/helpers`).mbTools,
-  ebmlDictionary = require(`${appRoot}/src/tools/ebml/ebml_dictionary`)
+  appRoot = require('app-root-path'),
+  {Tools} = require('mbeeg'),
+  ebmlDictionary = require('./ebml_dictionary')
 ;
 
 /**
@@ -11,7 +11,7 @@ const
  * that extracts pure binary ebml elements, and then provide Readable stream interface with
  * ebml parsed to openViBE stream objects in json format
  */
-class EBMLReader extends require(`stream`).Transform {
+class EBMLReader extends require('stream').Transform {
   constructor({
                 ebmlSource, //some input stream e.g. TCP or fs readable stream
                 ebmlCallback, //input stream parser. It should return pure & aligned ebml byte-stream

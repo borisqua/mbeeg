@@ -1,5 +1,5 @@
 "use strict";
-const python = require(`child_process`).spawn(`python`,[`./test.py`, [`-u`, `-i`]]);
+const python = require('child_process').spawn('python',['./test.py', ['-u', '-i']]);
 
 let
   data = [1,2,3,4,5,6,7,8,9],

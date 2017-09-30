@@ -1,12 +1,30 @@
 "use strict";
 //TODO tests for each step of controller algorithm
 const
-  appRoot = require(`app-root-path`)
+  appRoot = require('app-root-path')
   , Net = require('net')
-  , fs = require(`fs`)
-  // , config = require(`${appRoot}/config`) //1. Load configuration - config.json file with stimuli, dsp and carousel parameters
-  , config = require(`./config`) //1. Load configuration - config.json file with stimuli, dsp and carousel parameters
-  , Stringifier = require(`${appRoot}/src/tools/helpers`).objectsStringifier
+  , fs = require('fs')
+  , {Stringifier, NTVerdictStringifier, Tools} = require('mbeeg')
+  // , config = require('${appRoot}/config`) //1. Load configuration - config.json file with stimuli, dsp and carousel parameters
+  // , config = require('./config') //1. Load configuration - config.json file with stimuli, dsp and carousel parameters
+  , config = Tools.loadConfiguration(`config.json`)
+  // , Stringifier = require(`${appRoot}/src/tools/helpers`).Stringifier //use in node mode
+  , ntrainerStringifier = new NTVerdictStringifier({
+    chunkBegin: `{\n"class": "ru.itu.parcus.modules.neurotrainer.modules.mberpxchg.dto.MbeegEventClassifierResult",
+    "cells": [`
+    , chunkEnd: `]}\n`
+    , chunksDelimiter: `,`
+    , indentationSpace: 2
+    , stringifyAll: true
+    , fields: [
+      {
+        name: "class",
+        type: "literal",
+        content: "ru.itu.parcus.modules.neurotrainer.modules.mberpxchg.dto.MbeegCellWeight"
+      },
+      {name: "cellId", type: "id"},
+      {name: "weight", type: "value"}]
+  })
   , plainStringifier = new Stringifier({
     chunkEnd: `\n\r`
   })
@@ -29,7 +47,9 @@ const
   })
   , epochsStringifier = new Stringifier({
     beginWith: `{"epochs": [\n`
+    , chunkBegin: `\n\r`
     , chunksDelimiter: `,`
+    , chunkEnd: `\n\r`
     , endWith: `]}`
     // , indentationSpace: 2
   })
@@ -82,41 +102,50 @@ const
       }
     }
   }
-  , EBMLReader = require(`${appRoot}/src/tools/ebml/reader`) //parse from ebml to json
+  
+  // , EBMLReader = require(`${appRoot}/src/tools/ebml/reader`) //parse from ebml to json//Use in node mode
+  , EBMLReader = require('C:/Users/Boris/YandexDisk/localhost.chrome/src/tools/ebml/reader') //parse from ebml to json//Use in node mode
   , openVibeJSON = new EBMLReader({
-    ebmlSource: openVibeClient.connect(1024, 'localhost', () => {})
+    ebmlSource: openVibeClient.connect(config.signal.port, config.signal.host, () => {})
     , ebmlCallback: provideTCP
   })
-  , OVReader = require(`${appRoot}/src/tools/openvibe/reader`) //extract samples from openViBE stream
+  , OVReader = require('C:/Users/Boris/YandexDisk/localhost.chrome/src/tools/openvibe/reader') //extract samples from openViBE stream
+  // , OVReader = require(`${appRoot}/src/tools/openvibe/reader`) //extract samples from openViBE stream
   , samples = new OVReader({
     ovStream: openVibeJSON
     // , signalDescriptor: signalGlobalsDescriptor
   })
-  , Stimuli = require(`${appRoot}/src/core/dsprocessor/stimuli.js`) //2. Create stimuli provider for keyboard(carousel) and eeg/P300 classifier
+  // , Stimuli = require(`${appRoot}/src/core/dsprocessor/stimuli.js`) //2. Create stimuli provider for keyboard(carousel) and eeg/P300 classifier
+  , Stimuli = require('C:/Users/Boris/YandexDisk/localhost.chrome/src/core/dsprocessor/stimuli.js') //2. Create stimuli provider for keyboard(carousel) and eeg/P300 classifier
   , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
     signalDuration: config.stimulation.duration
     , pauseDuration: config.stimulation.pause
     , stimuliArray: config.stimulation.sequence.stimuli
   })
-  , DSProcessor = require(`${appRoot}/src/core/dsprocessor`)
+  , DSProcessor = require('C:/Users/Boris/YandexDisk/localhost.chrome/src/core/dsprocessor')
+  // , DSProcessor = require(`${appRoot}/src/core/dsprocessor`)
   , epochs = new DSProcessor({
     stimuli: stimuli
     , samples: samples
-    // , cyclesLimit: 1
+    , cyclesLimit: config.signal.cycles
     // , samplingRate: signalGlobalsDescriptor.samplingRate
     //TODO to solve problem with passing sampling rate to DSProcessor
     , channels: config.signal.channels
+    , processingSteps: ``
   })
-  , EpochsProcessor = require(`${appRoot}/src/core/epprocessor`)
+  , EpochsProcessor = require('C:/Users/Boris/YandexDisk/localhost.chrome/src/core/epprocessor')
+  // , EpochsProcessor = require(`${appRoot}/src/core/epprocessor`)
   , featuresProcessor = new EpochsProcessor({
     epochs: epochs
     , moving: false
     , depth: 5
     , stimuliNumber: config.stimulation.sequence.stimuli.length
   })
-  , Classifier = require(`${appRoot}/src/core/classifier`)
+  , Classifier = require('C:/Users/Boris/YandexDisk/localhost.chrome/src/core/classifier')
+  // , Classifier = require(`${appRoot}/src/core/classifier`)
   , classifier = new Classifier({})
-  , DecisionMaker = require(`${appRoot}/src/core/decisionmaker`)
+  , DecisionMaker = require('C:/Users/Boris/YandexDisk/localhost.chrome/src/core/decisionmaker')
+  // , DecisionMaker = require(`${appRoot}/src/core/decisionmaker`)
   , decisions = new DecisionMaker({
     start: config.decision.start
     , maxLength: config.decision.queue
@@ -130,55 +159,61 @@ const
 openVibeClient.on(`close`, () => console.log(`Open ViBE connection closed`));
 
 /*const
-  json2csv = require(`json2csv`)
+  json2csv = require('json2csv')
   , epochsFromFile = require(`${appRoot}/epochs`);
 for(let key of epochs){
   console.log(key)
 }*/
 const
-  {Channels} = require(`${appRoot}/test/testhelpers`)
+  // {Channels} = require(`${appRoot}/test/testhelpers`)
+  {Channels} = require('C:/Users/Boris/YandexDisk/localhost.chrome/test/testhelpers')
   , channelsMonitor = new Channels({
     // keys: [20],
     // channels: [1] //, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
   });
-let fields = {};
+
+// let fields = {};
+
 
 // stimuli.pipe(plainStringifier).pipe(process.stdout);//test
-// stimuli.pipe(stimulusStringifier).pipe(process.stdout);//test
+stimuli.pipe(stimulusStringifier).pipe(process.stdout);//test
 // openVibeJSON.pipe(ovStringifier).pipe(process.stdout);
 // samples.pipe(plainStringifier).pipe(process.stdout);
 // samples.pipe(sampleStringifier).pipe(process.stdout);
-// epochs.pipe(channelsMonitor).pipe(process.stdout);
+epochs.pipe(channelsMonitor).pipe(process.stdout);
 // epochs.pipe(epochsStringifier).pipe(process.stdout);
 // epochsStringifier.pipe(fs.createWriteStream(`${appRoot}/epochs.json`));
 // featuresProcessor.pipe(plainStringifier).pipe(process.stdout);
 // featuresProcessor.pipe(featuresStringifier).pipe(process.stdout);
 // featuresProcessor.pipe(classifier).pipe(plainStringifier).pipe(process.stdout);
-// featuresProcessor.pipe(classifier).pipe(verdictStringifier).pipe(process.stdout);
-// featuresProcessor.pipe(classifier).pipe(decisions).pipe(decisionStringifier).pipe(process.stdout);
+featuresProcessor.pipe(classifier).pipe(verdictStringifier).pipe(process.stdout);
+featuresProcessor.pipe(classifier).pipe(decisions).pipe(decisionStringifier).pipe(process.stdout);
+// featuresProcessor.pipe(classifier).pipe(ntrainerStringifier).pipe(process.stdout);
 
-const
-  cli = require(`commander`)
-  , colors = require(`colors`)
-;
-
-cli.version(`0.0.1`)
-  // .usage(`[command] [options]`)
-  .description(`mbEEG server writes json objects of stimuli, verdicts and decisions into specified TCP socket`);
-  // .option(`-s, --stimuli`, `show stimuli data flow in console`)
-  // .option(`-o, --open-vibe`, 'show openViBE stream json flow in console')
-  // .option(`-m, --samples`, `show signal samples data flow in console`) //, /^(raw|filtered|detrended)$/i, `detrended`)
-  // .option(`-e, --epochs`, `show epochs json flow in console`)
-  // .option(`-f, --features`, `show features json flow in console`)
-  // .option(`-v, --verdict`, `show classification data flow in console`)
-  // .option(`-d, --decision`, `show final decision on current cycle in console`)
-  // .option(`-j, --json`, `show data in JSON if available`)
-  // .parse(process.argv);
-
+// const
+//   cli = require('commander')
+//   , colors = require('colors')
+// ;
+//
+// cli.version(`0.0.1`)
+//   .usage(`[command] [options]`)
+//   .description(`mbEEG server writes json objects of stimuli, verdicts and decisions into specified TCP socket`)
+//   .option(`-s, --stimuli`, `show stimuli data flow in console`)
+//   .option(`-o, --open-vibe`, 'show openViBE stream json flow in console')
+//   .option(`-m, --samples`, `show signal samples data flow in console`) //, /^(raw|filtered|detrended)$/i, `detrended`)
+//   .option(`-e, --epochs`, `show epochs json flow in console`)
+//   .option(`-f, --features`, `show features json flow in console`)
+//   .option(`-v, --verdict`, `show classification data flow in console`)
+//   .option(`-d, --decision`, `show final decision on current cycle in console`)
+//   .option(`-j, --json`, `show data in JSON if available`)
+//   .parse(process.argv);
+//
 // cli.command(`server <port>`).description(`run mbEEG TCP server`).action((port, options) => {});
 // cli.command(`server`)
 //   .description(`run mbEEG TCP server`)
 //   .action(() => {
+    
+    
     const mbEEGServer = Net.createServer(socket => {
       //5. Create and run TCP server to communicate between main process of app and renderer process of keyboard (carousel)
       console.log(`client ${socket.remoteAddress}:${socket.remotePort} connected`);
@@ -204,25 +239,27 @@ cli.version(`0.0.1`)
     });
     
     mbEEGServer.on(`close`, () => console.log(`mbEEG sever verdict service closed.`));
+    
+    
   // });
-/*cli.command(`console`)
-  .description(`write mbEEG flows into standard output. \n\r                   If you choose --open-vibe option others options will be disabled.`)
-  .action(() => {
-    if (cli.stimuli)
-      if (cli.json) stimuli.pipe(stimulusStringifier).pipe(process.stdout);//test
-      else stimuli.pipe(plainStringifier).pipe(process.stdout);//test
-    if (cli.openVibe) openVibeJSON.pipe(ovStringifier).pipe(process.stdout);
-    if (cli.samples)
-      if (cli.json) samples.pipe(sampleStringifier).pipe(process.stdout);
-      else samples.pipe(plainStringifier).pipe(process.stdout);
-    if (cli.epochs) epochs.pipe(epochsStringifier).pipe(process.stdout);
-    if (cli.features)
-      if (cli.json) featuresProcessor.pipe(featuresStringifier).pipe(process.stdout);
-      else featuresProcessor.pipe(plainStringifier).pipe(process.stdout);
-    if (cli.verdict)
-      if (cli.json) featuresProcessor.pipe(classifier).pipe(verdictStringifier).pipe(process.stdout);
-      else featuresProcessor.pipe(classifier).pipe(plainStringifier).pipe(process.stdout);
+// cli.command(`console`)
+//   .description(`write mbEEG flows into standard output. \n\r                   If you choose --open-vibe option others options will be disabled.`)
+//   .action(() => {
+//     if (cli.stimuli)
+//       if (cli.json) stimuli.pipe(stimulusStringifier).pipe(process.stdout);//test
+//       else stimuli.pipe(plainStringifier).pipe(process.stdout);//test
+//     if (cli.openVibe) openVibeJSON.pipe(ovStringifier).pipe(process.stdout);
+//     if (cli.samples)
+//       if (cli.json) samples.pipe(sampleStringifier).pipe(process.stdout);
+//       else samples.pipe(plainStringifier).pipe(process.stdout);
+//     if (cli.epochs) epochs.pipe(epochsStringifier).pipe(process.stdout);
+//     if (cli.features)
+//       if (cli.json) featuresProcessor.pipe(featuresStringifier).pipe(process.stdout);
+//       else featuresProcessor.pipe(plainStringifier).pipe(process.stdout);
+//     if (cli.verdict)
+//       if (cli.json) featuresProcessor.pipe(classifier).pipe(verdictStringifier).pipe(process.stdout);
+//       else featuresProcessor.pipe(classifier).pipe(plainStringifier).pipe(process.stdout);
 // featuresProcessor.pipe(classifier).pipe(decisions).pipe(decisionStringifier).pipe(process.stdout);
-  });
+  // });
 // cli.parse(process.argv);
-if (process.argv.length < 3) cli.help(/!*text=>colors.green(text)*!/);*/
+// if (process.argv.length < 3) cli.help(/!*text=>colors.green(text)*!/);

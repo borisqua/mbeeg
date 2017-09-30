@@ -1,5 +1,5 @@
 "use strict";
-const {Readable} = require(`stream`);
+const {Readable} = require('stream');
 
 class Stimuli extends Readable {
   constructor({signalDuration = 130, pauseDuration = 170, learning = false, objectMode= true }) {

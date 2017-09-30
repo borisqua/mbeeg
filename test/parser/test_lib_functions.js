@@ -1,7 +1,7 @@
 'use strict';
 const
 // Debug = require('debug')('mberp:test:helper'),
-  appRoot = require(`app-root-path`),
+  appRoot = require('app-root-path'),
   Helper = require(`${appRoot}/src/tools/parser/ebml/helper`),
   buffer = [];
 

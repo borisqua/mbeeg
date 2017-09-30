@@ -1,9 +1,8 @@
 "use strict";
 const
-  appRoot = require(`app-root-path`)
-  , {app, BrowserWindow, Menu, ipcMain, globalShortcut} = require('electron')
-  , template = require(`${appRoot}/src/app/menu`)
-  // , ipcController = require(`child_process`).fork(`${appRoot}/src/core/controller/index.js`)
+  {app, BrowserWindow, Menu, ipcMain, globalShortcut} = require('electron')
+  , template = require(`./app/menu`)
+  // , ipcController = require('child_process').fork(`${appRoot}/src/core/controller/index.js`)
 ;
 
 let winMain, winKeyboard, winConsole //winDebuggerLog;// Keep a global reference of the windows objects, if you don't, the window will be closed automatically when the JavaScript object is garbage collected.
@@ -13,7 +12,7 @@ let winMain, winKeyboard, winConsole //winDebuggerLog;// Keep a global reference
 ;
 
 function createWindows() {
-  const window = require(`${appRoot}/src/app/window`);
+  const window = require(`./app/window`);
   // Menu.setApplicationMenu(menu);
   
   winMain = window({

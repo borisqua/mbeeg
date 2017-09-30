@@ -1,8 +1,10 @@
 "use strict";
 const
-  {Transform} = require(`stream`)
-  , appRoot = require(`app-root-path`)
-  , log = require(`${appRoot}/epochs`)
+  {Transform} = require('stream')
+  , appRoot = require('app-root-path')
+// C:/Users/Boris/YandexDisk/localhost.chrome
+//   , log = require(`${appRoot}/epochs`)
+//   , log = require('C:/Users/Boris/YandexDisk/localhost.chrome/epochs')
 ;
 
 class Channels extends Transform {
@@ -18,7 +20,7 @@ class Channels extends Transform {
   // noinspection JSUnusedGlobalSymbols
   _transform(epoch, encoding, cb) {
     if (!this.keys.length || this.keys.includes(epoch.key)) {
-      let result = ``; //`Cycle: ${epoch.cycle}\n`;
+      let result = `Cycle: ${epoch.cycle} - `;
       for (let chN = 0; chN < epoch.channels.length; chN++) {
         if (!this.channels.length || this.channels.includes(chN)) {
           let fieldName = `key${('0' + epoch.key).substr(-2)}::ch${('0' + chN).substr(-2)}`;

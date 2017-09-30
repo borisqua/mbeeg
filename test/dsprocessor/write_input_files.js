@@ -1,7 +1,7 @@
 "use strict";
 const
-  fs = require(`fs`),
-  csv = require(`csv-streamify`);
+  fs = require('fs'),
+  csv = require('csv-streamify');
 
 let
   n = process.argv,

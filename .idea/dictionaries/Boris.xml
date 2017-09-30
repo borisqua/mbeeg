@@ -13,6 +13,7 @@
       <w>detrending</w>
       <w>dspclient</w>
       <w>dsprocessor</w>
+      <w>dspsteps</w>
       <w>ebml</w>
       <w>endian</w>
       <w>endianness</w>
@@ -27,6 +28,8 @@
       <w>lightgrey</w>
       <w>lowpass</w>
       <w>mberp</w>
+      <w>neuro</w>
+      <w>objectifier</w>
       <w>olength</w>
       <w>ovprovider</w>
       <w>passthrough</w>

@@ -1,9 +1,9 @@
 "use strict";
 const
-  appRoot = require(`app-root-path`)
-  , fs = require(`fs`)
-  , Stimuli = require(`${appRoot}/test/mock_stimuli_transform`)
-  , stimuliCSV = require(`csv-streamify`)({objectMode: true})
+  appRoot = require('app-root-path')
+  , fs = require('fs')
+  , {Stimuli} = require('mbeeg')
+  , stimuliCSV = require('csv-streamify')({objectMode: true})
 ;
 
 let stimuli = new Stimuli({

@@ -1,7 +1,7 @@
 "use strict";
 const
-  appRoot = require(`app-root-path`)
-  , stringifier = require(`${appRoot}/src/tools/helpers`).objectsStringifier
+  appRoot = require('app-root-path')
+  , stringifier = require(`${appRoot}/src/tools/helpers`).Stringifier
   , Client = require('net').Socket()
   , EBMLReader = require(`${appRoot}/src/tools/ebml/reader`)
   , OVReader = require(`${appRoot}/src/tools/openvibe/reader`)

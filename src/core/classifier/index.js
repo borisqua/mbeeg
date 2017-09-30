@@ -1,9 +1,9 @@
 "use strict";
 const
-  appRoot = require(`app-root-path`),
-  Tools = require(`${appRoot}/src/tools/helpers`).mbTools;
+  appRoot = require('app-root-path'),
+  {Tools} = require('mbeeg');
 
-class Classifier extends require(`stream`).Transform {
+class Classifier extends require('stream').Transform {
   constructor({
                 method = (feature, start = 0, end = feature.length, channel = 0) =>
                   feature[channel].slice(start, end).reduce((acc, val) => Math.abs(acc + val), 0),

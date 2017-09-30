@@ -1,5 +1,5 @@
 "use strict";
-const {spawn} = require(`child_process`);
+const {spawn} = require('child_process');
 let a = [...new Array(4).keys()].map(i => [...new Array(5).keys()].map(i => 0));
 for (let d = 1; d < 5; d++) {
   for (let f = 1; f < 6; f++) {

@@ -1,10 +1,10 @@
 "use strict";
 const
-  // merge2 = require(`merge2`),
-  appRoot = require(`app-root-path`),
-  fs = require(`fs`),
-  stimuliCSV = require(`csv-streamify`)({objectMode: true}),
-  eegCSV = require(`csv-streamify`)({objectMode: true}),
+  // merge2 = require('merge2'),
+  appRoot = require('app-root-path'),
+  fs = require('fs'),
+  stimuliCSV = require('csv-streamify')({objectMode: true}),
+  eegCSV = require('csv-streamify')({objectMode: true}),
   EEG = require(`${appRoot}/src/core/dsprocessor/eeg.js`),
   Stimuli = require(`${appRoot}/test/mock_stimuli_transform.js`),
   Classifier = require(`${appRoot}/src/core/classifier`),

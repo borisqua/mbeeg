@@ -1,11 +1,11 @@
 "use strict";
 
 const
-  appRoot = require(`app-root-path`)
-  , csv = require(`csv-streamify`)
+  appRoot = require('app-root-path')
+  , csv = require('csv-streamify')
   , parser = csv({ objectMode: true })
-  , {Readable} = require(`stream`)
-  , fs = require(`fs`)
+  , {Readable} = require('stream')
+  , fs = require('fs')
 ;
 
 class EEG extends Readable {

@@ -1,8 +1,8 @@
 "use strict";
 const
-  appRoot = require(`app-root-path`),
-  fs = require(`fs`),
-  eegCSV = require(`csv-streamify`)({objectMode: true}),
+  appRoot = require('app-root-path'),
+  fs = require('fs'),
+  eegCSV = require('csv-streamify')({objectMode: true}),
   EEG = require(`${appRoot}/src/core/dsprocessor/eeg.js`)
 ;
 

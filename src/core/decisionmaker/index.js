@@ -1,11 +1,13 @@
 "use strict";
 const
-  appRoot = require(`app-root-path`)
-  , config = require(`${appRoot}/config`)
-  , Matrix = require(`ml-matrix`)
+  appRoot = require('app-root-path')
+// C:/Users/Boris/YandexDisk/localhost.chrome
+//   , config = require(`${appRoot}/config`)
+  , config = require('C:/Users/Boris/YandexDisk/localhost.chrome/config')
+  , Matrix = require('ml-matrix')
 ;
 
-class DecisionMaker extends require(`stream`).Transform {
+class DecisionMaker extends require('stream').Transform {
   constructor({
                 start = 2
                 , maxLength = 5//12

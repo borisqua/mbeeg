@@ -1,6 +1,6 @@
 "use strict";
 
-class EEG extends require(`stream`).Transform {
+class EEG extends require('stream').Transform {
   /**
    *
    * @param {Number} samplingRate - digital signal sampling rate

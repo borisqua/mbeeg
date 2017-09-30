@@ -1,7 +1,7 @@
 "use strict";
 const
-  fs = require(`fs`),
-  csv = require(`csv`),
+  fs = require('fs'),
+  csv = require('csv'),
   dsProcessor = require(`./core/dsprocessor`);
 
 let

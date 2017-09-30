@@ -1,13 +1,14 @@
 "use strict";
+
 const
-  appRoot = require(`app-root-path`)
-  , {ipcRenderer} = require(`electron`)
+  {Tools} = require('mbeeg')
+  , {ipcRenderer} = require('electron')
 ;
 
 $(() => {
   let
-    config = require(`${appRoot}/config`),
-    viewport, timestamp, keys, groups, stimuli,
+    config = Tools.loadConfiguration(`config.json`)
+    , viewport, timestamp, keys, groups, stimuli,
     length, velocity, boxDelay,
     timeLines;
   
@@ -129,7 +130,7 @@ $(() => {
       }
     }
     //TODO LOADING & SAVING CONFIGURATION SHOULD BE IN RESPONSIBILITY OF CONTROLLER IN COOPERATION WITH CONSOLE RENDERER
-    const fs = require(`fs`);
+    const fs = require('fs');
     fs.writeFile(`config.json`, JSON.stringify(config, null, 2), (err) => {
       if (err) throw err;
     });

@@ -1,6 +1,6 @@
 "use strict";
 const
-  {ipcRenderer} = require(`electron`);
+  {ipcRenderer} = require('electron');
 
 $(()=> {
   $(`.button#carousel`).focus();

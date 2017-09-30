@@ -23,8 +23,10 @@
     "host": "localhost",
     "port": 1024,
     "channels": [
-      7
-    ]
+      2
+    ],
+    "dspsteps":"filter, detrend",
+    "cycles":0
   },
   "decision": {
     "start": 2,
@@ -79,6 +81,296 @@
         "left": -160,
         "stimuliId": 3,
         "groupId": 0
+      },
+      {
+        "id": 4,
+        "symbol": "Д",
+        "row": 0,
+        "column": 6,
+        "top": 0,
+        "left": -160,
+        "stimuliId": 4,
+        "groupId": 0
+      },
+      {
+        "id": 5,
+        "symbol": "Е",
+        "row": 0,
+        "column": 5,
+        "top": 0,
+        "left": -160,
+        "stimuliId": 5,
+        "groupId": 0
+      },
+      {
+        "id": 6,
+        "symbol": "Ё",
+        "row": 0,
+        "column": 4,
+        "top": 0,
+        "left": -160,
+        "stimuliId": 6,
+        "groupId": 0
+      },
+      {
+        "id": 7,
+        "symbol": "Ж",
+        "row": 0,
+        "column": 3,
+        "top": 0,
+        "left": -160,
+        "stimuliId": 7,
+        "groupId": 0
+      },
+      {
+        "id": 8,
+        "symbol": "З",
+        "row": 0,
+        "column": 2,
+        "top": 0,
+        "left": -160,
+        "stimuliId": 8,
+        "groupId": 0
+      },
+      {
+        "id": 9,
+        "symbol": "И",
+        "row": 0,
+        "column": 1,
+        "top": 0,
+        "left": -160,
+        "stimuliId": 9,
+        "groupId": 0
+      },
+      {
+        "id": 10,
+        "symbol": "Й",
+        "row": 0,
+        "column": 0,
+        "top": 0,
+        "left": -160,
+        "stimuliId": 10,
+        "groupId": 0
+      },
+      {
+        "id": 11,
+        "symbol": "К",
+        "row": 1,
+        "column": 10,
+        "top": 160,
+        "left": -160,
+        "stimuliId": 11,
+        "groupId": 1
+      },
+      {
+        "id": 12,
+        "symbol": "Л",
+        "row": 1,
+        "column": 9,
+        "top": 160,
+        "left": -160,
+        "stimuliId": 12,
+        "groupId": 1
+      },
+      {
+        "id": 13,
+        "symbol": "М",
+        "row": 1,
+        "column": 8,
+        "top": 160,
+        "left": -160,
+        "stimuliId": 13,
+        "groupId": 1
+      },
+      {
+        "id": 14,
+        "symbol": "Н",
+        "row": 1,
+        "column": 7,
+        "top": 160,
+        "left": -160,
+        "stimuliId": 14,
+        "groupId": 1
+      },
+      {
+        "id": 15,
+        "symbol": "О",
+        "row": 1,
+        "column": 6,
+        "top": 160,
+        "left": -160,
+        "stimuliId": 15,
+        "groupId": 1
+      },
+      {
+        "id": 16,
+        "symbol": "П",
+        "row": 1,
+        "column": 5,
+        "top": 160,
+        "left": -160,
+        "stimuliId": 16,
+        "groupId": 1
+      },
+      {
+        "id": 17,
+        "symbol": "Р",
+        "row": 1,
+        "column": 4,
+        "top": 160,
+        "left": -160,
+        "stimuliId": 17,
+        "groupId": 1
+      },
+      {
+        "id": 18,
+        "symbol": "С",
+        "row": 1,
+        "column": 3,
+        "top": 160,
+        "left": -160,
+        "stimuliId": 18,
+        "groupId": 1
+      },
+      {
+        "id": 19,
+        "symbol": "Т",
+        "row": 1,
+        "column": 2,
+        "top": 160,
+        "left": -160,
+        "stimuliId": 19,
+        "groupId": 1
+      },
+      {
+        "id": 20,
+        "symbol": "У",
+        "row": 1,
+        "column": 1,
+        "top": 160,
+        "left": -160,
+        "stimuliId": 20,
+        "groupId": 1
+      },
+      {
+        "id": 21,
+        "symbol": "Ф",
+        "row": 1,
+        "column": 0,
+        "top": 160,
+        "left": -160,
+        "stimuliId": 21,
+        "groupId": 1
+      },
+      {
+        "id": 22,
+        "symbol": "X",
+        "row": 2,
+        "column": 10,
+        "top": 320,
+        "left": -160,
+        "stimuliId": 22,
+        "groupId": 2
+      },
+      {
+        "id": 23,
+        "symbol": "Ц",
+        "row": 2,
+        "column": 9,
+        "top": 320,
+        "left": -160,
+        "stimuliId": 23,
+        "groupId": 2
+      },
+      {
+        "id": 24,
+        "symbol": "Ч",
+        "row": 2,
+        "column": 8,
+        "top": 320,
+        "left": -160,
+        "stimuliId": 24,
+        "groupId": 2
+      },
+      {
+        "id": 25,
+        "symbol": "Ш",
+        "row": 2,
+        "column": 7,
+        "top": 320,
+        "left": -160,
+        "stimuliId": 25,
+        "groupId": 2
+      },
+      {
+        "id": 26,
+        "symbol": "Щ",
+        "row": 2,
+        "column": 6,
+        "top": 320,
+        "left": -160,
+        "stimuliId": 26,
+        "groupId": 2
+      },
+      {
+        "id": 27,
+        "symbol": "Ъ",
+        "row": 2,
+        "column": 5,
+        "top": 320,
+        "left": -160,
+        "stimuliId": 27,
+        "groupId": 2
+      },
+      {
+        "id": 28,
+        "symbol": "Ы",
+        "row": 2,
+        "column": 4,
+        "top": 320,
+        "left": -160,
+        "stimuliId": 28,
+        "groupId": 2
+      },
+      {
+        "id": 29,
+        "symbol": "Ь",
+        "row": 2,
+        "column": 3,
+        "top": 320,
+        "left": -160,
+        "stimuliId": 29,
+        "groupId": 2
+      },
+      {
+        "id": 30,
+        "symbol": "Э",
+        "row": 2,
+        "column": 2,
+        "top": 320,
+        "left": -160,
+        "stimuliId": 30,
+        "groupId": 2
+      },
+      {
+        "id": 31,
+        "symbol": "Ю",
+        "row": 2,
+        "column": 1,
+        "top": 320,
+        "left": -160,
+        "stimuliId": 31,
+        "groupId": 2
+      },
+      {
+        "id": 32,
+        "symbol": "Я",
+        "row": 2,
+        "column": 0,
+        "top": 320,
+        "left": -160,
+        "stimuliId": 32,
+        "groupId": 2
       }
     ],
     "groups": [
