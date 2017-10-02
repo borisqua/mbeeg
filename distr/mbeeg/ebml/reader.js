@@ -112,64 +112,65 @@ class EBMLReader extends require('stream').Transform {
     //if element type isn't data type then open nested element (recursive call of _openElement)
     //else pass element data to callback object that knows what to do with data of that element type
     let
-      elementId = this._readTag(),
-      elementSize = this._readTag();
-    if (!elementId || !elementSize) return null;
-    
-    let
-      id = Tools.deleteLeadZeros(elementId.hexString).toUpperCase(),
-      // id = elementId.hexString.toUpperCase(),
-      name = ebmlDictionary[id].name,
-      type = ebmlDictionary[id].type,
-      size = parseInt(elementSize.hexString, 16),
-      // data = !!size && type !== `master` ? this._readData(size, type) : null,
-      ebml = {}
+      id = 0
+      , elementId = 0
+      , elementSize = 0
+      , name
+      , type
+      , size
+      , ebml = {}
     ;
-    // ebml.push({name: name, type: type, size: size, content: []});
-    ebml[`${name}`] = {type: type, size: size};
-    // console.log(ebml);
-    // console.log(`C:${this._cursor} ### ${'\t'.repeat(this._level)}${id} ${name} : ${type.toUpperCase()} Size: == 0x${elementSize.hexString} == ${size}`);
-    
-    switch (type) {
-      // case `INT`://(in accordance to EBML specification the name should be INT = *8BYTE)
-      case `uinteger`://38 - this is absolute frequency per current dictionary (in accordance to EBML specification the name should be UINT = *8BYTE
-      case `string`://6(in accordance to EBML specification the name should be STRING = *BYTE *PADDING where PADDING = %x00)
-      case `float`://3(in accordance to EBML specification the name should be FLOAT = *1(4BYTE / 8BYTE / 10BYTE) )
-      case `binary(float32)`://1(in accordance to EBML specification the name should be BINARY = *BYTE. Information about internal structure and data types can be passed in outer container tags)
-      case `binary(float64)`://2(in accordance to EBML specification the name should be BINARY = *BYTE. Information about internal structure and data types can be passed in outer container tags)
-      case `binary`://3(in accordance to EBML specification the name should be BINARY = *BYTE. Information about internal structure and data types can be stored in outer container tag but mustn't be interpreted at the EBML level)
-      case `date`://1(in accordance to EBML specification the name should be DATE = 8BYTE)
-        let content = this._readData(size, type);
-        ebml[`${name}`].value = content.value;
-        ebml[`${name}`].buffer = content.buffer;
-        // console.log(ebml);
-        break;
-      default://39 type `master` in current openViBE notation in most occasions, or, no matter how it named, this is container tag
-        let tagSpan = this._cursor + size;
-        this._level++;
-        while (this._cursor < tagSpan) {
-          let element = this._openElement();
-          if (ebml[`${name}`][`${element.name}`] === undefined)
-            ebml[`${name}`][`${element.name}`] = element.content;
-          else if (Array.isArray(ebml[`${name}`][`${element.name}`]))
-            ebml[`${name}`][`${element.name}`].push(element.content);
-          else {
-            ebml[`${name}`][`${element.name}`] = [ebml[`${name}`][`${element.name}`]];
-            ebml[`${name}`][`${element.name}`].push(element.content);
+    try {
+      elementId = this._readTag();
+      elementSize = this._readTag();
+      if (!elementId || !elementSize) return null;
+      
+      id = Tools.deleteLeadZeros(elementId.hexString).toUpperCase();
+      name = ebmlDictionary[id].name;
+      type = ebmlDictionary[id].type;
+      size = parseInt(elementSize.hexString, 16);
+      ebml[`${name}`] = {type: type, size: size};
+      // console.log(ebml);
+      // console.log(`C:${this._cursor} ### ${'\t'.repeat(this._level)}${id} ${name} : ${type.toUpperCase()} Size: == 0x${elementSize.hexString} == ${size}`);
+      
+      switch (type) {
+        // case `INT`://(in accordance to EBML specification the name should be INT = *8BYTE)
+        case `uinteger`://38 - this is absolute frequency per current dictionary (in accordance to EBML specification the name should be UINT = *8BYTE
+        case `string`://6(in accordance to EBML specification the name should be STRING = *BYTE *PADDING where PADDING = %x00)
+        case `float`://3(in accordance to EBML specification the name should be FLOAT = *1(4BYTE / 8BYTE / 10BYTE) )
+        case `binary(float32)`://1(in accordance to EBML specification the name should be BINARY = *BYTE. Information about internal structure and data types can be passed in outer container tags)
+        case `binary(float64)`://2(in accordance to EBML specification the name should be BINARY = *BYTE. Information about internal structure and data types can be passed in outer container tags)
+        case `binary`://3(in accordance to EBML specification the name should be BINARY = *BYTE. Information about internal structure and data types can be stored in outer container tag but mustn't be interpreted at the EBML level)
+        case `date`://1(in accordance to EBML specification the name should be DATE = 8BYTE)
+          let content = this._readData(size, type);
+          ebml[`${name}`].value = content.value;
+          ebml[`${name}`].buffer = content.buffer;
+          // console.log(ebml);
+          break;
+        default://type `master` or 'container' in other words
+          let tagSpan = this._cursor + size;
+          this._level++;
+          while (this._cursor < tagSpan) {
+            let element = this._openElement();
+            if (ebml[`${name}`][`${element.name}`] === undefined)
+              ebml[`${name}`][`${element.name}`] = element.content;
+            else if (Array.isArray(ebml[`${name}`][`${element.name}`]))
+              ebml[`${name}`][`${element.name}`].push(element.content);
+            else {
+              ebml[`${name}`][`${element.name}`] = [ebml[`${name}`][`${element.name}`]];
+              ebml[`${name}`][`${element.name}`].push(element.content);
+            }
           }
-        }
-        this._level--;
+          this._level--;
+      }
+      
+      //   console.log(`C:${this._cursor} ### ${'\t'.repeat(this._level + 2)} Data: ${ebml[`${name}`].content.value}<=>${JSON.stringify(ebml[`${name}`].content.buffer, null/*, 2*/)}`);//C:${this._cursor} ###
+      return {name: name, content: ebml[`${name}`]};
     }
-    
-    // if (ebml[`${name}`].content.value !== undefined)
-    //   console.log(`C:${this._cursor} ### ${'\t'.repeat(this._level + 2)} Data: ${ebml[`${name}`].content.value}<=>${JSON.stringify(ebml[`${name}`].content.buffer, null/*, 2*/)}`);//C:${this._cursor} ###
-    // return {name: name, type: type, size: size, content: ebml[`${name}`].content};
-    return {name: name, content: ebml[`${name}`]};
-    /*  Типы большинства элементов можно найти в файле plugins\processing\tools\share\config-ebml-stream-spy.txt.
-        Типы binary(float64) и binary(float32) означают, что на уровне EBML данные не парсятся (тип binary),
-      а на уровне OpenViBE содержат массивы чисел float64 и float32 соответственно. При этом порядок байт
-      в числах от младшего к старшему (little-endian), в отличие от формата EBML, где байты в данных типа float
-      расположены в порядке от старшего к младшему (big-endian)*/
+    catch (err) {
+      console.log(`Can't find id ${id} error: ${err}`);
+      throw `${err.message}`;
+    }
   }
 }
 

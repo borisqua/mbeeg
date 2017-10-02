@@ -15,7 +15,7 @@ const
       , {
         name: "class",
         type: "literal",
-        content: "ru.itu.parcus.modules.neurotrainer.modules.mberpxchg.dto.MbeegEventCellFlashing"
+        content: "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellFlashing"
       }
     ]
   })

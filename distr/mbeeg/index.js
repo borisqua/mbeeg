@@ -4,7 +4,7 @@ module.exports = {
   
   EBMLReader: require('./ebml/reader')
   , OVReader: require('./openvibe/reader')
-  , Stimuli: require('./dsprocessor/stimuli')
+  , Stimuli: require('./tools').Stimuli
   , DSProcessor: require('./dsprocessor')
   , EpochsProcessor: require('./epprocessor')
   , Classifier: require('./classifier')
@@ -14,5 +14,6 @@ module.exports = {
   , Objectifier: require('./tools').Objectifier
   , NTVerdictStringifier: require('./tools').NTVerdictStringifier
   , NTStimuliStringifier: require('./tools').NTStimuliStringifier
+  , Channels: require('./tools').Channels
   
 };

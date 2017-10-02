@@ -38,6 +38,7 @@
       <w>precalculated</w>
       <w>preprocessing</w>
       <w>raweeg</w>
+      <w>repl</w>
       <w>rereference</w>
       <w>rereferenced</w>
       <w>rereferencing</w>
@@ -45,6 +46,7 @@
       <w>revalidate</w>
       <w>samplingrate</w>
       <w>speedscale</w>
+      <w>stims</w>
       <w>strikethrough</w>
       <w>sumx</w>
       <w>sumxx</w>
@@ -55,6 +57,7 @@
       <w>timeseries</w>
       <w>tuples</w>
       <w>uint</w>
+      <w>unpipe</w>
       <w>xsize</w>
       <w>ysize</w>
     </words>

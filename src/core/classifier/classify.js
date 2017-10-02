@@ -20,7 +20,7 @@ const
     , chunkEnd: `}\n\r`
   })
   , ntrainerStringifier = new NTVerdictStringifier({
-    chunkBegin: `{\n"class": "ru.itu.parcus.modules.neurotrainer.modules.mberpxchg.dto.MbeegEventClassifierResult",
+    chunkBegin: `{\n"class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventClassifierResult",
     "cells": [`
     , chunkEnd: `]}\n`
     , chunksDelimiter: `,`
@@ -30,7 +30,7 @@ const
       {
         name: "class",
         type: "literal",
-        content: "ru.itu.parcus.modules.neurotrainer.modules.mberpxchg.dto.MbeegCellWeight"
+        content: "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegCellWeight"
       },
       {name: "cellId", type: "id"},
       {name: "weight", type: "value"}]

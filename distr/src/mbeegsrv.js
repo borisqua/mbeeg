@@ -17,7 +17,7 @@ const
   } = require('mbeeg')
   , config = Tools.loadConfiguration(`config.json`)
   , ntrainerStringifier = new NTVerdictStringifier({
-    chunkBegin: `{\n"class": "ru.itu.parcus.modules.neurotrainer.modules.mberpxchg.dto.MbeegEventClassifierResult",
+    chunkBegin: `{\n"class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventClassifierResult",
     "cells": [`
     , chunkEnd: `]}\n`
     , chunksDelimiter: `,`
@@ -27,7 +27,7 @@ const
       {
         name: "class",
         type: "literal",
-        content: "ru.itu.parcus.modules.neurotrainer.modules.mberpxchg.dto.MbeegCellWeight"
+        content: "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegCellWeight"
       },
       {name: "cellId", type: "id"},
       {name: "weight", type: "value"}]
@@ -109,24 +109,18 @@ const
       }
     }
   }
-  
-  // , EBMLReader = require(`${appRoot}/src/tools/ebml/reader`) //parse from ebml to json//Use in node mode
   , openVibeJSON = new EBMLReader({
     ebmlSource: openVibeClient.connect(config.signal.port, config.signal.host, () => {})
     , ebmlCallback: provideTCP
   })
-  // , OVReader = require(`${appRoot}/src/tools/openvibe/reader`) //extract samples from openViBE stream
   , samples = new OVReader({
     ovStream: openVibeJSON
-    // , signalDescriptor: signalGlobalsDescriptor
   })
-  // , Stimuli = require(`${appRoot}/src/core/dsprocessor/stimuli.js`) //2. Create stimuli provider for keyboard(carousel) and eeg/P300 classifier
   , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
     signalDuration: config.stimulation.duration
     , pauseDuration: config.stimulation.pause
     , stimuliArray: config.stimulation.sequence.stimuli
   })
-  // , DSProcessor = require(`${appRoot}/src/core/dsprocessor`)
   , epochs = new DSProcessor({
     stimuli: stimuli
     , samples: samples
@@ -136,24 +130,19 @@ const
     , channels: config.signal.channels
     , processingSteps: ``
   })
-  // , EpochsProcessor = require(`${appRoot}/src/core/epprocessor`)
   , featuresProcessor = new EpochsProcessor({
     epochs: epochs
     , moving: false
     , depth: 5
     , stimuliNumber: config.stimulation.sequence.stimuli.length
   })
-  // , Classifier = require(`${appRoot}/src/core/classifier`)
   , classifier = new Classifier({})
-  // , DecisionMaker = require(`${appRoot}/src/core/decisionmaker`)
   , decisions = new DecisionMaker({
     start: config.decision.start
     , maxLength: config.decision.queue
     , decisionThreshold: config.decision.threshold
     , method: config.decision.method
   })
-
-
 ;
 
 openVibeClient.on(`close`, () => console.log(`Open ViBE connection closed`));
@@ -173,7 +162,6 @@ const
   });
 
 // let fields = {};
-
 
 // stimuli.pipe(plainStringifier).pipe(process.stdout);//test
 // stimuli.pipe(stimulusStringifier).pipe(process.stdout);//test

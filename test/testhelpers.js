@@ -2,9 +2,6 @@
 const
   {Transform} = require('stream')
   , appRoot = require('app-root-path')
-// C:/Users/Boris/YandexDisk/localhost.chrome
-//   , log = require(`${appRoot}/epochs`)
-//   , log = require('C:/Users/Boris/YandexDisk/localhost.chrome/epochs')
 ;
 
 class Channels extends Transform {
