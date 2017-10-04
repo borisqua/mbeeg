@@ -85,7 +85,7 @@ const
         running = true;
         
         message.class = "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings";
-        message.object = stimuliArray;
+        message.objects = stimuliArray;
         if (!mbeeg.write(JSON.stringify(message)))
           console.log(`Error: scene settings message sending failed.`);
         if (mode === 'carousel') {
@@ -126,7 +126,7 @@ const
         
         running = false;
         message = {};
-        message.class = "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeggFlashStop";
+        message.class = "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop";
         if (mbeeg.write(JSON.stringify(message))) console.log(`stopped. server pending in ${mode} mode`);
         else console.log(`Error: stop message sending failed.`);
         replSrv.displayPrompt();

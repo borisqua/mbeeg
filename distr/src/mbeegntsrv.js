@@ -16,19 +16,20 @@ const
   } = require('mbeeg')
   , config = Tools.loadConfiguration(`config.json`)
   , ntDecisionStringifier = new Stringifier({
-    chunkBegin: `{
+    chunkBegin: `\n\r{
     "class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellConceived",\n\r
     "cellId": `
     , chunkEnd: `,\n\r
     "timestamp": ${new Date().getTime()}\n\r
-    }\r\n`
+    }\n\r`
     , indentationSpace: 2
     , stringifyAll: true
   })
   , ntrainerStringifier = new NTVerdictStringifier({
-    chunkBegin: `{\n"class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventClassifierResult",
+    chunkBegin: `\n\r{
+    "class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventClassifierResult",
     "cells": [`
-    , chunkEnd: `]}\n`
+    , chunkEnd: `]}\n\r`
     , chunksDelimiter: `,`
     , indentationSpace: 2
     , stringifyAll: true
@@ -165,30 +166,32 @@ const
     
     socket
       .on(`end`, () => {
-        ntStimuli.unpipe();
+        // ntStimuli.unpipe();
         stimuli.unpipe();
         console.log('end: client disconnected');
       })
       .on(`close`, () => {
-        ntStimuli.unpipe();
+        // ntStimuli.unpipe();
         stimuli.unpipe();
         console.log('close: client disconnected');
       })
       .on(`error`, () => {
-        ntStimuli.unpipe();
-        stimuli.unpipe();
+        // ntStimuli.unpipe();
+        // stimuli.unpipe();
         console.log('error: client disconnected');
       })
-      .on('data', chunk => {
+      .on('data', chunk => {//to unpipe delete listener
+        console.log(chunk.toString());
         let message = JSON.parse(chunk.toString());
         switch (message.class) {
           case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings":
-            console.log(`Message:\n\r ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings`);
+            console.log(`Incoming message:\n\r ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings`);
+            console.log(`OK`);
             break;
           case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings":
             stimuliArray = message.object;//TODO changing options in config object and file
-            console.log(`Message:\n\rclass: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings`);
-            console.log(`object: ${JSON.stringify(message.object)}`);
+            console.log(`Incoming message:\n\rclass: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings`);
+            console.log(`objects: ${JSON.stringify(message.objects)}`);
             running = true;
             mode = 'vr';
             break;
@@ -200,24 +203,25 @@ const
               , signalDuration: config.stimulation.duration
               , pauseDuration: config.stimulation.pause
             });
-            console.log(`Message:\n\rclass: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStart`);
-            console.log(`signalDuration: ${JSON.stringify(message.flashDuration)}`);
-            console.log(`pauseDuration: ${JSON.stringify(message.stepDelay)}`);
-            console.log(`Stimuli flow has started...`);
+            console.log(`Incoming message:\n\rclass: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStart`);
+            console.log(`\n\rsignalDuration: ${JSON.stringify(message.flashDuration)}`);
+            console.log(`\rpauseDuration: ${JSON.stringify(message.stepDelay)}`);
+            console.log(`\n\rStimuli flow has started...\n\r`);
             if (running)
               stimuli.pipe(ntStimuli);
             mode = 'carousel';
             break;
-          case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeggFlashStop":
-            console.log(`Message: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeggFlashStop`);
+          case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop":
+            console.log(`Incoming message: \n\rru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop`);
             if (mode === 'carousel') {
-              stimuli.unpipe();
-              ntStimuli.unpipe();
+              stimuli = {};
+              // stimuli.unpipe();
+              // stimuli.drain();
             }
-            if (mode === 'vr')
-              ntStimuli.unpipe();
+            // ntStimuli.unpipe();
+            // ntStimuli.drain();
             running = false;
-            console.log(`Stimuli flow have stopped...`);
+            console.log(`Stimuli flow has stopped...`);
             break;
           case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellFlashing":
             if (running) {

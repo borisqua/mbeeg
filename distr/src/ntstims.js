@@ -50,15 +50,15 @@ let
   , stimuliArray = [0, 1, 2]//config.stimulation.sequence.stimuli
   , signalDuration = 100//config.stimulation.duration
   , pauseDuration = 200//config.stimulation.pause
-;
-
-const
-  stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
+  , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
     signalDuration: signalDuration
     , pauseDuration: pauseDuration
     , stimuliArray: stimuliArray
   })
-  , mbeeg = Net.createConnection(config.service.port, config.service.host, () => {
+;
+
+const
+  mbeeg = Net.createConnection(config.service.port, config.service.host, () => {
     if (cli.vr || cli.carousel)
       console.log(colors.green(
         `\n\r ... mock neuro-trainer started in '${mode}' mode ...
@@ -82,21 +82,23 @@ const
     let start = () => {
       if (!mode) console.log(`select mode first. See commands '.vr' and '.carousel'`);
       else {
-        running = true;
         
         message.class = "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings";
-        message.object = stimuliArray;
+        message.objects = stimuliArray;
         if (!mbeeg.write(JSON.stringify(message)))
           console.log(`Error: scene settings message sending failed.`);
-        if (mode === 'carousel') {
-          message.class = "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStart";
-          message.flashDuration = signalDuration;
-          message.stepDelay = pauseDuration;
-          if (mbeeg.write(JSON.stringify(message))) console.log(`started in 'carousel' mode`);
-          else console.log(`Error: scene settings message sending failed.`);
-        } else {
-          console.log(`started in 'vr' mode`);
-          stimuli.pipe(ntrainerStringifier).pipe(mbeeg);//process.stdout);
+        else {
+          running = true;
+          if (mode === 'carousel') {
+            message.class = "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStart";
+            message.flashDuration = signalDuration;
+            message.stepDelay = pauseDuration;
+            if (mbeeg.write(JSON.stringify(message))) console.log(`started in 'carousel' mode`);
+            else console.log(`Error: scene settings message sending failed.`);
+          } else {
+            console.log(`started in 'vr' mode`);
+            stimuli.pipe(ntrainerStringifier).pipe(mbeeg);//process.stdout);
+          }
         }
       }
       replSrv.displayPrompt();
@@ -123,10 +125,15 @@ const
     });
     replSrv.defineCommand('stop', {
       help: `Stop stimulation in selected mode`, action: () => {
-        
+        if (mode === `vr`) {
+          // stimuli.pipe(ntrainerStringifier).pipe(mbeeg);//process.stdout);
+          // stimuli.unpipe();
+          // stimuli.pause();
+          stimuli = {};
+        }
         running = false;
         message = {};
-        message.class = "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeggFlashStop";
+        message.class = "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop";
         if (mbeeg.write(JSON.stringify(message))) console.log(`stopped. server pending in ${mode} mode`);
         else console.log(`Error: stop message sending failed.`);
         replSrv.displayPrompt();
@@ -151,22 +158,4 @@ const
     
   })
 ;
-// mbeeg.pipe(process.stdout);
-
-/*
-
-console.log(`client ${socket.remoteAddress}:${socket.remotePort} connected`);
-
-let unpipe = readable => {
-  readable.unpipe();
-  return 'client disconnected'
-};
-
-socket
-  .on(`end`, () => { console.log(`end: ${unpipe(stimuli)}`); })
-  .on(`close`, () => { console.log(`close: ${unpipe(stimuli)}`); })
-  .on(`error`, () => { console.log(`error: ${unpipe(stimuli)}`); })
-;
-
-*/
 
