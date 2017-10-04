@@ -31,7 +31,7 @@ const
         context.tcpcursor += 8;
         bufferTailLength -= 8;
       }
-      else if(!context.expectedEBMLChunkSize)
+      else if (!context.expectedEBMLChunkSize)
         break;
       if (bufferTailLength >= context.expectedEBMLChunkSize) {
         context.ebmlChunk = Buffer.from(context.tcpbuffer.slice(context.tcpcursor, context.tcpcursor + context.expectedEBMLChunkSize));
@@ -53,7 +53,6 @@ const
   })
   , samples = new OVReader({
     ovStream: openVibeJSON
-    //TODO get sampleRate from ovSream // , signalDescriptor: signalGlobalsDescriptor
   })
   , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
     signalDuration: config.stimulation.duration
@@ -81,22 +80,20 @@ if (cli.pipe) {
   epochs = new DSProcessor({
     stimuli: stimuliObjectifier
     , samples: samples
-    // , cyclesLimit: 1
-    // , samplingRate: signalGlobalsDescriptor.samplingRate //TODO solve problem with passing sampling rate to DSProcessor
     , channels: config.signal.channels
-    , processingSteps: config.signal.dsp.vertical.steps
-  })
-  ;
+    , epochDuration: config.signal.epoch.duration
+    , processingSequence: config.signal.dsp.vertical.steps
+    , cyclesLimit: config.signal.cycles
+  });
 } else {
   epochs = new DSProcessor({
     stimuli: stimuli
     , samples: samples
-    // , cyclesLimit: 1
-    // , samplingRate: signalGlobalsDescriptor.samplingRate //TODO solve problem with passing sampling rate to DSProcessor
     , channels: config.signal.channels
-    , processingSteps: config.signal.dspsteps
-  })
-  ;
+    , epochDuration: config.signal.epoch.duration
+    , processingSequence: config.signal.dsp.vertical.steps
+    , cyclesLimit: config.signal.cycles
+  });
 }
 
 if (process.argv.length <= 2) cli.help();

@@ -1,12 +1,9 @@
 "use strict";
-//TODO 1.Check problem with overlapping epochs & deleting samples (it is necessary to make sure that the sample falls into every epoch where it should be, and only after that it will be removed)
+//TODO 1.Problem with overlapping epochs & deleting samples (it is necessary to make sure that the sample falls into every epoch where it should be, and only after that it will be removed)
 //TODO 2.Consider throwing away of unused leading stimuli and epochs
 //TODO 3.Detecting samples or epochs leaks
 //TODO refactor to use writable capabilities of the DSProcessor stream, by writing merged stream of stimuli and eeg data. For this purpose DSProcess should have capability to distinguish chunks of this two streams.
 const
-  // appRoot = require('app-root-path'),
-// C:/Users/Boris/YandexDisk/localhost.chrome
-//   Tools = require(`${appRoot}/src/tools/helpers`).Tools;
   Tools = require('../tools').Tools
 ;
 
@@ -14,12 +11,11 @@ class DSProcessor extends require('stream').Transform {
   constructor({
                 stimuli
                 , samples
-                , channels = [1] //channels selector. first channel by default, index 0 reserved for timestamp in samples input stream
+                , channels
                 // , learning = false
-                , epochDuration = 1000
-                , samplingRate = 128 //TODO sampling rate should be taken from samples input object
-                , processingSequence = `filter, detrend`//rereference`//, detrend` ////filter, detrend rereference``
-                , cyclesLimit = 0
+                , epochDuration
+                , processingSequence
+                , cyclesLimit
                 , objectMode = true
               }) {
     super({objectMode: true});
@@ -30,10 +26,10 @@ class DSProcessor extends require('stream').Transform {
     let currentSample = [];
     
     this.channels = channels;
-    this.samplingRate = samplingRate;
+    this.samplingRate = 0;
     this.learning = null;
     this.objectMode = objectMode;
-    this.processingSteps = processingSequence.split(/\s*,\s*/);
+    this.processingSequence = processingSequence;
     this.cyclesLimit = cyclesLimit;
     
     stimuli.on('data', stimulus => {
@@ -51,12 +47,12 @@ class DSProcessor extends require('stream').Transform {
       epoch.stimulusDuration = stimuli.signalDuration;
       epoch.stimulusPause = stimuli.pauseDuration;
       epoch.epochDuration = epochDuration;
-      epoch.samplingRate = this.samplingRate;
-      epoch.state = `raw`;//[cycle_idx]
-      epoch.full = false;//[cycle_idx]
-      epoch.timestamp = currentStimulus[0];//[cycle_idx]
-      epoch.target = currentStimulus[2];//[cycle_idx]
-      epoch.channels = [];//[ch_idx][sample_idx][cycle_idx]
+      epoch.samplingRate = samples.header.samplingRate;
+      epoch.state = `raw`;
+      epoch.full = false;
+      epoch.timestamp = currentStimulus[0];
+      epoch.target = currentStimulus[2];
+      epoch.channels = [];
       epochsFIFO.push(epoch);
       
       let obsoleteSampleIndex = null;
@@ -134,10 +130,10 @@ class DSProcessor extends require('stream').Transform {
   // noinspection JSUnusedGlobalSymbols
   _transform(epoch, encoding, cb) {
     for (let i = 0, channelsNumber = epoch.channels.length; i < channelsNumber; i++) {
-      for (let step of this.processingSteps) {
-        switch (step) {
-          case 'filter':
-            epoch.channels[i] = Tools.butterworth4Bulanov(epoch.channels[i], epoch.samplingRate, 25);
+      for (let step of this.processingSequence) {
+        switch (step.name) {
+          case 'butterworth4BulanovLowpass':
+            epoch.channels[i] = Tools.butterworth4Bulanov(epoch.channels[i], epoch.samplingRate, step.parameters[0].value);
             break;
           case 'detrend':
             epoch.channels[i] = Tools.detrend(epoch.channels[i]);
@@ -146,7 +142,7 @@ class DSProcessor extends require('stream').Transform {
             epoch.channels[i] = Tools.rereference(epoch.channels[i]);
             break;
         }
-        epoch.state = step;
+        epoch.state = step.name;
       }
     }
     // if (epoch.cycle > 0)

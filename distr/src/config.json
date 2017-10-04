@@ -30,7 +30,19 @@
     },
     "dsp": {
       "vertical": {
-        "steps": "filter, detrend"
+        "steps": [
+          {
+            "name":"butterworth4BulanovLowpass",
+            "parameters": [{
+              "name": "cutoff",
+              "value": 8
+            }]
+          },
+          {
+            "name":"detrend",
+            "parameters":[]
+          }
+        ]
       },
       "horizontal": {
         "depth": 5,

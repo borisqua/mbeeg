@@ -1,8 +1,7 @@
 "use strict";
 
 const
-  appRoot = require('app-root-path')
-  , Net = require('net')
+  Net = require('net')
   , cli = require('commander')
   , {Stringifier, Objectifier, Tools} = require('mbeeg')
   , config = Tools.loadConfiguration(`config.json`)
@@ -92,22 +91,20 @@ if (cli.pipe) {
   epochs = new DSProcessor({
     stimuli: stimuliObjectifier
     , samples: samples
-    // , cyclesLimit: 1
-    // , samplingRate: signalGlobalsDescriptor.samplingRate
-    //TODO solve problem with passing sampling rate to DSProcessor
     , channels: config.signal.channels
-    , processingSteps: config.signal.dspsteps
+    , epochDuration: config.signal.epoch.duration
+    , processingSequence: config.signal.dsp.vertical.steps
+    , cyclesLimit: config.signal.cycles
   })
   ;
 } else {
   epochs = new DSProcessor({
     stimuli: stimuli
     , samples: samples
-    // , cyclesLimit: 1
-    // , samplingRate: signalGlobalsDescriptor.samplingRate
-    //TODO solve problem with passing sampling rate to DSProcessor
     , channels: config.signal.channels
-    , processingSteps: config.signal.dspsteps
+    , epochDuration: config.signal.epoch.duration
+    , processingSequence: config.signal.dsp.vertical.steps
+    , cyclesLimit: config.signal.cycles
   })
   ;
 }

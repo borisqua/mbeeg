@@ -25,8 +25,31 @@
     "channels": [
       2
     ],
-    "dspsteps":"filter, detrend",
-    "cycles":0
+    "epoch":{
+      "duration": 1000
+    },
+    "dsp": {
+      "vertical": {
+        "steps": [
+          {
+            "name":"butterworth4BulanovLowpass",
+            "parameters": [{
+              "name": "cutoff",
+              "value": 8
+            }]
+          },
+          {
+            "name":"detrend",
+            "parameters":[]
+          }
+        ]
+      },
+      "horizontal": {
+        "depth": 5,
+        "moving": false
+      }
+    },
+    "cycles": 0
   },
   "decision": {
     "start": 2,

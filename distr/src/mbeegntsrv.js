@@ -126,10 +126,10 @@ const
   , epochs = new DSProcessor({
     stimuli: ntStimuli
     , samples: samples
-    , cyclesLimit: config.signal.cycles
-    //TODO problem with passing sampling rate to DSProcessor
     , channels: config.signal.channels
-    , processingSteps: ``
+    , epochDuration: config.signal.epoch.duration
+    , processingSequence: config.signal.dsp.vertical.steps
+    , cyclesLimit: config.signal.cycles
   })
   , featuresProcessor = new EpochsProcessor({
     epochs: epochs

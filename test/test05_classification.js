@@ -31,17 +31,15 @@ const epochs = new DSProcessor({
     fs.createReadStream(`${appRoot}/test/dsprocessor/data/integral/eeg45.csv`)
       .pipe(eegCSV)
       .pipe(eeg)
-  , learning: false
-  , stimuliNumber: 4
-  , epochDuration: 1000
-  , samplingRate: 250
-  , sequence: `filter, detrend`
+  , channels: config.signal.channels
+  , epochDuration: config.signal.epoch.duration
+  , processingSequence: config.signal.dsp.vertical.steps
+  , cyclesLimit: config.signal.cycles
   , objectMode: true
   
 });
 
 const classifier = new Classifier({
-  // method: lib.absIntegral,
   objectMode: false
   // objectMode: true
 });

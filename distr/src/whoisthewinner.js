@@ -59,7 +59,9 @@ const
     stimuli: stimuli
     , samples: samples
     , channels: config.signal.channels
-    , processingSteps: config.signal.dspsteps
+    , epochDuration: config.signal.epoch.duration
+    , processingSequence: config.signal.dsp.vertical.steps
+    , cyclesLimit: config.signal.cycles
   })
   , featuresProcessor = new EpochsProcessor({
     epochs: epochs
