@@ -37,42 +37,38 @@ const
   })
   , epochsObjectifier = new Objectifier()
   , openVibeClient = new Net.Socket() //3. Create TCP client for openViBE eeg data server
-  , provideTCP = (context, data) => {
-    let start = 0;//start of next chunk in data
-    
-    if (!context.expectedEBMLChunkSize) {//first or new, after previous completion, openViBE chunk received by tcp client
-      context.ebmlChunk = Buffer.alloc(0);
-      context.expectedEBMLChunkSize = 0;
-      context.expectedEBMLChunkSize = data.readUIntLE(start, 8);//first Uint64LE contains length of ebml data sent by
-                                                                // openViBE
-      data = data.slice(8);//trim openViBE specific TCP header, so now ebmlChunk is pure EBML data
+  , tcpFeeder = (context, tcpchunk) => {
+    if (context.tcpbuffer === undefined) {
+      context.tcpbuffer = Buffer.alloc(0);
+      context.tcpcursor = 0;
     }
-    let actualSizeOfTCPData = data.length;//actualSize of ebml data presented in current tcp data chunk
-    
-    if (actualSizeOfTCPData && context.expectedEBMLChunkSize) {//if ebml data present and ebml chunk size from openViBE tcp pack header present too
-      while (actualSizeOfTCPData > context.expectedEBMLChunkSize) {
-        context.ebmlChunk = Buffer.from(data, start, context.expectedEBMLChunkSize);
-        context.write(context.ebmlChunk);
-        start += context.expectedEBMLChunkSize;
-        context.expectedEBMLChunkSize = data.readUIntLE(start, 8);//first Uint64LE contains length of ebml data sent by
-                                                                  // openViBE
+    context.tcpbuffer = Buffer.concat([context.tcpbuffer, tcpchunk]);
+    let bufferTailLength = context.tcpbuffer.length - context.tcpcursor;
+    while (bufferTailLength) {
+      if (!context.expectedEBMLChunkSize && bufferTailLength >= 8) {
+        context.expectedEBMLChunkSize = context.tcpbuffer.readUIntLE(context.tcpcursor, 8);//first Uint64LE contains length of ebml data sent by openViBE
+        context.tcpcursor += 8;
+        bufferTailLength -= 8;
       }
-      if (actualSizeOfTCPData <= context.expectedEBMLChunkSize) {//actual chunk length is less then required as prescribed in ov tcp pack header (due some network problems e.g.)
-        context.expectedEBMLChunkSize -= actualSizeOfTCPData;//decrease size of expected but not received ebml data by
-                                                             // amount of received data
-        context.ebmlChunk = Buffer.concat([context.ebmlChunk, data]);//assemble chunk to the full ebmlChunkSize before
-                                                                     // write ebmlChunk into ebml reader
-        if (!context.expectedEBMLChunkSize) {
-          // reader.write(context.ebmlChunk);
-          context.write(context.ebmlChunk);
-          context.ebmlChunk = Buffer.alloc(0);
-        }
-      }
+      else if(!context.expectedEBMLChunkSize)
+        break;
+      if (bufferTailLength >= context.expectedEBMLChunkSize) {
+        context.ebmlChunk = Buffer.from(context.tcpbuffer.slice(context.tcpcursor, context.tcpcursor + context.expectedEBMLChunkSize));
+        context.tcpcursor += context.expectedEBMLChunkSize;
+        bufferTailLength -= context.expectedEBMLChunkSize;
+        context.expectedEBMLChunkSize = 0;
+      } else
+        break;
+      context.write(context.ebmlChunk);
+    }
+    if (!bufferTailLength) {
+      context.tcpbuffer = Buffer.alloc(0);
+      context.tcpcursor = 0;
     }
   }
   , openVibeJSON = new EBMLReader({
     ebmlSource: openVibeClient.connect(config.signal.port, config.signal.host, () => {})
-    , ebmlCallback: provideTCP
+    , ebmlCallback: tcpFeeder
   })
   , samples = new OVReader({
     ovStream: openVibeJSON
@@ -91,11 +87,10 @@ const
     , channels: config.signal.channels
     , processingSteps: config.signal.dspsteps
   })
-  // , EpochsProcessor = require(`${appRoot}/src/core/epprocessor`)
   , featuresProcessor = new EpochsProcessor({
     epochs: epochs
     , moving: false
-    , depth: 5
+    , depth: 5//TODO change averaging algorithm
     , stimuliNumber: config.stimulation.sequence.stimuli.length
   })
   , classifier = new Classifier({})

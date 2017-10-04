@@ -389,8 +389,8 @@ class NTrainerVerdictStringifier extends Stringifier {
       for (let j = 0; j < this.fields.length; j++) {
         output += `${running2 ? this.delimiter : '{'} "${this.fields[j].name}": `;
         if (this.fields[j].type === "literal") output += `"${this.fields[j].content}"`;
-        else if (this.fields[j].type === "id") output += `"${i}"`;
-        else if (this.fields[j].type === "value") output += `"${chunk[i]}"`;
+        else if (this.fields[j].type === "id") output += `${i}`;
+        else if (this.fields[j].type === "value") output += `${chunk[i]}`;
         
         running2 = true;
       }
@@ -417,8 +417,8 @@ class NTrainerStimuliStringifier extends Stringifier {
       output += `${running ? this.delimiter : '{'} "${this.fields[j].name}": `;
       
       if (this.fields[j].type === "literal") output += `"${this.fields[j].content}"`;
-      else if (this.fields[j].type === "id") output += `"${j}"`;
-      else if (this.fields[j].type === "value") output += `"${chunk[j]}"`;
+      else if (this.fields[j].type === "id") output += `${j}`;
+      else if (this.fields[j].type === "value") output += `${chunk[j]}`;
       
       running = true;
     }

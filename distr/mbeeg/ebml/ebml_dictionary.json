@@ -19,10 +19,6 @@
   "type": "master",
   "name": "OVTK_NodeId_Acquisition_Buffer_ChannelUnits"
  },
-"57": {
- "type": "master",
- "name": "UNDEFINED"
-},
  "60": {
   "type": "master",
   "name": "OVTK_NodeId_Acquisition_Stimulations"

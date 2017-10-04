@@ -16,7 +16,10 @@
   "author": "Boris Bronovitsky",
   "license": "ISC",
   "dependencies": {
+    "mbeeg": "^1.0.0",
     "colors": "^1.1.2",
-    "commander": "^2.11.0"
+    "commander": "^2.11.0",
+    "fili": "^2.0.0",
+    "ml-matrix": "^5.0.1"
   }
 }

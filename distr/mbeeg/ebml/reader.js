@@ -13,7 +13,7 @@ const
 class EBMLReader extends require('stream').Transform {
   constructor({
                 ebmlSource, //some input stream e.g. TCP or fs readable stream
-                ebmlCallback, //input stream parser. It should return pure & aligned ebml byte-stream
+                ebmlCallback, //input stream parser. It should return pure & aligned stream of binary ebml elements
                 objectMode = true
               }) {
     // options.readableObjectMode = true;
@@ -26,32 +26,27 @@ class EBMLReader extends require('stream').Transform {
     this._prevCursor = 0;
     this._ebml = {};
     
+    // this._tcpbuffer = Buffer.alloc(0);
+    // this._tcpcursor = 0;
     ebmlSource.on(`data`, data => ebmlCallback(this, data));
     
   }
   
   // noinspection JSUnusedGlobalSymbols
   _transform(chunk, encoding, cb) {
-    //first - add new portion of data to buffer
-    if (this._buffer === null) {
-      this._buffer = Buffer.from(chunk);
-    } else {
-      this._buffer = Buffer.concat([this._buffer, chunk]);
-    }
-    //then parsing cycle
-    while (this._cursor < this._buffer.length) {
-      let element = this._openElement();
-      this._ebml[`${element.name}`] = element.content;
-      if (!this._ebml) break;
-      this._ebml.timestamp = {value: 0};//original ov stream object doesn't have timing information
-      this._ebml.timestamp.value = new Date().getTime();
-      if (this.objectMode)
-        cb(null, this._ebml);//do some work after parsing has finished
-      else
-        cb(null, `${JSON.stringify(this._ebml, null, 2)}\n`);
-      // console.log(JSON.stringify(this._ebml, null, 2));
-    }
-    // cb();
+    this._buffer = Buffer.from(chunk);
+    this._cursor = 0;
+    
+    //then parsing
+    let element = this._openElement();
+    this._ebml[`${element.name}`] = element.content;
+    this._ebml.timestamp = {value: 0};//original ovstream object doesn't have timing information so let's add it
+    this._ebml.timestamp.value = new Date().getTime();
+    if (this.objectMode)
+      cb(null, this._ebml);//do some work after parsing
+    else
+      cb(null, `${JSON.stringify(this._ebml, null, 2)}\n`);
+    // console.log(JSON.stringify(this._ebml, null, 2));
   }
   
   /**
@@ -110,7 +105,7 @@ class EBMLReader extends require('stream').Transform {
    */
   _openElement() {
     //if element type isn't data type then open nested element (recursive call of _openElement)
-    //else pass element data to callback object that knows what to do with data of that element type
+    //else pass element data to _readData(size, type) that reads data and constructs content of current element (ebml object)
     let
       id = 0
       , elementId = 0
@@ -169,7 +164,7 @@ class EBMLReader extends require('stream').Transform {
     }
     catch (err) {
       console.log(`Can't find id ${id} error: ${err}`);
-      throw `${err.message}`;
+      throw err;//`${err.message}`;
     }
   }
 }

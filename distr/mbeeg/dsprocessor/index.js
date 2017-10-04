@@ -1,5 +1,5 @@
 "use strict";
-//TODO 1.Problem with overlapping epochs & deleting samples (it is necessary to make sure that the sample falls into every epoch where it should be, and only after that it will be removed)
+//TODO 1.Check problem with overlapping epochs & deleting samples (it is necessary to make sure that the sample falls into every epoch where it should be, and only after that it will be removed)
 //TODO 2.Consider throwing away of unused leading stimuli and epochs
 //TODO 3.Detecting samples or epochs leaks
 //TODO refactor to use writable capabilities of the DSProcessor stream, by writing merged stream of stimuli and eeg data. For this purpose DSProcess should have capability to distinguish chunks of this two streams.

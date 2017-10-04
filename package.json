@@ -32,6 +32,7 @@
     "qunitjs": "^2.4.0"
   },
   "dependencies": {
+    "mbeeg": "latest",
     "app-root-path": "^2.0.1",
     "colors": "^1.1.2",
     "commander": "^2.11.0",
