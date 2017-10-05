@@ -64,14 +64,18 @@ if (cli.pipe) {
   samples = new OVReader({
     ovStream: objectifier
   });
-  if (cli.json) samples.pipe(sampleStringifier).pipe(process.stdout);
-  else samples.pipe(plainStringifier).pipe(process.stdout);
+  if (cli.json)
+    samples.pipe(sampleStringifier).pipe(process.stdout);
+  else
+    samples.pipe(plainStringifier).pipe(process.stdout);
 } else {
   samples = new OVReader({
     ovStream: openVibeJSON
   });
-  if (cli.json) samples.pipe(sampleStringifier).pipe(process.stdout);
-  else samples.pipe(plainStringifier).pipe(process.stdout);
+  if (cli.json)
+    samples.pipe(sampleStringifier).pipe(process.stdout);
+  else
+    samples.pipe(plainStringifier).pipe(process.stdout);
 }
 
 
