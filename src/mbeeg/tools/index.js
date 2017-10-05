@@ -203,7 +203,7 @@ class Tools {
     let
       firstByte = offset + bytes - 1, //index of byte with alignment part of vInt data
       vIntAlignmentLength = Math.floor(Math.log2(buffer[firstByte])),
-      vIntFullLength = 8 * bytes - vIntAlignmentLength, // vInt full langth in bytes === number of bits of vInt descriptor
+      vIntFullLength = 8 * bytes - vIntAlignmentLength, // vInt full length in bytes === number of bits of vInt descriptor
       valueBuffer = buffer.slice(firstByte, firstByte + vIntFullLength - bytes + 1);
     valueBuffer[0] = valueBuffer[0] & (Math.pow(2, vIntAlignmentLength) - 1);
     // valueBuffer[0] = valueBuffer[0] & (Math.pow(2, 8 - vIntFullLength + (bytes - 1) * 8) - 1);
@@ -219,9 +219,9 @@ class Tools {
     // One more way to calculate length is using javascript Math.clz32(first4bytes)
     // let length2 = 8 * (bytes - 1) + Math.clz32(buffer[firstByte]) - 23;
     //TODO there is much much faster approach to get vInt length, it is the precalculated vector with 256 elements (i.e. 2^8 elements)
-    // that contain vectors with length equal to number of bytes of length descriptor
+    // that contains vectors with length equal to number of bytes of length descriptor
     // each element of last vector keeps precalculated length of vInt for that specific length of vInt length descriptor
-    // then vInt could be expressed like some thing like this: {let bytes=0; while(!buffer[bytes++]); return table256[buffer[bytes]][bytes];}
+    // then vInt could be expressed like something like this: {let bytes=0; while(!buffer[bytes++]); return table256[buffer[bytes]][bytes];}
     // in that case current implementation of vInt could be used to precalculate table256 before beginning the parsing process
   }
   
@@ -307,7 +307,7 @@ class Stimuli extends require('stream').Transform {
       if (this.objectMode) {
         this.push(this.stimulus);
       } else
-        this.push(`${JSON.stringify(this.stimulus)}\r\n`);
+        this.push(`${JSON.stringify(this.stimulus)}`);
       
       this._checkCycles();
     }, this.stimulusCycleDuration);
