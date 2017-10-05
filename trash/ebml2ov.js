@@ -6,7 +6,7 @@ const
   , config = Tools.loadConfiguration(`config.json`)
   , openVibeClient = new Net.Socket() //3. Create TCP client for openViBE eeg data server
   , ovStringifier = new Stringifier({
-    beginWith: `{\n\r`
+    beginWith: `{\r\n`
     , chunkBegin: `"openViBE_Stream":`
     , chunksDelimiter: `, `
     , chunkEnd: `}`
@@ -88,7 +88,7 @@ const
   })
 ;
 
-openVibeClient.on('close', () => console.log(`\n\r...\n\rOpen ViBE connection closed`));
+openVibeClient.on('close', () => console.log(`\r\n...\r\nOpen ViBE connection closed`));
 openVibeJSON.pipe(ovStringifier).pipe(process.stdout);
 
 cli.version('0.0.1')

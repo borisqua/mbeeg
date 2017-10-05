@@ -15,7 +15,7 @@ const
 const stringifier = new Transform({
   objectMode: true,
   transform(chunk, encoding, cb) {
-    cb(null, `${JSON.stringify(chunk)}\n\r`);
+    cb(null, `${JSON.stringify(chunk)}\r\n`);
   }
 });
 
@@ -38,7 +38,7 @@ stimuli
   .pipe(new Transform({
     objectMode: true,
     transform(chunk, encoding, cb) {
-      cb(null, `${JSON.stringify(chunk)}\n\r`);
+      cb(null, `${JSON.stringify(chunk)}\r\n`);
     }
   }))
   .pipe(process.stdout)

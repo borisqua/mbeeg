@@ -1,0 +1,99 @@
+html, body {
+  min-width: 140mm;
+  margin: 0;
+  padding: 0; }
+
+form {
+  margin-top: 20px; }
+
+input[type="text"], input[type="number"] {
+  min-width: 60px;
+  border: 1px solid lightgray; }
+
+label {
+  width: 150px;
+  margin: 0 5px -10px 15px;
+  font-size: 10pt;
+  color: gray; }
+
+legend {
+  font-size: 10pt;
+  color: gray; }
+
+fieldset {
+  float: left;
+  text-align: right; }
+  fieldset .value {
+    font-size: 10pt;
+    color: gray;
+    width: 50px; }
+
+.inputbox {
+  height: 25px;
+  padding: 5px; }
+
+.centered {
+  vertical-align: middle;
+  text-align: center;
+  position: relative; }
+
+.button {
+  font-size: 10pt;
+  background-color: lightgrey;
+  color: grey;
+  border: 1px solid darkgrey; }
+
+html {
+  text-align: left;
+  vertical-align: top; }
+  html body {
+    font: normal 100% sans-serif; }
+    html body header {
+      display: none; }
+    html body main {
+      position: relative;
+      overflow: hidden;
+      margin: 5px;
+      padding: 5px; }
+      html body main #monitor {
+        text-align: left; }
+        html body main #monitor .line {
+          text-align: left;
+          position: relative;
+          font-size: xx-large;
+          width: 98%;
+          margin: 10px 10px 10px;
+          padding: 2px; }
+      html body main #left {
+        min-width: 50px;
+        width: -2.8%;
+        height: 480px;
+        float: left;
+        display: none; }
+      html body main #viewport {
+        min-width: 480px;
+        min-height: 480px;
+        width: 98%;
+        height: 98%;
+        position: relative;
+        overflow: hidden;
+        margin: 5px;
+        padding: 5px; }
+        html body main #viewport .key {
+          position: absolute;
+          min-width: 140px;
+          max-width: 140px;
+          min-height: 140px;
+          max-height: 140px;
+          text-align: center;
+          vertical-align: middle;
+          margin: 5px; }
+      html body main .controller {
+        clear: both; }
+    html body footer {
+      display: none; }
+
+.key:hover {
+  background-size: 100%; }
+
+/*# sourceMappingURL=styles.css.map */
