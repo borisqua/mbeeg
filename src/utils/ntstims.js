@@ -6,10 +6,11 @@ const
   , Net = require('net')
   , ntrainerStringifier = new NTStimuliStringifier({
     chunkBegin: ``
-    , chunkEnd: ``
+    , chunkEnd: `\r\n`
     , chunksDelimiter: `,`
-    , indentationSpace: 2
-    , stringifyAll: true
+    // , indentationSpace: 2
+    // , stringifyAll: true
+  // , endWith: `\r\n`
     , fields: [
       {name: "timestamp", type: "value"}
       , {name: "cellId", type: "value"}

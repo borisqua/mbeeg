@@ -12,7 +12,7 @@ class EpochsProcessor extends require('stream').Transform {
                 // learning = false,
                 // window = 200,
                 // offset = 200,
-                sequence = `avg, detrend`,
+                // sequence = `avg, detrend`,
                 objectMode = true
               }) {
     super({objectMode: true});

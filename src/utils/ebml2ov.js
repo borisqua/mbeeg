@@ -6,11 +6,11 @@ const
   , config = Tools.loadConfiguration(`config.json`)
   , openVibeClient = new Net.Socket() //3. Create TCP client for openViBE eeg data server
   , ovStringifier = new Stringifier({
-    beginWith: `{\r\n`
+    beginWith: `{`
     , chunkBegin: `"openViBE_Stream":`
     , chunksDelimiter: `, `
     , chunkEnd: `}`
-    , endWith: `}`
+    , endWith: `}\r\n`
     , indentationSpace: 2
   })
   , tcpFeeder = (context, tcpchunk) => {

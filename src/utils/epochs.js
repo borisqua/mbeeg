@@ -92,7 +92,7 @@ if (cli.pipe) {
     , channels: config.signal.channels
     , epochDuration: config.signal.epoch.duration
     , processingSequence: config.signal.dsp.vertical.steps
-    , cyclesLimit: 5//config.signal.cycles
+    , cyclesLimit: config.signal.cycles
   });
 }
 

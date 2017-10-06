@@ -16,23 +16,19 @@ const
   } = require('mbeeg')
   , config = Tools.loadConfiguration(`config.json`)
   , ntDecisionStringifier = new Stringifier({
-    chunkBegin: `\r\n{
-    "class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellConceived",\r\n
-    "cellId": `
-    , chunkEnd: `,\r\n
-    "timestamp": ${new Date().getTime()}\r\n
-    }\r\n`
-    , indentationSpace: 2
-    , stringifyAll: true
+    chunkBegin: `{"class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellConceived", "cellId": `
+    , chunkEnd: `, "timestamp": ${new Date().getTime()} }\r\n`
+    // , endWith: `\r\n`
+    // , indentationSpace: 2
+    // , stringifyAll: true
   })
   , ntrainerStringifier = new NTVerdictStringifier({
-    chunkBegin: `\r\n{
-    "class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventClassifierResult",
-    "cells": [`
-    , chunkEnd: `]}\r\n`
+    chunkBegin: `{"class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventClassifierResult", "cells": [`
+    , chunkEnd: `]}\n\r`
     , chunksDelimiter: `,`
-    , indentationSpace: 2
-    , stringifyAll: true
+    // , indentationSpace: 2
+    // , stringifyAll: true
+    // , endWith: `\r\n`
     , fields: [
       {
         name: "class",
@@ -99,7 +95,7 @@ const
         context.tcpcursor += 8;
         bufferTailLength -= 8;
       }
-      else if(!context.expectedEBMLChunkSize)
+      else if (!context.expectedEBMLChunkSize)
         break;
       if (bufferTailLength >= context.expectedEBMLChunkSize) {
         context.ebmlChunk = Buffer.from(context.tcpbuffer.slice(context.tcpcursor, context.tcpcursor + context.expectedEBMLChunkSize));

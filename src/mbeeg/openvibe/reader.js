@@ -43,23 +43,35 @@ class OVStreamReader extends require('stream').Transform {
           this.buffer.data = Buffer.from(bufferProperties.buffer);
           
           this.cursor = 0;
-          let rows = this.header.signal.matrix.dimensions[1].length;
+          let
+            channels = []
+            , rows = this.header.signal.matrix.dimensions[1].length
+          ;
           this.header.timestamp = this.header.timestamp - rows * 1000 / this.header.samplingRate; //by default epoch timestamp equals to last sample timestamp, so let's move timestamp to the first one
-          for (let row = 0; row < rows; row++) {
-            let sampleVector = [];
-            sampleVector.push(Math.round(this.header.timestamp += 1000 / this.header.samplingRate));
-            for (let column = 0, columns = this.header.signal.matrix.dimensions[0].length; column < columns; column++) {
+          for (let column = 0, columns = this.header.signal.matrix.dimensions[0].length; column < columns; column++) {
+            // for (let row = 0; row < rows; row++) {
+            let samples = [];
+            samples.push(Math.round(this.header.timestamp += 1000 / this.header.samplingRate));
+            for (let row = 0; row < rows; row++) {
+              // for (let column = 0, columns = this.header.signal.matrix.dimensions[0].length; column < columns; column++) {
               switch (this.buffer.valueSize) {
                 case 64:
-                  sampleVector.push(this.buffer.data.readDoubleLE(this.cursor));
+                  samples.push(this.buffer.data.readDoubleLE(this.cursor));
                   break;
                 case 32:
-                  sampleVector.push(this.buffer.data.readFloatLE(this.cursor));
+                  samples.push(this.buffer.data.readFloatLE(this.cursor));
                   break;
                 default:
-                  sampleVector.push(this.buffer.data.readUInt8(this.cursor));
+                  samples.push(this.buffer.data.readUInt8(this.cursor));
               }
               this.cursor += this.buffer.valueSize / 8;
+            }
+            channels.push(samples);
+          }
+          for (let row = 0; row < rows; row++) {
+            let sampleVector = [];
+            for (let ch = 0; ch < channels.length; ch++) {
+              sampleVector.push(channels[ch][row]);
             }
             this.write(sampleVector);
           }

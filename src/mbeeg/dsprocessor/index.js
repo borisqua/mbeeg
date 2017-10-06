@@ -4,7 +4,7 @@
 //TODO 3.Detecting samples or epochs leaks
 //TODO refactor to use writable capabilities of the DSProcessor stream, by writing merged stream of stimuli and eeg data. For this purpose DSProcess should have capability to distinguish chunks of this two streams.
 const
-  Tools = require('../tools/index').Tools
+  Tools = require('../tools').Tools
 ;
 
 class DSProcessor extends require('stream').Transform {
@@ -64,7 +64,10 @@ class DSProcessor extends require('stream').Transform {
           if (_sampleInsideEpoch(e, s[0])) {
             if (_completeEpoch(this, e, currentSample)) {
               e.full = true;
-              if (this.cyclesLimit && this.cyclesLimit < e.cycle) this.unpipe(); //stop if output is limited
+              if (this.cyclesLimit && this.cyclesLimit < e.cycle) { //stop if output is limited
+                this.unpipe();
+                process.exit(0);
+              }
               this.write(epochsFIFO.splice(i, 1)[0]);
               i--;
               epochsFIFOlength--;

@@ -23,7 +23,7 @@
     "host": "localhost",
     "port": 1024,
     "channels": [
-      2
+      1
     ],
     "epoch":{
       "duration": 1000
@@ -49,7 +49,7 @@
         "moving": false
       }
     },
-    "cycles": 0
+    "cycles": 5
   },
   "decision": {
     "start": 2,
