@@ -111,12 +111,12 @@ const
   })
 ;
 let
-  ovStreamFile = fs.createWriteStream(`ovStream.json`)
-  , samplesFile = fs.createWriteStream(`samples.json`)
-  , stimuliFile = fs.createWriteStream(`stimuli.json`)
-  , epochsRawFile = fs.createWriteStream(`epochsRaw.json`)
-  , epochsFilteredFile = fs.createWriteStream(`epochsFiltered.json`)
-  , epochsDetrendedFile = fs.createWriteStream(`epochsDetrended.json`)
+  ovStreamFile = fs.createWriteStream(`output/ovStream.json`)
+  , samplesFile = fs.createWriteStream(`output/samples.json`)
+  , stimuliFile = fs.createWriteStream(`output/stimuli.json`)
+  , epochsRawFile = fs.createWriteStream(`output/epochsRaw.json`)
+  , epochsFilteredFile = fs.createWriteStream(`output/epochsFiltered.json`)
+  , epochsDetrendedFile = fs.createWriteStream(`output/epochsDetrended.json`)
 ;
 
 cli.version('0.0.1')

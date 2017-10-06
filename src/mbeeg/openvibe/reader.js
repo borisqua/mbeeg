@@ -51,7 +51,6 @@ class OVStreamReader extends require('stream').Transform {
           for (let column = 0, columns = this.header.signal.matrix.dimensions[0].length; column < columns; column++) {
             // for (let row = 0; row < rows; row++) {
             let samples = [];
-            samples.push(Math.round(this.header.timestamp += 1000 / this.header.samplingRate));
             for (let row = 0; row < rows; row++) {
               // for (let column = 0, columns = this.header.signal.matrix.dimensions[0].length; column < columns; column++) {
               switch (this.buffer.valueSize) {
@@ -70,6 +69,7 @@ class OVStreamReader extends require('stream').Transform {
           }
           for (let row = 0; row < rows; row++) {
             let sampleVector = [];
+            sampleVector.push(Math.round(this.header.timestamp += 1000 / this.header.samplingRate));
             for (let ch = 0; ch < channels.length; ch++) {
               sampleVector.push(channels[ch][row]);
             }
