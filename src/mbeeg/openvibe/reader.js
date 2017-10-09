@@ -23,61 +23,69 @@ class OVStreamReader extends require('stream').Transform {
       valueSize: 8,
       data: Buffer.alloc(0)
     };
-    ovStream.on(`data`, chunk => {
-        this.header.timestamp = this._getChildProperties(chunk, `timestamp`).value;
-        this.header.samplingRate = this._getChildProperties(chunk, `OVTK_NodeId_Header_Signal_SamplingRate`).value;
-        if (!this.header.samplingRate) throw `OpenViBE stream error: Signal sampling rate undefined`;
-        // let ovStreamHeader = this._getChildObject(chunk, `OVTK_NodeId_Header`);
-        let signal = this._getChildObject(chunk, `OVTK_NodeId_Acquisition_Header_Signal`);//get ovStream element with signal header description (dimensions, labels, dim.sizes)
-        if (!signal) throw `OpenViBE stream error: Signal header undefined`;
-        this._setupMatrix(this.header.signal, signal);//parse signal header description element and save descriptive info into this.header.signal
-        let channelUnits = this._getChildObject(chunk, `OVTK_NodeId_Acquisition_Header_ChannelUnits`);//get ovStream element with channel units description
-        this._setupMatrix(this.header.channelUnits, channelUnits);//parse channel units descr.element and save info into this.header.channelUnits
-        
-        let ovStreamBuffer = this._getChildObject(chunk, `OVTK_NodeId_Buffer`);
-        let bufferProperties = this._getChildProperties(ovStreamBuffer, `OVTK_NodeId_Buffer_StreamedMatrix_RawBuffer`);
-        if (bufferProperties) {
-          this.buffer.valueSize = parseInt(bufferProperties.type.replace(/^\D+/g, ''));//regexp - to delete leading non digit signs, it allows to parseInt (convert string, for instance "binary(float64)", into number (64))
-          if (!this.buffer.valueSize) this.buffer.valueSize = 8;
-          this.buffer.length = bufferProperties.size;
-          this.buffer.data = Buffer.from(bufferProperties.buffer);
-          
-          this.cursor = 0;
-          let
-            channels = []
-            , rows = this.header.signal.matrix.dimensions[1].length
-          ;
-          this.header.timestamp = this.header.timestamp - rows * 1000 / this.header.samplingRate; //by default epoch timestamp equals to last sample timestamp, so let's move timestamp to the first one
-          for (let column = 0, columns = this.header.signal.matrix.dimensions[0].length; column < columns; column++) {
-            // for (let row = 0; row < rows; row++) {
-            let samples = [];
-            for (let row = 0; row < rows; row++) {
-              // for (let column = 0, columns = this.header.signal.matrix.dimensions[0].length; column < columns; column++) {
-              switch (this.buffer.valueSize) {
-                case 64:
-                  samples.push(this.buffer.data.readDoubleLE(this.cursor));
-                  break;
-                case 32:
-                  samples.push(this.buffer.data.readFloatLE(this.cursor));
-                  break;
-                default:
-                  samples.push(this.buffer.data.readUInt8(this.cursor));
-              }
-              this.cursor += this.buffer.valueSize / 8;
-            }
-            channels.push(samples);
-          }
-          for (let row = 0; row < rows; row++) {
-            let sampleVector = [];
-            sampleVector.push(Math.round(this.header.timestamp += 1000 / this.header.samplingRate));
-            for (let ch = 0; ch < channels.length; ch++) {
-              sampleVector.push(channels[ch][row]);
-            }
-            this.write(sampleVector);
-          }
-        }
+  }
+  
+  // ovStream.on(`data`, chunk => {
+  _getSamples(ovStreamJsonChunk) {
+    if (!this.header.samplingRate)
+      this.header.samplingRate = this._getChildProperties(ovStreamJsonChunk, `OVTK_NodeId_Header_Signal_SamplingRate`).value;
+    if (!this.header.samplingRate) throw `OpenViBE stream error: Signal sampling rate undefined`;
+    // let ovStreamHeader = this._getChildObject(chunk, `OVTK_NodeId_Header`);
+    let signal = this._getChildObject(ovStreamJsonChunk, `OVTK_NodeId_Acquisition_Header_Signal`);//get ovStream element with signal header description (dimensions, labels, dim.sizes)
+    if (!signal) throw `OpenViBE stream error: Signal header undefined`;
+    this._setupMatrix(this.header.signal, signal);//parse signal header description element and save descriptive info into this.header.signal
+    let channelUnits = this._getChildObject(ovStreamJsonChunk, `OVTK_NodeId_Acquisition_Header_ChannelUnits`);//get ovStream element with channel units description
+    this._setupMatrix(this.header.channelUnits, channelUnits);//parse channel units descr.element and save info into this.header.channelUnits
+    
+    let ovStreamBuffer = this._getChildObject(ovStreamJsonChunk, `OVTK_NodeId_Buffer`);
+    let bufferProperties = this._getChildProperties(ovStreamBuffer, `OVTK_NodeId_Buffer_StreamedMatrix_RawBuffer`);
+    if (bufferProperties) {
+      this.buffer.valueSize = parseInt(bufferProperties.type.replace(/^\D+/g, ''));//regexp - to delete leading non digit signs, it allows to parseInt (convert string, for instance "binary(float64)", into number (64))
+      if (!this.buffer.valueSize) this.buffer.valueSize = 8;
+      this.buffer.length = bufferProperties.size;
+      this.buffer.data = Buffer.from(bufferProperties.buffer);
+      
+      this.cursor = 0;
+      let
+        channels = []
+        , rows = this.header.signal.matrix.dimensions[1].length
+      ;
+      if (!this.header.timestamp) {
+        this.header.timestamp = this._getChildProperties(ovStreamJsonChunk, `timestamp`).value;
+        this.header.timestamp = this.header.timestamp - rows * 1000 / this.header.samplingRate; //by default epoch timestamp equals to last sample timestamp, so let's move timestamp to the first one
       }
-    )
+      for (let column = 0, columns = this.header.signal.matrix.dimensions[0].length; column < columns; column++) {
+        // for (let row = 0; row < rows; row++) {
+        let channel = [];
+        for (let row = 0; row < rows; row++) {
+          // for (let column = 0, columns = this.header.signal.matrix.dimensions[0].length; column < columns; column++) {
+          switch (this.buffer.valueSize) {
+            case 64:
+              channel.push(this.buffer.data.readDoubleLE(this.cursor));
+              break;
+            case 32:
+              channel.push(this.buffer.data.readFloatLE(this.cursor));
+              break;
+            default:
+              channel.push(this.buffer.data.readUInt8(this.cursor));
+          }
+          this.cursor += this.buffer.valueSize / 8;
+        }
+        channels.push(channel);
+      }
+      let samples = [];
+      for (let row = 0; row < rows; row++) {
+        let sample = [];
+        // sampleVector.push(Math.round(this.header.timestamp += 1000 / this.header.samplingRate));
+        for (let ch = 0; ch < channels.length; ch++) {
+          sample.push(channels[ch][row]);
+        }
+        samples.push(sample);
+      }
+      // samples.sort((a, b) => {return a[0] - b[0]});
+      return samples;
+    }
+    return null;
   }
   
   /**
@@ -157,11 +165,12 @@ class OVStreamReader extends require('stream').Transform {
   }
   
   // noinspection JSUnusedGlobalSymbols
-  _transform(sampleVector, encoding, cb) {
+  _transform(ovStreamJsonChunk, encoding, cb) {
+    let samples = this._getSamples(ovStreamJsonChunk);
     if (this.objectMode) {
-      cb(null, sampleVector);
+      cb(null, samples);
     } else {
-      cb(null, `${JSON.stringify(sampleVector, null, 2)}\n`);
+      cb(null, `${JSON.stringify(samples, null, 2)}\n`);
     }
   }
 }

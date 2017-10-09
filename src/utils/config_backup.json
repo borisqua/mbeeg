@@ -25,22 +25,24 @@
     "channels": [
       2
     ],
-    "epoch":{
+    "epoch": {
       "duration": 1000
     },
     "dsp": {
       "vertical": {
         "steps": [
           {
-            "name":"butterworth4BulanovLowpass",
-            "parameters": [{
-              "name": "cutoff",
-              "value": 8
-            }]
+            "name": "butterworth4BulanovLowpass",
+            "parameters": [
+              {
+                "name": "cutoff",
+                "value": 8
+              }
+            ]
           },
           {
-            "name":"detrend",
-            "parameters":[]
+            "name": "detrend",
+            "parameters": []
           }
         ]
       },

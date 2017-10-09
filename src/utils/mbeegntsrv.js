@@ -17,14 +17,14 @@ const
   , config = Tools.loadConfiguration(`config.json`)
   , ntDecisionStringifier = new Stringifier({
     chunkBegin: `{"class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellConceived", "cellId": `
-    , chunkEnd: `, "timestamp": ${new Date().getTime()} }\r\n`
+    , chunkEnd: `, "timestamp": ${new Date().getTime()}}\r\n`
     // , endWith: `\r\n`
     // , indentationSpace: 2
     // , stringifyAll: true
   })
   , ntrainerStringifier = new NTVerdictStringifier({
     chunkBegin: `{"class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventClassifierResult", "cells": [`
-    , chunkEnd: `]}\n\r`
+    , chunkEnd: `]}`
     , chunksDelimiter: `,`
     // , indentationSpace: 2
     // , stringifyAll: true

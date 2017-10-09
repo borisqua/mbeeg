@@ -1,10 +1,104 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AnalysisUIOptions">
+    <option name="SCOPE_TYPE" value="3" />
+  </component>
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" shouldDeleteObsolete="true" buildAllGenerated="false">
+    <generated />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="7f9d169a-01ee-4ab5-a98f-d809ba0f905d" name="Default" comment="" />
+    <list default="true" id="7f9d169a-01ee-4ab5-a98f-d809ba0f905d" name="Default" comment="mbeeg suite (dsprocessor refactored)">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/test/test1_mock_stimuli_transform.js" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/dictionaries/Boris.xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace (2).xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace (3).xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace (4).xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace (5).xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace (6).xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace (7).xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace (8).xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/.idea/workspace (9).xml" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/core/classifier/index.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/core/classifier/learning.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/core/controller/mbeegntsrv.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/core/controller/mbeegsrv.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/core/controller/ovprovider.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/core/decisionmaker/index.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/core/dsprocessor/dspserver.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/core/dsprocessor/eeg.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/core/dsprocessor/epochs.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/core/dsprocessor/index.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/core/dsprocessor/learning.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/core/dsprocessor/stims.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/core/dsprocessor/stimuli.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/core/epprocessor/features.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/core/epprocessor/index.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/ebml2ov.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/ebml_dictionary.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/ov2samples.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/config.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ebml/cli.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ebml/data/bci-ssvep-training.ov" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ebml/data/tcp_raw01.bin" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ebml/data/test.webm" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ebml/dtd.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ebml/ebml2ov.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ebml/ebml_dictionary.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ebml/ebml_dictionary_statistics.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ebml/ebml_notes.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ebml/emotivEPOCexample.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ebml/ovStreamChunkExample.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ebml/reader.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ebml/schema.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ebml/write_ebml_dictionary.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ebml/writer.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ebml/z_ebml_id_work.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ebml/z_ovfile_work.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/helpers.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/ntstims.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/openvibe/ov2samples.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/openvibe/reader.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/stimuli.js" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/trash/tools/tcpclient.js" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/mbeeg/dsprocessor/index.js" afterPath="$PROJECT_DIR$/src/mbeeg/dsprocessor/index.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/mbeeg/openvibe/reader.js" afterPath="$PROJECT_DIR$/src/mbeeg/openvibe/reader.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/mbeeg/tools/index.js" afterPath="$PROJECT_DIR$/src/mbeeg/tools/index.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/utils/config.json" afterPath="$PROJECT_DIR$/src/utils/config.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/utils/config_backup.json" afterPath="$PROJECT_DIR$/src/utils/config_backup.json" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/utils/epochs.js" afterPath="$PROJECT_DIR$/src/utils/epochs.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/utils/epochs2files.js" afterPath="$PROJECT_DIR$/src/utils/epochs2files.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/utils/mbeegntsrv.js" afterPath="$PROJECT_DIR$/src/utils/mbeegntsrv.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/utils/ntstims.js" afterPath="$PROJECT_DIR$/src/utils/ntstims.js" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/utils/ov2samples.js" afterPath="$PROJECT_DIR$/src/utils/ov2samples.js" />
+    </list>
     <ignored path="localhost.chrome.iws" />
     <ignored path=".idea/workspace.xml" />
     <ignored path=".idea/dataSources.local.xml" />
+    <ignored path="node_modules/" />
+    <ignored path=".idea/libraries/" />
+    <ignored path="node.screencast/" />
+    <ignored path="greensock-js/" />
+    <ignored path="jquery-ui-1.12.1/" />
+    <ignored path="electron/node_modules/" />
+    <manually-removed-from-ignored>
+      <directory path="./" />
+      <directory path="electron/quickstart/" />
+      <directory path="express/" />
+      <directory path="carousel/js/lib/jquery-ui-1.12.1/" />
+      <directory path="nody/node_modules/" />
+      <directory path="ebml/" />
+      <directory path="/" />
+      <directory path="electron/" />
+      <directory path="carousel/js/lib/" />
+      <directory path="electron/carousel/js/lib/" />
+      <directory path="nodecpp/" />
+      <directory path="carousel/js/lib/greensock-js/" />
+    </manually-removed-from-ignored>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -12,115 +106,276 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="ChangesViewManager" flattened_view="false" />
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
-  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="DatabaseView">
+    <option name="SHOW_INTERMEDIATE" value="true" />
+    <option name="GROUP_SCHEMA" value="true" />
+    <option name="GROUP_CONTENTS" value="false" />
+    <option name="SORT_POSITIONED" value="false" />
+    <option name="SHOW_TABLE_DETAILS" value="true" />
+    <option name="SHOW_EMPTY_GROUPS" value="false" />
+    <option name="AUTO_SCROLL_FROM_SOURCE" value="false" />
+  </component>
   <component name="FavoritesManager">
     <favorites_list name="localhost.chrome" />
   </component>
   <component name="FileEditorManager">
-    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="index.haml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/index.haml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="8" column="28" selection-start-line="8" selection-start-column="28" selection-end-line="8" selection-end-column="28" />
-              <folding>
-                <element signature="e#581#822#0" expanded="false" />
-                <element signature="e#835#1145#0" expanded="false" />
-                <element signature="e#1158#1467#0" expanded="false" />
-                <element signature="e#1480#1698#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="styles.less" pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/css/styles.less">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="544">
-              <caret line="32" column="20" selection-start-line="32" selection-start-column="20" selection-end-line="32" selection-end-column="20" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="html.less" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/css/html.less">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="sizes.less" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/css/sizes.less">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="18" selection-start-line="0" selection-start-column="18" selection-end-line="0" selection-end-column="18" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="html.css" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/css/html.css">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="1" column="13" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="carousel.js" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/js/carousel.js">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="17">
-              <caret line="1" column="18" selection-start-line="1" selection-start-column="18" selection-end-line="1" selection-end-column="18" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <splitter split-orientation="horizontal" split-proportion="0.64027864">
+      <split-first>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/node_modules/mbeeg/dsprocessor/index.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="222">
+                  <caret line="140" column="86" lean-forward="true" selection-start-line="140" selection-start-column="86" selection-end-line="140" selection-end-column="86" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="epochs.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/utils/epochs.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="-31">
+                  <caret line="67" column="47" lean-forward="false" selection-start-line="67" selection-start-column="47" selection-end-line="67" selection-end-column="47" />
+                  <folding>
+                    <element signature="e#277#303#0" expanded="false" />
+                    <element signature="e#345#499#0" expanded="false" />
+                    <element signature="e#673#1871#0" expanded="false" />
+                    <element signature="e#1906#2030#0" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="index.js" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/node_modules/mbeeg/tools/index.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="196">
+                  <caret line="186" column="45" lean-forward="false" selection-start-line="186" selection-start-column="45" selection-end-line="186" selection-end-column="45" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/mbeeg/tools/index.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="472">
+                  <caret line="185" column="29" lean-forward="false" selection-start-line="185" selection-start-column="29" selection-end-line="185" selection-end-column="29" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="index.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/mbeeg/dsprocessor/index.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="878">
+                  <caret line="139" column="30" lean-forward="false" selection-start-line="139" selection-start-column="30" selection-end-line="139" selection-end-column="30" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file leaf-file-name="epochs.js" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/utils/epochs.js">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="357">
+                  <caret line="61" column="67" lean-forward="false" selection-start-line="61" selection-start-column="67" selection-end-line="61" selection-end-column="67" />
+                  <folding>
+                    <element signature="e#277#303#0" expanded="false" />
+                    <element signature="e#345#499#0" expanded="false" />
+                    <element signature="e#673#1871#0" expanded="false" />
+                    <element signature="e#1906#2030#0" expanded="false" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="config.json" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/src/utils/config.json">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="323">
+                  <caret line="37" column="32" lean-forward="false" selection-start-line="37" selection-start-column="32" selection-end-line="37" selection-end-column="32" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="config_backup.json" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/src/utils/config_backup.json">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="714">
+                  <caret line="42" column="0" lean-forward="false" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Pug File" />
+        <option value="JavaScript File" />
+        <option value="cmd script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>\</find>
+      <find>e</find>
+      <find>:*\s*</find>
+      <find>GG</find>
+      <find>connection</find>
+      <find>helpers</find>
+      <find>config.eeg</find>
+      <find>parseFloat</find>
+      <find>parseInt</find>
+      <find>stringifier</find>
+      <find>reduce</find>
+      <find>console.log</find>
+      <find>csv-streamify`</find>
+      <find>mbTools</find>
+      <find>$PROJECT_DIR$/src/tools/helpers</find>
+      <find>Tools = require</find>
+      <find>appRoot</find>
+      <find>require(`.`)</find>
+      <find>`fs`</find>
+      <find>`[a-zA-Z\/0-9-_].`</find>
+      <find>`[a-zA-Z\/0-9\-_]*`</find>
+      <find>require\(`[a-zA-Z\/0-9\-_]*`\)</find>
+      <find>loadConfiguration(`../config.json`)</find>
+      <find>mberpxchg</find>
+      <find>new DSProcessor</find>
+      <find>timestamp</find>
+      <find>\n\r</find>
+      <find>\r\n</find>
+      <find>module</find>
+      <find>samplesFIFO</find>
+    </findStrings>
+    <replaceStrings>
+      <replace>let</replace>
+      <replace>'*':</replace>
+      <replace>'[A-Za-z]+':</replace>
+      <replace>'$1':</replace>
+      <replace>&quot;</replace>
+      <replace>Tools</replace>
+      <replace>mbeeg</replace>
+      <replace>'[a-zA-Z\/0-9-_].'</replace>
+      <replace>mbeegxchg</replace>
+      <replace>\r\n</replace>
+      <replace>this.samplesFIFO</replace>
+    </replaceStrings>
+    <dirStrings>
+      <dir>C:\Users\Boris\YandexDisk\localhost.chrome\src</dir>
+      <dir>C:\Users\Boris\YandexDisk\localhost.chrome\src\ntrainer</dir>
+      <dir>C:\Users\Boris\YandexDisk\localhost.chrome\node_modules\mbeeg</dir>
+    </dirStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/js/less.js" />
-        <option value="$PROJECT_DIR$/style/styles.less" />
-        <option value="$PROJECT_DIR$/index.html" />
-        <option value="$PROJECT_DIR$/css/test.scss" />
-        <option value="$PROJECT_DIR$/css/controls.css" />
-        <option value="$PROJECT_DIR$/css/mixins.less" />
-        <option value="$PROJECT_DIR$/css/controls.less" />
-        <option value="$PROJECT_DIR$/index.haml" />
-        <option value="$PROJECT_DIR$/js/carousel.js" />
-        <option value="$PROJECT_DIR$/css/html.less" />
-        <option value="$PROJECT_DIR$/css/sizes.less" />
-        <option value="$PROJECT_DIR$/css/styles.less" />
+        <option value="$PROJECT_DIR$/distr/src/ov2samples.js" />
+        <option value="$PROJECT_DIR$/src/tools/openvibe/reader.js" />
+        <option value="$PROJECT_DIR$/src/app/main.js" />
+        <option value="$PROJECT_DIR$/src/utils/epochs5cycles_raw.json" />
+        <option value="$PROJECT_DIR$/src/utils/classify.js" />
+        <option value="$PROJECT_DIR$/src/utils/features.js" />
+        <option value="$PROJECT_DIR$/src/utils/mbeegsrv.js" />
+        <option value="$PROJECT_DIR$/src/utils/stims.js" />
+        <option value="$PROJECT_DIR$/src/utils/whoisthewinner.js" />
+        <option value="$PROJECT_DIR$/test/test08_real_stimuli_readable_bufferMode.js" />
+        <option value="$PROJECT_DIR$/test/test09_real_stimuli_readable_objectMode.js" />
+        <option value="$PROJECT_DIR$/trash/core/controller/mbeegntsrv.js" />
+        <option value="$PROJECT_DIR$/trash/core/controller/mbeegsrv.js" />
+        <option value="$PROJECT_DIR$/trash/core/dsprocessor/epochs.js" />
+        <option value="$PROJECT_DIR$/trash/core/dsprocessor/stims.js" />
+        <option value="$PROJECT_DIR$/trash/core/dsprocessor/stimuli.js" />
+        <option value="$PROJECT_DIR$/trash/core/epprocessor/features.js" />
+        <option value="$PROJECT_DIR$/trash/ebml2ov.js" />
+        <option value="$PROJECT_DIR$/trash/ov2samples.js" />
+        <option value="$PROJECT_DIR$/trash/tools/ebml/cli.js" />
+        <option value="$PROJECT_DIR$/trash/tools/ebml/ebml2ov.js" />
+        <option value="$PROJECT_DIR$/trash/tools/ntstims.js" />
+        <option value="$PROJECT_DIR$/trash/tools/openvibe/ov2samples.js" />
+        <option value="$PROJECT_DIR$/trash/tools/stimuli.js" />
+        <option value="$PROJECT_DIR$/trash/core/decisionmaker/index.js" />
+        <option value="$PROJECT_DIR$/trash/core/classifier/index.js" />
+        <option value="$PROJECT_DIR$/trash/tools/ebml/reader.js" />
+        <option value="$PROJECT_DIR$/src/carousel/index.js" />
+        <option value="$PROJECT_DIR$/src/carousel/gui/console/css/misc.css" />
+        <option value="$PROJECT_DIR$/src/carousel/gui/keyboard/css/misc.scss" />
+        <option value="$PROJECT_DIR$/src/carousel/gui/console/css/misc.scss" />
+        <option value="$PROJECT_DIR$/src/carousel/gui/keyboard/css/misc.css" />
+        <option value="$PROJECT_DIR$/src/mbeeg/package.json" />
+        <option value="$PROJECT_DIR$/src/mbeeg/epprocessor/index.js" />
+        <option value="$PROJECT_DIR$/src/utils/ebml2ov.js" />
+        <option value="$PROJECT_DIR$/src/utils/make.cmd" />
+        <option value="$PROJECT_DIR$/src/mbeeg/tools/index.js" />
+        <option value="$PROJECT_DIR$/src/utils/ntstims.js" />
+        <option value="$PROJECT_DIR$/src/utils/mbeegntsrv.js" />
+        <option value="$PROJECT_DIR$/src/utils/ov2samples.js" />
+        <option value="$PROJECT_DIR$/node_modules/mbeeg/openvibe/reader.js" />
+        <option value="$PROJECT_DIR$/src/mbeeg/openvibe/reader.js" />
+        <option value="$PROJECT_DIR$/src/utils/epochs.js" />
+        <option value="$PROJECT_DIR$/src/utils/epochs2files.js" />
+        <option value="$PROJECT_DIR$/src/mbeeg/dsprocessor/index.js" />
+        <option value="_stream_readable.js" />
+        <option value="_stream_transform.js" />
+        <option value="$PROJECT_DIR$/src/utils/config_backup.json" />
+        <option value="$PROJECT_DIR$/src/utils/config.json" />
+        <option value="$PROJECT_DIR$/node_modules/mbeeg/dsprocessor/index.js" />
+        <option value="$PROJECT_DIR$/node_modules/mbeeg/tools/index.js" />
       </list>
     </option>
   </component>
+  <component name="JsBowerSettings">
+    <node-interpreter value="project" />
+    <exe-path />
+    <config-path />
+  </component>
   <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
   <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsFlowSettings">
+    <service-enabled>true</service-enabled>
+    <exe-path />
+    <annotation-enable>false</annotation-enable>
+    <other-services-enabled>true</other-services-enabled>
+    <auto-save>true</auto-save>
+  </component>
   <component name="JsGulpfileManager">
     <detection-done>true</detection-done>
     <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="NodeModulesDirectoryManager">
+    <handled-path value="$PROJECT_DIR$/node_modules" />
+  </component>
+  <component name="PackageJsonUpdateNotifier">
+    <dismissed value="$PROJECT_DIR$/src/mbeeg/package.json" />
   </component>
   <component name="PhpServers">
     <servers />
   </component>
   <component name="PhpWorkspaceProjectConfiguration" backward_compatibility_performed="true" />
-  <component name="ProjectFrameBounds">
-    <option name="x" value="953" />
-    <option name="width" value="974" />
-    <option name="height" value="1006" />
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="width" value="1920" />
+    <option name="height" value="1080" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -130,39 +385,21 @@
             <id />
           </State>
           <State>
-            <id>CSS</id>
+            <id>GeneralJavaScript</id>
           </State>
           <State>
-            <id>Code style issuesCSS</id>
-          </State>
-          <State>
-            <id>Invalid elementsCSS</id>
-          </State>
-          <State>
-            <id>Less</id>
-          </State>
-          <State>
-            <id>Probable bugsCSS</id>
+            <id>JavaScript</id>
           </State>
         </expanded-state>
         <selected-state>
           <State>
-            <id>Less</id>
+            <id>AngularJS</id>
           </State>
         </selected-state>
       </profile-state>
     </entry>
   </component>
-  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
-    <OptionsSetting value="true" id="Add" />
-    <OptionsSetting value="true" id="Remove" />
-    <OptionsSetting value="true" id="Checkout" />
-    <OptionsSetting value="true" id="Update" />
-    <OptionsSetting value="true" id="Status" />
-    <OptionsSetting value="true" id="Edit" />
-    <ConfirmationsSetting value="0" id="Add" />
-    <ConfirmationsSetting value="0" id="Remove" />
-  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
       <flattenPackages />
@@ -178,191 +415,265 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="ProjectPane">
-        <subPane>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="localhost.chrome" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="localhost.chrome" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="localhost.chrome" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="index.haml" />
-              <option name="myItemType" value="com.intellij.plugins.watcher.projectView.NestingTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="localhost.chrome" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="localhost.chrome" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="js" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="localhost.chrome" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="localhost.chrome" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="css" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="test.scss" />
-              <option name="myItemType" value="com.intellij.plugins.watcher.projectView.NestingTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="localhost.chrome" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="localhost.chrome" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="css" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="styles.less" />
-              <option name="myItemType" value="com.intellij.plugins.watcher.projectView.NestingTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="localhost.chrome" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="localhost.chrome" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="css" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="sizes.less" />
-              <option name="myItemType" value="com.intellij.plugins.watcher.projectView.NestingTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="localhost.chrome" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="localhost.chrome" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="css" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="mixins.less" />
-              <option name="myItemType" value="com.intellij.plugins.watcher.projectView.NestingTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="localhost.chrome" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="localhost.chrome" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="css" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="html.less" />
-              <option name="myItemType" value="com.intellij.plugins.watcher.projectView.NestingTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="localhost.chrome" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="localhost.chrome" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="css" />
-              <option name="myItemType" value="com.jetbrains.php.projectView.PhpTreeStructureProvider$1" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="controls.less" />
-              <option name="myItemType" value="com.intellij.plugins.watcher.projectView.NestingTreeNode" />
-            </PATH_ELEMENT>
-          </PATH>
-        </subPane>
-      </pane>
       <pane id="Scope">
+        <subPane subId="Default">
+          <expand>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="tools" type="cbb8eebc:String" user="tools" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="tools" type="cbb8eebc:String" user="tools" />
+              <item name="openvibe" type="cbb8eebc:String" user="openvibe" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+              <item name="distr" type="cbb8eebc:String" user="distr" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
         <subPane subId="Project Files">
-          <PATH>
-            <PATH_ELEMENT USER_OBJECT="Root">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT USER_OBJECT="localhost.chrome">
-              <option name="myItemId" value="" />
-              <option name="myItemType" value="" />
-            </PATH_ELEMENT>
-          </PATH>
+          <expand>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+              <item name="distr" type="cbb8eebc:String" user="distr" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+              <item name="distr" type="cbb8eebc:String" user="distr" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="core" type="cbb8eebc:String" user="core" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="core" type="cbb8eebc:String" user="core" />
+              <item name="classifier" type="cbb8eebc:String" user="classifier" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="core" type="cbb8eebc:String" user="core" />
+              <item name="controller" type="cbb8eebc:String" user="controller" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="core" type="cbb8eebc:String" user="core" />
+              <item name="decisionmaker" type="cbb8eebc:String" user="decisionmaker" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="core" type="cbb8eebc:String" user="core" />
+              <item name="dsprocessor" type="cbb8eebc:String" user="dsprocessor" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="core" type="cbb8eebc:String" user="core" />
+              <item name="epprocessor" type="cbb8eebc:String" user="epprocessor" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="ntrainer" type="cbb8eebc:String" user="ntrainer" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="tools" type="cbb8eebc:String" user="tools" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="tools" type="cbb8eebc:String" user="tools" />
+              <item name="ebml" type="cbb8eebc:String" user="ebml" />
+            </path>
+            <path>
+              <item name="Root" type="cbb8eebc:String" user="Root" />
+              <item name="localhost.chrome" type="cbb8eebc:String" user="localhost.chrome" />
+              <item name="src" type="cbb8eebc:String" user="src" />
+              <item name="tools" type="cbb8eebc:String" user="tools" />
+              <item name="openvibe" type="cbb8eebc:String" user="openvibe" />
+            </path>
+          </expand>
+          <select />
         </subPane>
       </pane>
       <pane id="Scratches" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="localhost.chrome" type="b2602c69:ProjectViewProjectNode" />
+              <item name="localhost.chrome" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="localhost.chrome" type="b2602c69:ProjectViewProjectNode" />
+              <item name="localhost.chrome" type="462c0819:PsiDirectoryNode" />
+              <item name="node_modules" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="localhost.chrome" type="b2602c69:ProjectViewProjectNode" />
+              <item name="localhost.chrome" type="462c0819:PsiDirectoryNode" />
+              <item name="node_modules" type="462c0819:PsiDirectoryNode" />
+              <item name="mbeeg" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="localhost.chrome" type="b2602c69:ProjectViewProjectNode" />
+              <item name="localhost.chrome" type="462c0819:PsiDirectoryNode" />
+              <item name="node_modules" type="462c0819:PsiDirectoryNode" />
+              <item name="mbeeg" type="462c0819:PsiDirectoryNode" />
+              <item name="dsprocessor" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="localhost.chrome" type="b2602c69:ProjectViewProjectNode" />
+              <item name="localhost.chrome" type="462c0819:PsiDirectoryNode" />
+              <item name="node_modules" type="462c0819:PsiDirectoryNode" />
+              <item name="mbeeg" type="462c0819:PsiDirectoryNode" />
+              <item name="tools" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="localhost.chrome" type="b2602c69:ProjectViewProjectNode" />
+              <item name="localhost.chrome" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="localhost.chrome" type="b2602c69:ProjectViewProjectNode" />
+              <item name="localhost.chrome" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="mbeeg" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="localhost.chrome" type="b2602c69:ProjectViewProjectNode" />
+              <item name="localhost.chrome" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="mbeeg" type="462c0819:PsiDirectoryNode" />
+              <item name="dsprocessor" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="localhost.chrome" type="b2602c69:ProjectViewProjectNode" />
+              <item name="localhost.chrome" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="mbeeg" type="462c0819:PsiDirectoryNode" />
+              <item name="tools" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="localhost.chrome" type="b2602c69:ProjectViewProjectNode" />
+              <item name="localhost.chrome" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="utils" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="watcher.settings" />
-    <property name="settings.editor.splitter.proportion" value="0.2" />
+    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
     <property name="WebServerToolWindowFactoryState" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/AppData/Roaming/npm/electron.cmd" />
     <property name="js-jscs-nodeInterpreter" value="C:\Program Files\nodejs\node.exe" />
+    <property name="nodejs_interpreter_path" value="C:/Program Files/nodejs/node" />
+    <property name="restartRequiresConfirmation" value="false" />
+    <property name="JavaScriptPreferStrict" value="true" />
+    <property name="JavaScriptWeakerCompletionTypeGuess" value="true" />
+    <property name="js.eslint.eslintPackage" value="" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.size" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.show.permissions" value="false" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.symlinks" value="true" />
+    <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
+    <property name="HbShouldOpenHtmlAsHb" value="" />
+    <property name="nodejs.mocha.mocha_node_package_dir" value="$PROJECT_DIR$/node_modules/mocha" />
+    <property name="javascript.nodejs.core.library.configured.version" value="6.10.1" />
+    <property name="settings.editor.splitter.proportion" value="0.25945947" />
+    <property name="ChangesBrowser.SHOW_FLATTEN" value="false" />
+    <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
+    <property name="full.screen.before.presentation.mode" value="false" />
+    <property name="SearchEverywhereHistoryKey" value="&#9;FILE&#9;file://C:/Users/Boris/YandexDisk/localhost.chrome/src/tools/parser/ebml/ebml_dictionary_statistics.js" />
+    <property name="node.js.path.for.package.jscs" value="project" />
+    <property name="node.js.detected.package.jscs" value="true" />
+    <property name="node.js.selected.package.jscs" value="" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.selected.package.eslint" value="" />
+    <property name="node.js.path.for.package.standard" value="project" />
+    <property name="node.js.detected.package.standard" value="true" />
+    <property name="node.js.selected.package.standard" value="C:\Users\Boris\AppData\Roaming\npm\node_modules\standard" />
+    <property name="jsx.switch.disabled" value="true" />
   </component>
-  <component name="RunManager">
-    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
-      <method />
-    </configuration>
-    <configuration default="true" type="PHPUnitRunConfigurationType" factoryName="PHPUnit">
-      <TestRunner />
-      <method />
-    </configuration>
-    <configuration default="true" type="PhpBehatConfigurationType" factoryName="Behat">
-      <BehatRunner />
-      <method />
-    </configuration>
-    <configuration default="true" type="PhpLocalRunConfigurationType" factoryName="PHP Console">
-      <method />
-    </configuration>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\Boris\YandexDisk\localhost.chrome\trash" />
+      <recent name="C:\Users\Boris\YandexDisk\localhost.chrome\src\utils\output" />
+      <recent name="C:\Users\Boris\YandexDisk\localhost.chrome\src" />
+      <recent name="C:\Users\Boris\YandexDisk\localhost.chrome\distr\src" />
+      <recent name="C:\Users\Boris\YandexDisk\localhost.chrome\distr" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\Boris\YandexDisk\localhost.chrome\src\mbeeg\tools" />
+      <recent name="C:\Users\Boris\YandexDisk\localhost.chrome\src\mbeeg\dsprocessor" />
+      <recent name="C:\Users\Boris\YandexDisk\localhost.chrome\node_modules\mbeeg\dsprocessor" />
+      <recent name="C:\Users\Boris\YandexDisk\localhost.chrome\node_modules\mbeeg\openvibe" />
+      <recent name="C:\Users\Boris\YandexDisk\localhost.chrome\src\utils" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Node.js.epochs.js">
     <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
       <node-interpreter>project</node-interpreter>
       <node-options />
@@ -370,21 +681,298 @@
       <tasks />
       <arguments />
       <envs />
+    </configuration>
+    <configuration default="true" type="ChromiumRemoteDebugType" factoryName="Chromium Remote">
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerJest" factoryName="Jest">
+      <node-interpreter value="project" />
+      <working-dir value="" />
+      <envs />
+      <scope-kind value="ALL" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavaScriptTestRunnerProtractor" factoryName="Protractor">
+      <config-file value="" />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
       <method />
     </configuration>
     <configuration default="true" type="js.build_tools.npm" factoryName="npm">
-      <command value="run-script" />
+      <command value="run" />
       <scripts />
       <node-interpreter value="project" />
       <envs />
       <method />
     </configuration>
+    <configuration name="ebml2ov.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" path-to-node="project" path-to-js-file="ebml2ov.js" working-dir="$PROJECT_DIR$/src/utils" />
+    <configuration name="electron" type="NodeJSConfigurationType" factoryName="Node.js" singleton="false" path-to-node="$USER_HOME$/AppData/Roaming/npm/electron.cmd" application-parameters="--inspect" node-parameters="." working-dir="$PROJECT_DIR$">
+      <envs>
+        <env name="mode" value="dev" />
+        <env name="devtools" value="true" />
+      </envs>
+      <profiling v8-profiler-path="C:\Users\Boris\YandexDisk\localhost.chrome\node_modules\v8-profiler" />
+      <EXTENSION ID="com.jetbrains.nodejs.remote.docker.NodeJSDockerRunConfigurationExtension">
+        <option name="envVars">
+          <list />
+        </option>
+        <option name="extraHosts">
+          <list />
+        </option>
+        <option name="links">
+          <list />
+        </option>
+        <option name="networkDisabled" value="false" />
+        <option name="networkMode" value="bridge" />
+        <option name="portBindings">
+          <list />
+        </option>
+        <option name="publishAllPorts" value="false" />
+        <option name="version" value="1" />
+        <option name="volumeBindings">
+          <list />
+        </option>
+      </EXTENSION>
+      <EXTENSION ID="com.jetbrains.nodejs.run.NodeJSProfilingRunConfigurationExtension">
+        <profiling v8-profiler-path="C:\Users\Boris\YandexDisk\localhost.chrome\node_modules\v8-profiler" />
+      </EXTENSION>
+    </configuration>
+    <configuration name="electron" type="NodeJSConfigurationType" factoryName="Node.js" singleton="false" path-to-node="$USER_HOME$/AppData/Roaming/npm/electron.cmd" application-parameters="--remote-debugging-port=9222" node-parameters="." working-dir="$PROJECT_DIR$">
+      <envs>
+        <env name="mode" value="dev" />
+        <env name="devtools" value="true" />
+      </envs>
+      <profiling v8-profiler-path="C:\Users\Boris\YandexDisk\localhost.chrome\node_modules\v8-profiler" />
+      <EXTENSION ID="com.jetbrains.nodejs.remote.docker.NodeJSDockerRunConfigurationExtension">
+        <option name="envVars">
+          <list />
+        </option>
+        <option name="extraHosts">
+          <list />
+        </option>
+        <option name="links">
+          <list />
+        </option>
+        <option name="networkDisabled" value="false" />
+        <option name="networkMode" value="bridge" />
+        <option name="portBindings">
+          <list />
+        </option>
+        <option name="publishAllPorts" value="false" />
+        <option name="version" value="1" />
+        <option name="volumeBindings">
+          <list />
+        </option>
+      </EXTENSION>
+      <EXTENSION ID="com.jetbrains.nodejs.run.NodeJSProfilingRunConfigurationExtension">
+        <profiling v8-profiler-path="C:\Users\Boris\YandexDisk\localhost.chrome\node_modules\v8-profiler" />
+      </EXTENSION>
+    </configuration>
+    <configuration name="epochs2files.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" path-to-node="project" path-to-js-file="epochs2files.js" working-dir="$PROJECT_DIR$/src/utils" />
+    <configuration name="epochs.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" path-to-node="project" path-to-js-file="epochs.js" application-parameters="-e" working-dir="$PROJECT_DIR$/src/utils">
+      <profiling v8-profiler-path="C:\Users\Boris\YandexDisk\localhost.chrome\node_modules\v8-profiler" />
+      <EXTENSION ID="com.jetbrains.nodejs.remote.docker.NodeJSDockerRunConfigurationExtension">
+        <option name="envVars">
+          <list />
+        </option>
+        <option name="extraHosts">
+          <list />
+        </option>
+        <option name="links">
+          <list />
+        </option>
+        <option name="networkDisabled" value="false" />
+        <option name="networkMode" value="bridge" />
+        <option name="portBindings">
+          <list />
+        </option>
+        <option name="publishAllPorts" value="false" />
+        <option name="version" value="1" />
+        <option name="volumeBindings">
+          <list />
+        </option>
+      </EXTENSION>
+      <EXTENSION ID="com.jetbrains.nodejs.run.NodeJSProfilingRunConfigurationExtension">
+        <profiling v8-profiler-path="C:\Users\Boris\YandexDisk\localhost.chrome\node_modules\v8-profiler" />
+      </EXTENSION>
+    </configuration>
+    <configuration name="mocha parser\test" type="mocha-javascript-test-runner" factoryName="Mocha">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <working-directory>$PROJECT_DIR$</working-directory>
+      <pass-parent-env>true</pass-parent-env>
+      <envs />
+      <ui>bdd</ui>
+      <extra-mocha-options />
+      <test-kind>TEST_FILE</test-kind>
+      <test-file>$PROJECT_DIR$/parser/test/mocha.js</test-file>
+    </configuration>
+    <configuration name="node server.js" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" path-to-js-file="$PROJECT_DIR$/node.screencast/www/server.js" working-dir="$PROJECT_DIR$/node.screencast/www">
+      <EXTENSION ID="com.jetbrains.nodejs.remote.docker.NodeJSDockerRunConfigurationExtension">
+        <option name="envVars">
+          <list />
+        </option>
+        <option name="extraHosts">
+          <list />
+        </option>
+        <option name="links">
+          <list />
+        </option>
+        <option name="networkDisabled" value="false" />
+        <option name="networkMode" value="bridge" />
+        <option name="portBindings">
+          <list />
+        </option>
+        <option name="publishAllPorts" value="false" />
+        <option name="version" value="1" />
+        <option name="volumeBindings">
+          <list />
+        </option>
+      </EXTENSION>
+    </configuration>
+    <configuration name="node test/helper.js" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" path-to-js-file="helper.js" working-dir="$PROJECT_DIR$/parser/test">
+      <envs>
+        <env name="DEBUG" value="mberp:*" />
+      </envs>
+      <EXTENSION ID="com.jetbrains.nodejs.remote.docker.NodeJSDockerRunConfigurationExtension">
+        <option name="envVars">
+          <list />
+        </option>
+        <option name="extraHosts">
+          <list />
+        </option>
+        <option name="links">
+          <list />
+        </option>
+        <option name="networkDisabled" value="false" />
+        <option name="networkMode" value="bridge" />
+        <option name="portBindings">
+          <list />
+        </option>
+        <option name="publishAllPorts" value="false" />
+        <option name="version" value="1" />
+        <option name="volumeBindings">
+          <list />
+        </option>
+      </EXTENSION>
+    </configuration>
+    <configuration name="ov2samples.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" path-to-node="project" path-to-js-file="ov2samples.js" working-dir="$PROJECT_DIR$/src/utils" />
+    <configuration name="parser with debug" type="NodeJSConfigurationType" factoryName="Node.js" path-to-node="project" path-to-js-file="index.js" working-dir="$PROJECT_DIR$/parser">
+      <envs>
+        <env name="DEBUG" value="mberp:*" />
+      </envs>
+      <EXTENSION ID="com.jetbrains.nodejs.remote.docker.NodeJSDockerRunConfigurationExtension">
+        <option name="envVars">
+          <list />
+        </option>
+        <option name="extraHosts">
+          <list />
+        </option>
+        <option name="links">
+          <list />
+        </option>
+        <option name="networkDisabled" value="false" />
+        <option name="networkMode" value="bridge" />
+        <option name="portBindings">
+          <list />
+        </option>
+        <option name="publishAllPorts" value="false" />
+        <option name="version" value="1" />
+        <option name="volumeBindings">
+          <list />
+        </option>
+      </EXTENSION>
+    </configuration>
+    <configuration name="renderer" type="ChromiumRemoteDebugType" factoryName="Chromium Remote" />
+    <configuration name="stims.js" type="NodeJSConfigurationType" factoryName="Node.js" temporary="true" path-to-node="project" path-to-js-file="stims.js" application-parameters="-p" working-dir="$PROJECT_DIR$/src/utils">
+      <profiling v8-profiler-path="C:\Users\Boris\YandexDisk\localhost.chrome\node_modules\v8-profiler" />
+      <EXTENSION ID="com.jetbrains.nodejs.remote.docker.NodeJSDockerRunConfigurationExtension">
+        <option name="envVars">
+          <list />
+        </option>
+        <option name="extraHosts">
+          <list />
+        </option>
+        <option name="links">
+          <list />
+        </option>
+        <option name="networkDisabled" value="false" />
+        <option name="networkMode" value="bridge" />
+        <option name="portBindings">
+          <list />
+        </option>
+        <option name="publishAllPorts" value="false" />
+        <option name="version" value="1" />
+        <option name="volumeBindings">
+          <list />
+        </option>
+      </EXTENSION>
+      <EXTENSION ID="com.jetbrains.nodejs.run.NodeJSProfilingRunConfigurationExtension">
+        <profiling v8-profiler-path="C:\Users\Boris\YandexDisk\localhost.chrome\node_modules\v8-profiler" />
+      </EXTENSION>
+    </configuration>
+    <configuration name="supervisor server.js" type="NodeJSConfigurationType" factoryName="Node.js" singleton="false" path-to-node="$USER_HOME$/AppData/Roaming/npm/supervisor.cmd" path-to-js-file="$PROJECT_DIR$/node.screencast/www/server.js" working-dir="$PROJECT_DIR$/node.screencast/www">
+      <EXTENSION ID="com.jetbrains.nodejs.remote.docker.NodeJSDockerRunConfigurationExtension">
+        <option name="envVars">
+          <list />
+        </option>
+        <option name="extraHosts">
+          <list />
+        </option>
+        <option name="links">
+          <list />
+        </option>
+        <option name="networkDisabled" value="false" />
+        <option name="networkMode" value="bridge" />
+        <option name="portBindings">
+          <list />
+        </option>
+        <option name="publishAllPorts" value="false" />
+        <option name="version" value="1" />
+        <option name="volumeBindings">
+          <list />
+        </option>
+      </EXTENSION>
+    </configuration>
+    <list size="12">
+      <item index="0" class="java.lang.String" itemvalue="Chromium Remote.renderer" />
+      <item index="1" class="java.lang.String" itemvalue="Mocha.mocha parser\test" />
+      <item index="2" class="java.lang.String" itemvalue="Node.js.electron" />
+      <item index="3" class="java.lang.String" itemvalue="Node.js.node server.js" />
+      <item index="4" class="java.lang.String" itemvalue="Node.js.node test/helper.js" />
+      <item index="5" class="java.lang.String" itemvalue="Node.js.parser with debug" />
+      <item index="6" class="java.lang.String" itemvalue="Node.js.supervisor server.js" />
+      <item index="7" class="java.lang.String" itemvalue="Node.js.epochs2files.js" />
+      <item index="8" class="java.lang.String" itemvalue="Node.js.ebml2ov.js" />
+      <item index="9" class="java.lang.String" itemvalue="Node.js.ov2samples.js" />
+      <item index="10" class="java.lang.String" itemvalue="Node.js.stims.js" />
+      <item index="11" class="java.lang.String" itemvalue="Node.js.epochs.js" />
+    </list>
+    <recent_temporary>
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Node.js.epochs.js" />
+        <item index="1" class="java.lang.String" itemvalue="Node.js.ov2samples.js" />
+        <item index="2" class="java.lang.String" itemvalue="Node.js.epochs2files.js" />
+        <item index="3" class="java.lang.String" itemvalue="Node.js.stims.js" />
+        <item index="4" class="java.lang.String" itemvalue="Node.js.ebml2ov.js" />
+      </list>
+    </recent_temporary>
   </component>
   <component name="ShelveChangesManager" show_recycled="false">
     <option name="remove_strategy" value="false" />
   </component>
+  <component name="SshConsoleOptionsProvider">
+    <option name="myEncoding" value="UTF-8" />
+    <option name="myConnectionType" value="NONE" />
+  </component>
+  <component name="StructureViewFactory">
+    <option name="ACTIVE_ACTIONS" value=",HIDE_INHERITED" />
+  </component>
   <component name="SvnConfiguration">
-    <configuration />
+    <configuration>C:\Users\Boris\AppData\Roaming\Subversion</configuration>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -402,56 +990,585 @@
       <workItem from="1491320131964" duration="11870000" />
       <workItem from="1491381058986" duration="66000" />
       <workItem from="1491381198206" duration="25122000" />
-      <workItem from="1491453860735" duration="3135000" />
+      <workItem from="1491453860735" duration="4441000" />
+      <workItem from="1491495536178" duration="616000" />
+      <workItem from="1491669756795" duration="1769000" />
+      <workItem from="1491686496927" duration="19653000" />
+      <workItem from="1491830919013" duration="9886000" />
+      <workItem from="1491843127586" duration="17982000" />
+      <workItem from="1491882608235" duration="3877000" />
+      <workItem from="1491887647057" duration="3539000" />
+      <workItem from="1492170886972" duration="39168000" />
+      <workItem from="1492346397697" duration="9849000" />
+      <workItem from="1492357550906" duration="21015000" />
+      <workItem from="1492406477116" duration="654000" />
+      <workItem from="1492407521686" duration="67000" />
+      <workItem from="1492407613505" duration="13776000" />
+      <workItem from="1492421652383" duration="606000" />
+      <workItem from="1492455873768" duration="1229000" />
+      <workItem from="1493656609759" duration="9110000" />
+      <workItem from="1493735390817" duration="3872000" />
+      <workItem from="1493794529203" duration="16966000" />
+      <workItem from="1493886632647" duration="6139000" />
+      <workItem from="1493924358651" duration="816000" />
+      <workItem from="1494445825451" duration="616000" />
+      <workItem from="1494614785334" duration="2888000" />
+      <workItem from="1494818474571" duration="6298000" />
+      <workItem from="1494828812592" duration="248000" />
+      <workItem from="1494829077945" duration="4467000" />
+      <workItem from="1494836307200" duration="932000" />
+      <workItem from="1494874477765" duration="6000" />
+      <workItem from="1494875397477" duration="6000" />
+      <workItem from="1494878360994" duration="237000" />
+      <workItem from="1494881231480" duration="823000" />
+      <workItem from="1495015402764" duration="1557000" />
+      <workItem from="1495018931346" duration="19230000" />
+      <workItem from="1495134735545" duration="730000" />
+      <workItem from="1495135722823" duration="1532000" />
+      <workItem from="1495137321227" duration="91000" />
+      <workItem from="1495137455684" duration="46000" />
+      <workItem from="1495137657237" duration="107000" />
+      <workItem from="1495137785216" duration="74000" />
+      <workItem from="1495137861258" duration="50000" />
+      <workItem from="1495137929028" duration="691000" />
+      <workItem from="1495138906208" duration="141000" />
+      <workItem from="1495139063120" duration="1291000" />
+      <workItem from="1495140714696" duration="421000" />
+      <workItem from="1495168373910" duration="11935000" />
+      <workItem from="1495188128201" duration="4702000" />
+      <workItem from="1495195264328" duration="602000" />
+      <workItem from="1495210363739" duration="8000" />
+      <workItem from="1495430875969" duration="1472000" />
+      <workItem from="1496050577719" duration="7081000" />
+      <workItem from="1496207811972" duration="677000" />
+      <workItem from="1496307270897" duration="388000" />
+      <workItem from="1496307681168" duration="4449000" />
+      <workItem from="1496336780814" duration="3692000" />
+      <workItem from="1496377980139" duration="2079000" />
+      <workItem from="1496605165597" duration="106000" />
+      <workItem from="1496605288935" duration="262000" />
+      <workItem from="1496632021491" duration="8209000" />
+      <workItem from="1496840203709" duration="272000" />
+      <workItem from="1496840567188" duration="51000" />
+      <workItem from="1496840639745" duration="693000" />
+      <workItem from="1496841354641" duration="36000" />
+      <workItem from="1496841408220" duration="4523000" />
+      <workItem from="1496903453992" duration="2040000" />
+      <workItem from="1496908755646" duration="630000" />
+      <workItem from="1496909448157" duration="7924000" />
+      <workItem from="1496917889932" duration="777000" />
+      <workItem from="1496927734000" duration="764000" />
+      <workItem from="1496929653524" duration="15615000" />
+      <workItem from="1497072433599" duration="41000" />
+      <workItem from="1497072513630" duration="286000" />
+      <workItem from="1497072915275" duration="12582000" />
+      <workItem from="1497089358484" duration="4220000" />
+      <workItem from="1497095462269" duration="15021000" />
+      <workItem from="1497201148500" duration="25186000" />
+      <workItem from="1497367393029" duration="37489000" />
+      <workItem from="1497597098473" duration="1241000" />
+      <workItem from="1497701177802" duration="3458000" />
+      <workItem from="1497708459538" duration="36104000" />
+      <workItem from="1497848064978" duration="21230000" />
+      <workItem from="1497877794166" duration="8126000" />
+      <workItem from="1497886691319" duration="3721000" />
+      <workItem from="1497995188985" duration="11415000" />
+      <workItem from="1498071433707" duration="5262000" />
+      <workItem from="1498118694455" duration="15286000" />
+      <workItem from="1498142886092" duration="91000" />
+      <workItem from="1498145293625" duration="32424000" />
+      <workItem from="1498294978929" duration="15067000" />
+      <workItem from="1498316474125" duration="24438000" />
+      <workItem from="1498425098689" duration="6824000" />
+      <workItem from="1498537461390" duration="37000" />
+      <workItem from="1498544979103" duration="1208000" />
+      <workItem from="1498594888032" duration="2945000" />
+      <workItem from="1498751879164" duration="145000" />
+      <workItem from="1499064311969" duration="782000" />
+      <workItem from="1499066849474" duration="36000" />
+      <workItem from="1499066988756" duration="980000" />
+      <workItem from="1499927118502" duration="686000" />
+      <workItem from="1499927900210" duration="19800000" />
+      <workItem from="1500293164946" duration="51206000" />
+      <workItem from="1500803691191" duration="13387000" />
+      <workItem from="1500886221286" duration="258000" />
+      <workItem from="1500887351882" duration="34716000" />
+      <workItem from="1501007434458" duration="604000" />
+      <workItem from="1501050816066" duration="134599000" />
+      <workItem from="1501489492839" duration="21603000" />
+      <workItem from="1501560638658" duration="33205000" />
+      <workItem from="1501754292456" duration="63000" />
+      <workItem from="1501754482808" duration="32127000" />
+      <workItem from="1502089625690" duration="95264000" />
+      <workItem from="1502698585155" duration="3619000" />
+      <workItem from="1502704839185" duration="21394000" />
+      <workItem from="1502785496644" duration="7597000" />
+      <workItem from="1502806289960" duration="733000" />
+      <workItem from="1502810586775" duration="2818000" />
+      <workItem from="1502814345838" duration="1832000" />
+      <workItem from="1502816368216" duration="32000" />
+      <workItem from="1502816471825" duration="2130000" />
+      <workItem from="1502822497561" duration="81661000" />
+      <workItem from="1503481286763" duration="45555000" />
+      <workItem from="1503605378324" duration="34882000" />
+      <workItem from="1503928062830" duration="88211000" />
+      <workItem from="1504285807540" duration="4331000" />
+      <workItem from="1504293700293" duration="25825000" />
+      <workItem from="1504441381545" duration="55000" />
+      <workItem from="1504764558532" duration="9332000" />
+      <workItem from="1504808522055" duration="494000" />
+      <workItem from="1504848966272" duration="94700000" />
+      <workItem from="1505321281018" duration="689000" />
+      <workItem from="1505322789048" duration="124323000" />
+      <workItem from="1506057012864" duration="29100000" />
+      <workItem from="1506146160863" duration="49292000" />
+      <workItem from="1506328474990" duration="47179000" />
+      <workItem from="1506438769509" duration="575000" />
+      <workItem from="1506439651693" duration="485000" />
+      <workItem from="1506441210449" duration="387000" />
+      <workItem from="1506478839986" duration="21607000" />
+      <workItem from="1506534365111" duration="15487000" />
+      <workItem from="1506576473205" duration="1431000" />
+      <workItem from="1506579844944" duration="30245000" />
+      <workItem from="1506660122784" duration="7521000" />
+      <workItem from="1506714493549" duration="3188000" />
+      <workItem from="1506748000283" duration="70494000" />
+      <workItem from="1506935906532" duration="22176000" />
+      <workItem from="1507018481518" duration="22442000" />
+      <workItem from="1507086330309" duration="9063000" />
+      <workItem from="1507102477572" duration="28617000" />
+      <workItem from="1507199949841" duration="14414000" />
+      <workItem from="1507264441745" duration="26857000" />
+      <workItem from="1507351726904" duration="10516000" />
+      <workItem from="1507365703806" duration="47875000" />
+      <workItem from="1507485810701" duration="201000" />
+      <workItem from="1507487765386" duration="4567000" />
     </task>
+    <task id="LOCAL-00001" summary="First commit">
+      <created>1497101263646</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1497101263646</updated>
+    </task>
+    <task id="LOCAL-00002" summary="First commit">
+      <created>1497130484636</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1497130484636</updated>
+    </task>
+    <task id="LOCAL-00003" summary="First commit">
+      <created>1497212439784</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1497212439784</updated>
+    </task>
+    <task id="LOCAL-00004" summary="First commit">
+      <created>1497516422927</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1497516422927</updated>
+    </task>
+    <task id="LOCAL-00005" summary="First commit">
+      <created>1497857881370</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1497857881370</updated>
+    </task>
+    <task id="LOCAL-00006" summary="First commit">
+      <created>1498144546750</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1498144546750</updated>
+    </task>
+    <task id="LOCAL-00007" summary="First commit">
+      <created>1498294257540</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1498294257540</updated>
+    </task>
+    <task id="LOCAL-00008" summary="First commit">
+      <created>1498295123808</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1498295123808</updated>
+    </task>
+    <task id="LOCAL-00009" summary="First commit">
+      <created>1498317276014</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1498317276014</updated>
+    </task>
+    <task id="LOCAL-00010" summary="ebml helper passed all tests">
+      <created>1498372908638</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1498372908639</updated>
+    </task>
+    <task id="LOCAL-00011" summary="ebml helper passed all tests">
+      <created>1498373265911</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1498373265911</updated>
+    </task>
+    <task id="LOCAL-00012" summary="ebml helper passed all tests">
+      <created>1498751997475</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1498751997475</updated>
+    </task>
+    <task id="LOCAL-00013" summary="folders structure changed">
+      <created>1500888891539</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1500888891539</updated>
+    </task>
+    <task id="LOCAL-00014" summary="folders structure changed">
+      <created>1500895234831</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1500895234831</updated>
+    </task>
+    <task id="LOCAL-00015" summary="folders structure changed">
+      <created>1500965540191</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1500965540191</updated>
+    </task>
+    <task id="LOCAL-00016" summary="folders structure changed">
+      <created>1500971627786</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1500971627786</updated>
+    </task>
+    <task id="LOCAL-00017" summary="Kj">
+      <created>1501215253035</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1501215253035</updated>
+    </task>
+    <task id="LOCAL-00018" summary="dsprocessor.epochs.pipe(process.stdout) works pretty fine">
+      <created>1501494342053</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1501494342053</updated>
+    </task>
+    <task id="LOCAL-00019" summary="dsprocessor.epochs.pipe(process.stdout) works pretty fine">
+      <created>1501495231646</created>
+      <option name="number" value="00019" />
+      <option name="presentableId" value="LOCAL-00019" />
+      <option name="project" value="LOCAL" />
+      <updated>1501495231647</updated>
+    </task>
+    <task id="LOCAL-00020" summary="dsprocessor.epochs.pipe(process.stdout) works pretty fine">
+      <created>1501495854823</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1501495854823</updated>
+    </task>
+    <task id="LOCAL-00021" summary="dsprocessor.epochs.pipe(process.stdout) works pretty fine">
+      <created>1501496403421</created>
+      <option name="number" value="00021" />
+      <option name="presentableId" value="LOCAL-00021" />
+      <option name="project" value="LOCAL" />
+      <updated>1501496403421</updated>
+    </task>
+    <task id="LOCAL-00022" summary="dsprocessor (epochs, filtered, detrended)">
+      <created>1501517401551</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1501517401551</updated>
+    </task>
+    <task id="LOCAL-00023" summary="dsprocessor (epochs, filtered, detrended)">
+      <created>1501561250456</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1501561250456</updated>
+    </task>
+    <task id="LOCAL-00024" summary="dsprocessor (epochs, filtered, detrended)">
+      <created>1501577553256</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1501577553256</updated>
+    </task>
+    <task id="LOCAL-00025" summary="dsprocessor improvements &amp; classifier stimuli flows">
+      <created>1502458318232</created>
+      <option name="number" value="00025" />
+      <option name="presentableId" value="LOCAL-00025" />
+      <option name="project" value="LOCAL" />
+      <updated>1502458318232</updated>
+    </task>
+    <task id="LOCAL-00026" summary="dsprocessor improvements &amp; classifier stimuli flows">
+      <created>1502813865615</created>
+      <option name="number" value="00026" />
+      <option name="presentableId" value="LOCAL-00026" />
+      <option name="project" value="LOCAL" />
+      <updated>1502813865615</updated>
+    </task>
+    <task id="LOCAL-00027" summary="dsprocessor improvements &amp; classifier stimuli flows">
+      <created>1502815987608</created>
+      <option name="number" value="00027" />
+      <option name="presentableId" value="LOCAL-00027" />
+      <option name="project" value="LOCAL" />
+      <updated>1502815987608</updated>
+    </task>
+    <task id="LOCAL-00028" summary="dsprocessor improvements &amp; classifier stimuli flows">
+      <created>1502817048943</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1502817048943</updated>
+    </task>
+    <task id="LOCAL-00029" summary="ebml parser">
+      <created>1504727323416</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1504727323416</updated>
+    </task>
+    <task id="LOCAL-00030" summary="ebml &amp; ov stream parser">
+      <created>1505202697739</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1505202697739</updated>
+    </task>
+    <task id="LOCAL-00031" summary="ebml &amp; ov stream parser">
+      <created>1505414278957</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1505414278958</updated>
+    </task>
+    <task id="LOCAL-00032" summary="ebml &amp; ov stream parser">
+      <created>1505764140639</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1505764140639</updated>
+    </task>
+    <task id="LOCAL-00033" summary="ebml &amp; ov stream parser">
+      <created>1505992949855</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1505992949855</updated>
+    </task>
+    <task id="LOCAL-00034" summary="ebml &amp; ov stream parser">
+      <created>1506070130061</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1506070130061</updated>
+    </task>
+    <task id="LOCAL-00035" summary="ebml &amp; ov stream parser">
+      <created>1506440076938</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1506440076938</updated>
+    </task>
+    <task id="LOCAL-00036" summary="ebml &amp; ov stream parser">
+      <created>1506769445906</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1506769445906</updated>
+    </task>
+    <task id="LOCAL-00037" summary="ebml &amp; ov stream parser">
+      <created>1506957905610</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1506957905610</updated>
+    </task>
+    <task id="LOCAL-00038" summary="ebml &amp; ov stream parser">
+      <created>1507087357973</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1507087357973</updated>
+    </task>
+    <task id="LOCAL-00039" summary="ebml &amp; ov stream parser">
+      <created>1507141658875</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1507141658875</updated>
+    </task>
+    <task id="LOCAL-00040" summary="ebml &amp; ov stream parser">
+      <created>1507147687541</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1507147687541</updated>
+    </task>
+    <task id="LOCAL-00041" summary="ebml &amp; ov stream parser">
+      <created>1507205401936</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1507205401937</updated>
+    </task>
+    <task id="LOCAL-00042" summary="ebml &amp; ov stream parser">
+      <created>1507209374581</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1507209374581</updated>
+    </task>
+    <task id="LOCAL-00043" summary="mbeeg suite testing">
+      <created>1507219181349</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1507219181349</updated>
+    </task>
+    <task id="LOCAL-00044" summary="mbeeg suite testing">
+      <created>1507220269285</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1507220269285</updated>
+    </task>
+    <task id="LOCAL-00045" summary="mbeeg suite testing">
+      <created>1507280688519</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1507280688519</updated>
+    </task>
+    <task id="LOCAL-00046" summary="mbeeg suite testing">
+      <created>1507281675249</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1507281675250</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
+  <component name="TestHistory">
+    <history-entry file="iir_js - 2017.08.10 at 14h 15m 54s.xml">
+      <configuration name="iir.js" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
+    <history-entry file="iir_js - 2017.08.10 at 14h 16m 39s.xml">
+      <configuration name="iir.js" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
+    <history-entry file="iir_js - 2017.08.10 at 14h 17m 06s.xml">
+      <configuration name="iir.js" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
+    <history-entry file="iir_js - 2017.08.10 at 14h 17m 38s.xml">
+      <configuration name="iir.js" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
+    <history-entry file="iir_js - 2017.08.10 at 14h 20m 46s.xml">
+      <configuration name="iir.js" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
+    <history-entry file="iir_js - 2017.08.10 at 14h 22m 11s.xml">
+      <configuration name="iir.js" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
+    <history-entry file="iir_js - 2017.08.10 at 14h 22m 29s.xml">
+      <configuration name="iir.js" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
+    <history-entry file="iir_js - 2017.08.10 at 14h 22m 41s.xml">
+      <configuration name="iir.js" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
+    <history-entry file="iir_js - 2017.08.10 at 14h 23m 12s.xml">
+      <configuration name="iir.js" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
+    <history-entry file="iir_js - 2017.08.10 at 17h 47m 50s.xml">
+      <configuration name="iir.js" configurationId="mocha-javascript-test-runner" />
+    </history-entry>
+  </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="60532000" />
+    <option name="totallyTimeSpent" value="2169093000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="953" y="0" width="974" height="1006" extended-state="0" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1936" height="1015" extended-state="6" />
     <layout>
-      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.19584244" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32993197" sideWeight="0.5042644" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32932165" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15831557" sideWeight="0.47126436" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3287827" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32703778" sideWeight="0.51226693" order="8" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33105803" sideWeight="0.56126916" order="11" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.10807736" sideWeight="0.50789094" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24631992" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3499006" sideWeight="0.48773307" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3395486" sideWeight="0.52873564" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.39249146" sideWeight="0.4970588" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32764506" sideWeight="0.49562362" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="TypeScript" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24966079" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298969" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.40045506" sideWeight="0.49713057" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32760596" sideWeight="0.49573562" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32993197" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32993197" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Key Promoter" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
     </layout>
-    <layout-to-restore>
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32993197" sideWeight="0.5042644" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32760596" sideWeight="0.49573562" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32993197" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19584244" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32993197" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-    </layout-to-restore>
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="Vcs.Log.UiProperties">
     <option name="RECENTLY_FILTERED_USER_GROUPS">
@@ -464,373 +1581,391 @@
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
   </component>
+  <component name="VcsManagerConfiguration">
+    <option name="LOCAL_CHANGES_DETAILS_PREVIEW_SHOWN" value="true" />
+    <ignored-roots>
+      <path value="$PROJECT_DIR$/electron/quickstart" />
+      <path value="D:/Git" />
+      <path value="$PROJECT_DIR$" />
+    </ignored-roots>
+    <MESSAGE value="First commit" />
+    <MESSAGE value="ebml helper passed all tests" />
+    <MESSAGE value="folders structure changed" />
+    <MESSAGE value="Kj" />
+    <MESSAGE value="dsprocessor.epochs.pipe(process.stdout) works pretty fine" />
+    <MESSAGE value="dsprocessor (epochs, filtered, detrended)" />
+    <MESSAGE value="dsprocessor improvements &amp; classifier stimuli flows" />
+    <MESSAGE value="ebml parser" />
+    <MESSAGE value="ebml &amp; ov stream parser" />
+    <MESSAGE value="mbeeg suite testing" />
+    <MESSAGE value="mbeeg suite (dsprocessor refactored)" />
+    <option name="LAST_COMMIT_MESSAGE" value="mbeeg suite (dsprocessor refactored)" />
+  </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager />
-    <watches-manager />
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/src/mbeeg/dsprocessor/index.js</url>
+          <line>145</line>
+          <properties />
+          <option name="timeStamp" value="360" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <url>file://$PROJECT_DIR$/node_modules/mbeeg/tools/index.js</url>
+          <line>184</line>
+          <properties />
+          <option name="timeStamp" value="362" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="javascript">
+          <condition expression="!epoch.channels[i]" language="JavaScript" />
+          <url>file://$PROJECT_DIR$/node_modules/mbeeg/dsprocessor/index.js</url>
+          <line>139</line>
+          <properties />
+          <option name="timeStamp" value="365" />
+        </line-breakpoint>
+      </breakpoints>
+      <breakpoints-dialog>
+        <breakpoints-dialog />
+      </breakpoints-dialog>
+      <default-breakpoints>
+        <breakpoint enabled="true" type="javascript-exception">
+          <properties />
+        </breakpoint>
+      </default-breakpoints>
+      <option name="time" value="366" />
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="NodeJSConfigurationType">
+        <watch expression="a" language="JavaScript" />
+        <watch expression="b" language="JavaScript" />
+        <watch expression="n" language="JavaScript" />
+      </configuration>
+      <configuration name="mocha-javascript-test-runner">
+        <watch expression="ebmlHelper.vIntLength(0,buffer)" language="JavaScript" />
+        <watch expression="buffer" language="JavaScript" />
+        <watch expression="8*(i+1) - (Math.log2(buffer[i])^0)" language="JavaScript" />
+        <watch expression="i" language="JavaScript" />
+      </configuration>
+    </watches-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <PATH>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="localhost.chrome" />
+        <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+      </PATH_ELEMENT>
+      <PATH_ELEMENT>
+        <option name="myItemId" value="localhost.chrome" />
+        <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+      </PATH_ELEMENT>
+    </PATH>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/index.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#581#822#0" expanded="false" />
-            <element signature="e#835#1145#0" expanded="false" />
-            <element signature="e#1158#1467#0" expanded="false" />
-            <element signature="e#1480#1698#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/styles.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="14" column="0" selection-start-line="14" selection-start-column="0" selection-end-line="14" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/html.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="153">
-          <caret line="9" column="3" selection-start-line="9" selection-start-column="3" selection-end-line="9" selection-end-column="3" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/carousel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/styles.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="27" column="7" selection-start-line="27" selection-start-column="7" selection-end-line="27" selection-end-column="7" />
-          <folding>
-            <element signature="e#581#822#0" expanded="false" />
-            <element signature="e#835#1145#0" expanded="false" />
-            <element signature="e#1158#1467#0" expanded="false" />
-            <element signature="e#1480#1698#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/carousel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/styles.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="459">
-          <caret line="27" column="7" selection-start-line="27" selection-start-column="7" selection-end-line="27" selection-end-column="7" />
-          <folding>
-            <element signature="e#581#822#0" expanded="false" />
-            <element signature="e#835#1145#0" expanded="false" />
-            <element signature="e#1158#1467#0" expanded="false" />
-            <element signature="e#1480#1698#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/js/carousel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/styles.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/styles.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="6" selection-start-line="10" selection-start-column="6" selection-end-line="10" selection-end-column="6" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="68" selection-start-line="6" selection-start-column="68" selection-end-line="6" selection-end-column="68" />
-          <folding>
-            <element signature="e#581#822#0" expanded="false" />
-            <element signature="e#835#1145#0" expanded="false" />
-            <element signature="e#1158#1467#0" expanded="false" />
-            <element signature="e#1480#1698#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/styles.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="119">
-          <caret line="7" column="6" selection-start-line="7" selection-start-column="6" selection-end-line="7" selection-end-column="6" />
-          <folding>
-            <element signature="e#581#822#0" expanded="false" />
-            <element signature="e#835#1145#0" expanded="false" />
-            <element signature="e#1158#1467#0" expanded="false" />
-            <element signature="e#1480#1698#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/styles.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="16" selection-start-line="1" selection-start-column="16" selection-end-line="1" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#581#822#0" expanded="false" />
-            <element signature="e#835#1145#0" expanded="false" />
-            <element signature="e#1158#1467#0" expanded="false" />
-            <element signature="e#1480#1698#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/styles.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="16" selection-start-line="1" selection-start-column="16" selection-end-line="1" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#581#822#0" expanded="false" />
-            <element signature="e#835#1145#0" expanded="false" />
-            <element signature="e#1158#1467#0" expanded="false" />
-            <element signature="e#1480#1698#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="170">
-          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/styles.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#581#822#0" expanded="false" />
-            <element signature="e#835#1145#0" expanded="false" />
-            <element signature="e#1158#1467#0" expanded="false" />
-            <element signature="e#1480#1698#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/old_index.html" />
-    <entry file="file://$PROJECT_DIR$/.zedstate" />
-    <entry file="file://$PROJECT_DIR$/old_index.html" />
-    <entry file="file://$PROJECT_DIR$/js/less.js" />
-    <entry file="file://$PROJECT_DIR$/css/test.css.map">
-      <provider editor-type-id="sourcemapFileViewerProvider">
-        <state />
-      </provider>
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/test.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/test.scss">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="6" selection-start-line="2" selection-start-column="6" selection-end-line="2" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="15" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/controls.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="6" selection-start-line="0" selection-start-column="6" selection-end-line="0" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/controls.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="34">
-          <caret line="2" column="1" selection-start-line="2" selection-start-column="1" selection-end-line="2" selection-end-column="1" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/mixins.less">
+    <entry file="file://$PROJECT_DIR$/trash/core/dsprocessor/index.js" />
+    <entry file="file://$PROJECT_DIR$/src/utils/whoisthewinner.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="85">
-          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/index.haml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="8" column="28" selection-start-line="8" selection-start-column="28" selection-end-line="8" selection-end-column="28" />
+          <caret line="5" column="106" lean-forward="false" selection-start-line="5" selection-start-column="106" selection-end-line="5" selection-end-column="106" />
           <folding>
-            <element signature="e#581#822#0" expanded="false" />
-            <element signature="e#835#1145#0" expanded="false" />
-            <element signature="e#1158#1467#0" expanded="false" />
-            <element signature="e#1480#1698#0" expanded="false" />
+            <element signature="e#403#463#0" expanded="false" />
+            <element signature="e#637#1834#0" expanded="false" />
+            <element signature="e#1869#1993#0" expanded="false" />
+            <element signature="e#2022#2054#0" expanded="false" />
+            <element signature="e#2082#2305#0" expanded="false" />
+            <element signature="e#2619#2742#0" expanded="false" />
+            <element signature="e#2814#2979#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/carousel.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="18" selection-start-line="1" selection-start-column="18" selection-end-line="1" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/html.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="13" selection-start-line="1" selection-start-column="13" selection-end-line="1" selection-end-column="13" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/sizes.css">
+    <entry file="file://$PROJECT_DIR$/src/utils/package_conf2.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/styles.css">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="102">
-          <caret line="6" column="16" selection-start-line="6" selection-start-column="16" selection-end-line="6" selection-end-column="16" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/html.less">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="1" column="0" selection-start-line="1" selection-start-column="0" selection-end-line="1" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/css/sizes.less">
+    <entry file="file://$PROJECT_DIR$/src/utils/package_conf0.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
-          <caret line="0" column="18" selection-start-line="0" selection-start-column="18" selection-end-line="0" selection-end-column="18" />
-          <folding />
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/css/styles.less">
+    <entry file="file://$PROJECT_DIR$/src/mbeeg/index.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="544">
-          <caret line="32" column="20" selection-start-line="32" selection-start-column="20" selection-end-line="32" selection-end-column="20" />
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/epochs5cycles_filtered.json" />
+    <entry file="file://$PROJECT_DIR$/src/mbeeg/ebml/reader.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1478">
+          <caret line="43" column="29" lean-forward="false" selection-start-line="43" selection-start-column="29" selection-end-line="43" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mbeeg/package.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="425">
+          <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/epochs.csv">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="26" lean-forward="false" selection-start-line="0" selection-start-column="26" selection-end-line="0" selection-end-column="26" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/epochs5cycles_raw.json" />
+    <entry file="file://$PROJECT_DIR$/src/mbeeg/epprocessor/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-561">
+          <caret line="12" column="0" lean-forward="false" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/ovStream.json" />
+    <entry file="file://$PROJECT_DIR$/src/utils/make.cmd" />
+    <entry file="file://$PROJECT_DIR$/distr/samples.json" />
+    <entry file="file://$PROJECT_DIR$/trash/core/controller/mbeegsrv.js" />
+    <entry file="file://$PROJECT_DIR$/node_modules/mbeeg/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="238">
+          <caret line="14" column="15" lean-forward="false" selection-start-line="14" selection-start-column="15" selection-end-line="14" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/tcpclient.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="10" column="0" lean-forward="false" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mbeeg/dsprocessor/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="82" column="3" lean-forward="false" selection-start-line="82" selection-start-column="3" selection-end-line="82" selection-end-column="3" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/ntstims.js" />
+    <entry file="file://$PROJECT_DIR$/config-default.json" />
+    <entry file="file://$PROJECT_DIR$/config (2).json" />
+    <entry file="file://$PROJECT_DIR$/config.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="33" column="10" lean-forward="false" selection-start-line="33" selection-start-column="10" selection-end-line="33" selection-end-column="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/ebml2ov.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/stims.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mbeeg/openvibe/emotivEPOC.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="284" column="18" lean-forward="false" selection-start-line="284" selection-start-column="18" selection-end-line="284" selection-end-column="18" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/ov2samples.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/classify.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="167">
+          <caret line="84" column="6" lean-forward="false" selection-start-line="84" selection-start-column="6" selection-end-line="84" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/epochs2files.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="159">
+          <caret line="93" column="6" lean-forward="false" selection-start-line="93" selection-start-column="6" selection-end-line="93" selection-end-column="6" />
+          <folding>
+            <element signature="e#284#444#0" expanded="false" />
+            <element signature="e#492#518#0" expanded="false" />
+            <element signature="e#564#590#0" expanded="false" />
+            <element signature="e#635#798#0" expanded="false" />
+            <element signature="e#848#1011#0" expanded="false" />
+            <element signature="e#1062#1246#0" expanded="false" />
+            <element signature="e#1377#2575#0" expanded="false" />
+            <element signature="e#2610#2734#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/features.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="167">
+          <caret line="64" column="6" lean-forward="false" selection-start-line="64" selection-start-column="6" selection-end-line="64" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/trash/core/dsprocessor/epochs.js" />
+    <entry file="file://$PROJECT_DIR$/trash/core/controller/mbeegntsrv.js" />
+    <entry file="file://$PROJECT_DIR$/test/test03_epoching (2).js" />
+    <entry file="file://$PROJECT_DIR$/src/utils/mbeegsrv.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="167">
+          <caret line="123" column="6" lean-forward="false" selection-start-line="123" selection-start-column="6" selection-end-line="123" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/mbeegntsrv.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="167">
+          <caret line="125" column="6" lean-forward="false" selection-start-line="125" selection-start-column="6" selection-end-line="125" selection-end-column="6" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mbeeg/openvibe/reader.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="391">
+          <caret line="53" column="45" lean-forward="true" selection-start-line="53" selection-start-column="45" selection-end-line="53" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/javascript/nodejs/6.10.1/core-modules/timers.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="192">
+          <caret line="246" column="3" lean-forward="false" selection-start-line="246" selection-start-column="3" selection-end-line="246" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_CONFIG_DIR$/javascript/nodejs/6.10.1/core-modules/events.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="285">
+          <caret line="102" column="0" lean-forward="false" selection-start-line="102" selection-start-column="0" selection-end-line="102" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/config_backup.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="714">
+          <caret line="42" column="0" lean-forward="false" selection-start-line="42" selection-start-column="0" selection-end-line="42" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/config.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="37" column="32" lean-forward="false" selection-start-line="37" selection-start-column="32" selection-end-line="37" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/output/epochsDetrended.json" />
+    <entry file="file://$PROJECT_DIR$/src/utils/output/ovStream.json" />
+    <entry file="file://$PROJECT_DIR$/src/utils/output/samples.json" />
+    <entry file="file://$PROJECT_DIR$/.idea/workspace (14).xml" />
+    <entry file="file://$PROJECT_DIR$/distr/README.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="0">
+            <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/distr/mbeeg/index.js" />
+    <entry file="file://$PROJECT_DIR$/node_modules/mbeeg/openvibe/reader.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="58" column="12" lean-forward="false" selection-start-line="58" selection-start-column="12" selection-end-line="58" selection-end-column="12" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/utils/epochs.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-31">
+          <caret line="67" column="47" lean-forward="false" selection-start-line="67" selection-start-column="47" selection-end-line="67" selection-end-column="47" />
+          <folding>
+            <element signature="e#277#303#0" expanded="false" />
+            <element signature="e#345#499#0" expanded="false" />
+            <element signature="e#673#1871#0" expanded="false" />
+            <element signature="e#1906#2030#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mbeeg/tools/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="472">
+          <caret line="185" column="29" lean-forward="false" selection-start-line="185" selection-start-column="29" selection-end-line="185" selection-end-column="29" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/mbeeg/dsprocessor/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="878">
+          <caret line="139" column="30" lean-forward="false" selection-start-line="139" selection-start-column="30" selection-end-line="139" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/mbeeg/dsprocessor/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="140" column="86" lean-forward="true" selection-start-line="140" selection-start-column="86" selection-end-line="140" selection-end-column="86" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/node_modules/mbeeg/tools/index.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="196">
+          <caret line="186" column="45" lean-forward="false" selection-start-line="186" selection-start-column="45" selection-end-line="186" selection-end-column="45" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+  <component name="masterDetails">
+    <states>
+      <state key="ScopeChooserConfigurable.UI">
+        <settings>
+          <splitter-proportions>
+            <option name="proportions">
+              <list>
+                <option value="0.2" />
+              </list>
+            </option>
+          </splitter-proportions>
+        </settings>
+      </state>
+    </states>
   </component>
 </project>

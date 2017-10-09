@@ -62,20 +62,20 @@ cli.version('0.0.1')
 if (cli.pipe) {
   process.stdin.pipe(objectifier);
   samples = new OVReader({
-    ovStream: objectifier
+    // ovStream: objectifier
   });
   if (cli.json)
-    samples.pipe(sampleStringifier).pipe(process.stdout);
+    objectifier.pipe(samples).pipe(sampleStringifier).pipe(process.stdout);
   else
-    samples.pipe(plainStringifier).pipe(process.stdout);
+    openVibeJSON.pipe(samples).pipe(plainStringifier).pipe(process.stdout);
 } else {
   samples = new OVReader({
-    ovStream: openVibeJSON
+    // ovStream: openVibeJSON
   });
   if (cli.json)
-    samples.pipe(sampleStringifier).pipe(process.stdout);
+    openVibeJSON.pipe(samples).pipe(sampleStringifier).pipe(process.stdout);
   else
-    samples.pipe(plainStringifier).pipe(process.stdout);
+    openVibeJSON.pipe(samples).pipe(plainStringifier).pipe(process.stdout);
 }
 
 

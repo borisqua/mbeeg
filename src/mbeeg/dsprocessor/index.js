@@ -1,5 +1,5 @@
 "use strict";
-//TODO 1.Problem with overlapping epochs & deleting samples (it is necessary to make sure that the sample falls into every epoch where it should be, and only after that it will be removed)
+//TODO 1.Problem with overlapping epochs & deleting samples
 //TODO 2.Consider throwing away of unused leading stimuli and epochs
 //TODO 3.Detecting samples or epochs leaks
 //TODO refactor to use writable capabilities of the DSProcessor stream, by writing merged stream of stimuli and eeg data. For this purpose DSProcess should have capability to distinguish chunks of this two streams.
@@ -20,112 +20,116 @@ class DSProcessor extends require('stream').Transform {
               }) {
     super({objectMode: true});
     
-    let epochsFIFO = [];
-    let samplesFIFO = [];
-    let currentStimulus = [];
-    let currentSample = [];
-    
+    this.stimuli = stimuli;
+    this.samples = samples;
     this.channels = channels;
-    this.samplingRate = 0;
-    this.learning = null;
-    this.objectMode = objectMode;
+    // this.learning = learning;
+    this.epochDuration = epochDuration;
     this.processingSequence = processingSequence;
     this.cyclesLimit = cyclesLimit;
+    this.objectMode = objectMode;
+    
+    this.epochsFIFO = [];
+    this.samplesFIFO = [];
     
     stimuli.on('data', stimulus => {
-      currentStimulus = stimulus;
-      
-      let stimulusPeriod = stimuli.signalDuration + stimuli.pauseDuration;
-      if (currentStimulus[0] - currentSample[0] < -stimulusPeriod) samples.pause();
-      else samples.resume();
-      if (currentStimulus[0] - currentSample[0] > stimulusPeriod) stimuli.pause();
-      else stimuli.resume();
+      // preventDefault();
+      if (!this.timestamp || this.samplesFIFO[0] > stimulus[0]) {
+        return;
+      }
       
       let epoch = {};
-      epoch.key = currentStimulus[1];
-      epoch.cycle = stimuli.stimulusCycle;
-      epoch.stimulusDuration = stimuli.signalDuration;
-      epoch.stimulusPause = stimuli.pauseDuration;
-      epoch.epochDuration = epochDuration;
-      epoch.samplingRate = samples.header.samplingRate;
+      epoch.key = stimulus[1];
+      epoch.cycle = this.stimuli.stimulusCycle;
+      epoch.stimulusDuration = this.stimuli.signalDuration;
+      epoch.stimulusPause = this.stimuli.pauseDuration;
+      epoch.duration = this.epochDuration;
+      epoch.samplingRate = this.samples.header.samplingRate;
       epoch.state = `raw`;
       epoch.full = false;
-      epoch.timestamp = currentStimulus[0];
-      epoch.target = currentStimulus[2];
-      epoch.channels = [];
-      epochsFIFO.push(epoch);
+      epoch.timestamp = stimulus[0];
+      epoch.target = stimulus[2];
+      epoch.channels = new Array(this.channels.length).fill([]);//TODO think about refactor epoch.channels into epoch.samples
       
-      let obsoleteSampleIndex = null;
+      this.epochsFIFO.push(epoch);
       
-      for (let i = 0, epochsFIFOlength = epochsFIFO.length; i < epochsFIFOlength; i++) {
-        let e = epochsFIFO[i];
-        for (let j = 0, samplesFIFOlength = samplesFIFO.length; j < samplesFIFOlength; j++) {
-          let s = samplesFIFO[j];
-          if (_sampleInsideEpoch(e, s[0])) {
-            if (_completeEpoch(this, e, currentSample)) {
-              e.full = true;
-              if (this.cyclesLimit && this.cyclesLimit < e.cycle) { //stop if output is limited
-                this.unpipe();
-                process.exit(0);
+      for (let i = 0; i < this.epochsFIFO.length; i++) {
+        let
+          e = this.epochsFIFO[i]
+          , samplesDeficit = false
+        ;
+        for (let j = 0; j < this.samplesFIFO.length; j++) {
+          let samp = this.samplesFIFO[j];
+          if (this.samplesFIFO.length - j >= this.samplesEpochLength) {
+            if (_firstSampleOfEpoch(this, e, samp[0])) {
+              if (_completeEpoch(this, e, j)) {
+                e.full = true;
+                if (this.cyclesLimit && this.cyclesLimit < e.cycle) { //stop if output is limited
+                  this.unpipe();
+                  process.exit(0);
+                }
+                this.write(this.epochsFIFO.splice(i, 1)[0]);
+                i--;
+                this.epochsFIFOlength--;
               }
-              this.write(epochsFIFO.splice(i, 1)[0]);
-              i--;
-              epochsFIFOlength--;
+              
             }
-          } else if (s[0] < e.timestamp) {
-            obsoleteSampleIndex = j;
+          } else {
+            samplesDeficit = true;
+            break;
           }
         }
+        if (samplesDeficit) break;
       }
-      samplesFIFO.splice(0, obsoleteSampleIndex + 1);
-      // console.log(`---- epochs: ${epochsFIFO.length}; samples: ${samplesFIFO.length}  ${currentStimulus[0]} ${currentSample[0]} delta(e-s): ${currentStimulus[0] - currentSample[0]}`);
+      console.log(`ssss epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}`);//  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
+      // console.log(`---- epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
     });
     
-    samples.on('data', sample => {
-      currentSample = sample;
-      
-      let stimulusPeriod = stimuli.signalDuration + stimuli.pauseDuration;
-      if (currentStimulus[0] - currentSample[0] < -stimulusPeriod) samples.pause();
-      else samples.resume();
-      if (currentStimulus[0] - currentSample[0] > stimulusPeriod) stimuli.pause();
-      else stimuli.resume();
-      
-      // if (epochsFIFO.length === 0 || epochsFIFO[0].timestamp <= currentSample[0])
-      samplesFIFO.push(currentSample);//it's only has sense to store sample if there isn't epochs in the epochsFIFO queue (so we don't know if epochs for current sample will be) or if the sample came after the earliest epoch available in epochsFIFO queue
-      for (let i = 0, epochsFIFOlength = epochsFIFO.length; i < epochsFIFOlength; i++) {
-        let e = epochsFIFO[i];
-        if (_sampleInsideEpoch(e, currentSample[0])) {
-          if (_completeEpoch(this, e, currentSample)) {
-            e.full = true;
-            this.write(epochsFIFO.splice(i, 1)[0]);
-            i--;
-            epochsFIFOlength--;
-          }
-        }
+    samples.on('data', samplesChunk => {
+      // preventDefault();
+      if (!this.timestamp) {
+        this.samplingRate = this.samples.header.samplingRate;
+        this.timestamp = this.samples.header.timestamp;
+        this.samplingStep = 1000 / this.samplingRate;
+        this.samplesEpochLength = this.epochDuration / this.samplingStep;
       }
-      // console.log(`ssss epochs: ${epochsFIFO.length}; samples: ${samplesFIFO.length}  ${currentStimulus[0]} ${currentSample[0]} delta(e-s): ${currentStimulus[0] - currentSample[0]}`);
+      
+      for (let s = 0; s < samplesChunk.length; s++) {//adding timestamp field
+        samplesChunk[s].unshift(Math.round(this.timestamp += this.samplingStep));
+      }//TODO correction of timestamp by information from each next ovStreamJSON
+      this.samplesFIFO = this.samplesFIFO.concat(samplesChunk);
+      
+      if (!this.epochsFIFO.length && this.samplesFIFO.length >= this.samplesEpochLength) {//keep samplesFIFO length not greater than epoch duration
+        this.samplesFIFO.splice(0, this.samplesFIFO.length - this.samplesEpochLength);
+        return;
+      }
+      if (this.epochsFIFO.length) {
+        let s;
+        for (s = 0; s < this.samplesFIFO.length; s++)//counting samples that emerged earlier than first stimulus
+          if (this.samplesFIFO[s][0] >= this.epochsFIFO[0].timestamp)
+            break;
+        this.samplesFIFO.splice(0, s);
+      }
+      console.log(`ssss epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}`);//  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
     });
     
-    function _sampleInsideEpoch(epoch, sampleTimestamp) {
-      // console.log(sampleTimestamp >= epoch.timestamp && sampleTimestamp <= epoch.timestamp + epoch.epochDuration);
-      return sampleTimestamp >= epoch.timestamp && sampleTimestamp <= epoch.timestamp + epoch.epochDuration;
+    function _firstSampleOfEpoch(context, epoch, sampleTimestamp) {
+      // console.log(sampleTimestamp >= epoch.timestamp && sampleTimestamp <= epoch.timestamp + epoch.duration);
+      return (sampleTimestamp >= epoch.timestamp) && (sampleTimestamp <= epoch.timestamp + context.samplingStep);
     }
     
-    function _completeEpoch(context, epoch, sample) {
-      for (let ch = 1; ch < sample.length; ch++) {
-        // if (context.channels.includes(ch))
-        let channelIndex = context.channels.indexOf(ch);
-        if (channelIndex >= 0)
-          if (epoch.channels[channelIndex] === undefined) {
-            epoch.channels[channelIndex] = [sample[ch]];
-            // console.log(`channel length ${epoch.channels[channelIndex].length}`);
-          } else {
-            epoch.channels[channelIndex].push(sample[ch]);
-            // console.log(`channel length ${epoch.channels[channelIndex].length}`);
+    function _completeEpoch(context, epoch, startSample) {
+      try {
+        for (let s = startSample; s < startSample + context.samplesEpochLength; s++) {
+          for (let ch = 0; ch < epoch.channels.length; ch++) {
+            if (context.channels.includes(ch + 1))
+              epoch.channels[ch].push(context.samplesFIFO[s][ch + 1]);
           }
+        }
+        return true;
+      } catch (err) {
+        throw err;
       }
-      // epoch.channels.every(ch => console.log(`channel length ${ch.length}`));
-      return !!(epoch.channels.length && epoch.channels.every(ch => ch.length === epoch.epochDuration * epoch.samplingRate / 1000));
       
     }
   }
@@ -134,7 +138,7 @@ class DSProcessor extends require('stream').Transform {
   _transform(epoch, encoding, cb) {
     for (let i = 0, channelsNumber = epoch.channels.length; i < channelsNumber; i++) {
       for (let step of this.processingSequence) {
-        switch (step.name) {
+        switch (step.name) {//TODO sometimes epoch.channels[i] is empty don't know why
           case 'butterworth4BulanovLowpass':
             epoch.channels[i] = Tools.butterworth4Bulanov(epoch.channels[i], epoch.samplingRate, step.parameters[0].value);
             break;

@@ -6,7 +6,7 @@ const
   , Net = require('net')
   , ntrainerStringifier = new NTStimuliStringifier({
     chunkBegin: ``
-    , chunkEnd: `\r\n`
+    // , chunkEnd: `\r\n`
     , chunksDelimiter: `,`
     // , indentationSpace: 2
     // , stringifyAll: true
@@ -23,12 +23,12 @@ const
     ]
   })
   , plainStringifier = new Stringifier({
-    chunkEnd: `\r\n`
+    // chunkEnd: `\r\n`
   })
   , stimulusStringifier = new Stringifier({
     chunkBegin: `{"stimulus":`
     , chunksDelimiter: ``
-    , chunkEnd: `}\r\n`
+    // , chunkEnd: `}\r\n`
   })
   , config = Tools.loadConfiguration(`config.json`)
   , cli = require('commander')

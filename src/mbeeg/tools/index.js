@@ -99,7 +99,7 @@ class Tools {
    */
   static butterworth4Bulanov(timeseries, samplingrate = 0, cutoff = 0, passthrough = false) {
     
-    if (!timeseries.length) return null;
+    if (!timeseries.length) throw 'no timeseries in butterworth4';//return null;
     if (!cutoff || passthrough) return timeseries.slice();
     if (!samplingrate) throw 'Butterworth4 error! Non zero sampling rate parameter is required!';
     if (timeseries.length < 2 / cutoff) throw 'Butterworth4 error! The length of timeseries must be at least as doubled 1/cutoff!';
@@ -163,30 +163,35 @@ class Tools {
    * @return {Array} detrend - detrended data, the same size as series input is
    */
   static detrend(timeseries, passtrough = false) {
-    if (passtrough) {
-      return timeseries.slice();
+    try {
+      if (passtrough) {
+        return timeseries.slice();
+      }
+      // if (!timeseries) throw `Detrend error! No input data!`;
+      let n = timeseries.length;
+      let sumxy = 0;
+      for (let i = 0; i < n; i++) sumxy += (i + 1) * timeseries[i];
+      let sumx = n * (n + 1) / 2; //sum of the first n natural numbers
+      let sumy = 0;
+      for (let i = 0; i < n; i++) sumy += timeseries[i];
+      // let sumxx = Math.pow(n, 3) / 3 + Math.pow(n, 2) / 2 + n / 6; //sum of the squares of the first n natural numbers
+      let sumxx = n * (n + 1) * (2 * n + 1) / 6;//sum of the squares of the first n natural numbers
+      let a = (n * sumxy - sumx * sumy) / (n * sumxx - sumx * sumx);
+      let b = (sumy - a * sumx) / n;
+  
+      let trend = new Array(n);
+      let detrend = new Array(n);
+  
+      for (let i = 0; i < n; i++) {
+        trend[i] = (i + 1) * a + b;
+        detrend[i] = timeseries[i] - trend[i];
+        // detrend[i] = ((timeseries[i] / trend[i]) - 1) * 100; //if trend[i] traverses zero there will be a problem
+      }
+  
+      return detrend;
+    } catch (err){
+      throw err;
     }
-    if (!timeseries) throw `Detrend error! No input data!`;
-    let n = timeseries.length;
-    let sumxy = 0;
-    for (let i = 0; i < n; i++) sumxy += (i + 1) * timeseries[i];
-    let sumx = n * (n + 1) / 2; //sum of the first n natural numbers
-    let sumy = 0;
-    for (let i = 0; i < n; i++) sumy += timeseries[i];
-    // let sumxx = Math.pow(n, 3) / 3 + Math.pow(n, 2) / 2 + n / 6; //sum of the squares of the first n natural numbers
-    let sumxx = n * (n + 1) * (2 * n + 1) / 6;//sum of the squares of the first n natural numbers
-    let a = (n * sumxy - sumx * sumy) / (n * sumxx - sumx * sumx);
-    let b = (sumy - a * sumx) / n;
-    
-    let trend = new Array(n);
-    let detrend = new Array(n);
-    
-    for (let i = 0; i < n; i++) {
-      trend[i] = (i + 1) * a + b;
-      detrend[i] = ((timeseries[i] / trend[i]) - 1) * 100;
-    }
-    
-    return detrend;
   }
   
   /**
@@ -366,8 +371,8 @@ class Stringifier extends Transform {
   
   // noinspection JSUnusedGlobalSymbols
   _transform(chunk, encoding, cb) {
-    if (this.stringifyAll) cb(null, JSON.stringify(JSON.parse(`${this.running ? this.delimiter : ''}${this.chunkBegin}${JSON.stringify(chunk, null, this.space)}${this.chunkEnd}`), null, this.space));
-    else cb(null, `${this.running ? this.delimiter : ''}${this.chunkBegin}${JSON.stringify(chunk, null, this.space)}${this.chunkEnd}`);
+    if (this.stringifyAll) cb(null, `${this.running ? this.delimiter : ''}${this.chunkBegin}${JSON.stringify(chunk)}${this.chunkEnd}`);
+    else cb(null, `${this.running ? this.delimiter : ''}${this.chunkBegin}${JSON.stringify(chunk,null, this.space)}${this.chunkEnd}`);
     this.running = true;
   }
 }
@@ -397,7 +402,7 @@ class NTrainerVerdictStringifier extends Stringifier {
       running = true
     }
     output += `${this.chunkEnd}`;
-    cb(null, JSON.stringify(JSON.parse(output), null, this.space));
+    cb(null, `${JSON.stringify(JSON.parse(output), null, this.space)}\r\n`);
   }
   
 }
@@ -422,7 +427,7 @@ class NTrainerStimuliStringifier extends Stringifier {
       running = true;
     }
     output += `}${this.chunkEnd}`;
-    cb(null, JSON.stringify(JSON.parse(output), null, this.space));
+    cb(null, `${JSON.stringify(JSON.parse(output), null, this.space)}`);
   }
   
 }

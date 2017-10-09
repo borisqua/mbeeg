@@ -51,9 +51,7 @@ const
     ebmlSource: openVibeClient.connect(config.signal.port, config.signal.host, () => {})
     , ebmlCallback: tcpFeeder
   })
-  , samples = new OVReader({
-    ovStream: openVibeJSON
-  })
+  , samples = new OVReader({})
   , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
     signalDuration: config.stimulation.duration
     , pauseDuration: config.stimulation.pause
@@ -79,7 +77,7 @@ if (cli.pipe) {
   process.stdin.pipe(stimuliObjectifier);
   epochs = new DSProcessor({
     stimuli: stimuliObjectifier
-    , samples: samples
+    , samples: openVibeJSON.pipe(samples)
     , channels: config.signal.channels
     , epochDuration: config.signal.epoch.duration
     , processingSequence: config.signal.dsp.vertical.steps
@@ -88,7 +86,7 @@ if (cli.pipe) {
 } else {
   epochs = new DSProcessor({
     stimuli: stimuli
-    , samples: samples
+    , samples: openVibeJSON.pipe(samples)
     , channels: config.signal.channels
     , epochDuration: config.signal.epoch.duration
     , processingSequence: config.signal.dsp.vertical.steps

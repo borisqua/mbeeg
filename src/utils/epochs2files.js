@@ -23,20 +23,26 @@ const
   , epochsRawStringifier = new Stringifier({
     beginWith: `{"epochs": [`
     , chunksDelimiter: `,`
+    , chunkEnd: `\r\n`
     , endWith: `]}\r\n`
+    // , stringifyAll: true
     , indentationSpace: 2
   })
   , epochsFilteredStringifier = new Stringifier({
     beginWith: `{"epochs": [`
     , chunksDelimiter: `,`
+    , chunkEnd: `\r\n`
     , endWith: `]}\r\n`
+    // , stringifyAll: true
     , indentationSpace: 2
   })
   , epochsDetrendedStringifier = new Stringifier({
     beginWith: `{"epochs": [`
     , chunkBegin: ``
     , chunksDelimiter: `,`
+    , chunkEnd: `\r\n`
     , endWith: `]}\r\n`
+    // , stringifyAll: true
     , indentationSpace: 2
   })
   , openVibeClient = new Net.Socket() //3. Create TCP client for openViBE eeg data server
@@ -73,9 +79,9 @@ const
     ebmlSource: openVibeClient.connect(config.signal.port, config.signal.host, () => {})
     , ebmlCallback: tcpFeeder
   })
-  , samples = new OVReader({
-    ovStream: openVibeJSON
-  })
+  , samplesRaw = new OVReader({})
+  // , samplesFiltered = new OVReader({})
+  // , samplesDetrended = new OVReader({})
   , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
     signalDuration: config.stimulation.duration
     , pauseDuration: config.stimulation.pause
@@ -83,28 +89,28 @@ const
   })
   , epochsRaw = new DSProcessor({
     stimuli: stimuli
-    , samples: samples
+    , samples: samplesRaw
     , channels: config.signal.channels
     , epochDuration: config.signal.epoch.duration
     , processingSequence: []//config.signal.dsp.vertical.steps
     , cyclesLimit: config.signal.cycles
   })
-  , epochsFiltered = new DSProcessor({
-    stimuli: stimuli
-    , samples: samples
-    , channels: config.signal.channels
-    , epochDuration: config.signal.epoch.duration
-    , processingSequence: config.signal.dsp.vertical.steps.slice(0, 1)
-    , cyclesLimit: config.signal.cycles
-  })
-  , epochsDetrended = new DSProcessor({
-    stimuli: stimuli
-    , samples: samples
-    , channels: config.signal.channels
-    , epochDuration: config.signal.epoch.duration
-    , processingSequence: config.signal.dsp.vertical.steps
-    , cyclesLimit: config.signal.cycles
-  })
+  // , epochsFiltered = new DSProcessor({
+  //   stimuli: stimuli
+  //   , samples: samplesFiltered
+  //   , channels: config.signal.channels
+  //   , duration: config.signal.epoch.duration
+  //   , processingSequence: config.signal.dsp.vertical.steps.slice(0, 1)
+  //   , cyclesLimit: config.signal.cycles
+  // })
+  // , epochsDetrended = new DSProcessor({
+  //   stimuli: stimuli
+  //   , samples: samplesDetrended
+  //   , channels: config.signal.channels
+  //   , duration: config.signal.epoch.duration
+  //   , processingSequence: config.signal.dsp.vertical.steps
+  //   , cyclesLimit: config.signal.cycles
+  // })
   , channelsMonitor = new Channels({
     // keys: [20],
     // channels: [1] //, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
@@ -115,8 +121,8 @@ let
   , samplesFile = fs.createWriteStream(`output/samples.json`)
   , stimuliFile = fs.createWriteStream(`output/stimuli.json`)
   , epochsRawFile = fs.createWriteStream(`output/epochsRaw.json`)
-  , epochsFilteredFile = fs.createWriteStream(`output/epochsFiltered.json`)
-  , epochsDetrendedFile = fs.createWriteStream(`output/epochsDetrended.json`)
+  // , epochsFilteredFile = fs.createWriteStream(`output/epochsFiltered.json`)
+  // , epochsDetrendedFile = fs.createWriteStream(`output/epochsDetrended.json`)
 ;
 
 cli.version('0.0.1')
@@ -129,12 +135,24 @@ cli.version('0.0.1')
 ;
 
 // if (process.argv.length <= 2) cli.help();
-openVibeJSON.pipe(ovStringifier).pipe(ovStreamFile);
-samples.pipe(plainSamplesStringifier).pipe(samplesFile);
-stimuli.pipe(plainStimsStringifier).pipe(stimuliFile);
+const
+  sampler = new require('stream').Transform({
+    objectMode: true,
+    transform(samples, encoding, cb) {
+      for (let s = 0; s < samples.length; s++) {
+        cb(null, samples[s]);
+        return;
+      }
+      cb();
+    }
+  })
+;
+// openVibeJSON.pipe(ovStringifier).pipe(ovStreamFile);
+openVibeJSON.pipe(samplesRaw).pipe(sampler).pipe(plainSamplesStringifier).pipe(samplesFile);
+// stimuli.pipe(plainStimsStringifier).pipe(stimuliFile);
 epochsRaw.pipe(epochsRawStringifier).pipe(epochsRawFile);
-epochsFiltered.pipe(epochsFilteredStringifier).pipe(epochsFilteredFile);
-epochsDetrended.pipe(epochsDetrendedStringifier).pipe(epochsDetrendedFile);
+// epochsFiltered.pipe(epochsFilteredStringifier).pipe(epochsFilteredFile);
+// epochsDetrended.pipe(epochsDetrendedStringifier).pipe(epochsDetrendedFile);
 
-epochsDetrended.pipe(channelsMonitor).pipe(process.stdout);
+// epochsRaw.pipe(channelsMonitor).pipe(process.stdout);
 
