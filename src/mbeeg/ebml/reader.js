@@ -1,7 +1,7 @@
 "use strict";
 
 const
-  Tools = require('../tools/index').Tools,
+  Tools = require('../tools').Tools,
   ebmlDictionary = require('./ebml_dictionary')
 ;
 

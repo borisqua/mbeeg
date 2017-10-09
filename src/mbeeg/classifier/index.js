@@ -1,6 +1,6 @@
 "use strict";
 const
-  {Tools} = require('../tools/index');
+  {Tools} = require('../tools');
 
 class Classifier extends require('stream').Transform {
   constructor({
