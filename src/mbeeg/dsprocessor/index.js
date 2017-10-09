@@ -51,11 +51,13 @@ class DSProcessor extends require('stream').Transform {
       
       this.epochsFIFO.push(epoch);
       
-      for (let i = 0; i < this.epochsFIFO.length; i++) {
+      // for (let i = 0; i < this.epochsFIFO.length; i++) {
+      while (this.epochsFIFO.length) {
         let
-          e = this.epochsFIFO[i]
+          e = this.epochsFIFO[0]
           , samplesDeficit = false
         ;
+        
         for (let j = 0; j < this.samplesFIFO.length; j++) {
           let samp = this.samplesFIFO[j];
           if (this.samplesFIFO.length - j >= this.samplesEpochLength) {
@@ -66,9 +68,10 @@ class DSProcessor extends require('stream').Transform {
                   this.unpipe();
                   process.exit(0);
                 }
-                this.write(this.epochsFIFO.splice(i, 1)[0]);
-                i--;
-                this.epochsFIFOlength--;
+                this.write(e);
+                this.epochsFIFO.shift();
+                //i && i--;
+                // this.epochsFIFOlength--;
               }
               
             }
@@ -79,7 +82,7 @@ class DSProcessor extends require('stream').Transform {
         }
         if (samplesDeficit) break;
       }
-      // console.log(`ssss epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}`);//  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
+      // console.log(`---- epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}`);//  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
       // console.log(`---- epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
     });
     

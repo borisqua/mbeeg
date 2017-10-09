@@ -98,7 +98,7 @@ class Tools {
    * @return {Array} time series filtered data (same size as input flow)
    */
   static butterworth4Bulanov(timeseries, samplingrate = 0, cutoff = 0, passthrough = false) {
-    
+    console.log(`timeseries.length = ${timeseries.length}`);
     if (!timeseries.length) throw 'no timeseries in butterworth4';//return null;
     if (!cutoff || passthrough) return timeseries.slice();
     if (!samplingrate) throw 'Butterworth4 error! Non zero sampling rate parameter is required!';
