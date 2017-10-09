@@ -1,8 +1,6 @@
 "use strict";
-//TODO 1.Problem with overlapping epochs & deleting samples
-//TODO 2.Consider throwing away of unused leading stimuli and epochs
 //TODO 3.Detecting samples or epochs leaks
-//TODO refactor to use writable capabilities of the DSProcessor stream, by writing merged stream of stimuli and eeg data. For this purpose DSProcess should have capability to distinguish chunks of this two streams.
+//TODO 4.Refactor to use writable capabilities of the DSProcessor stream, by writing merged stream of stimuli and eeg data. For this purpose DSProcess should have capability to distinguish chunks of this two streams.
 const
   Tools = require('../tools').Tools
 ;
@@ -81,7 +79,7 @@ class DSProcessor extends require('stream').Transform {
         }
         if (samplesDeficit) break;
       }
-      console.log(`ssss epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}`);//  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
+      // console.log(`ssss epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}`);//  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
       // console.log(`---- epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
     });
     
@@ -96,7 +94,7 @@ class DSProcessor extends require('stream').Transform {
       
       for (let s = 0; s < samplesChunk.length; s++) {//adding timestamp field
         samplesChunk[s].unshift(Math.round(this.timestamp += this.samplingStep));
-      }//TODO correction of timestamp by information from each next ovStreamJSON
+      }//TODO think about correction of timestamp by information from each next ovStreamJSON
       this.samplesFIFO = this.samplesFIFO.concat(samplesChunk);
       
       if (!this.epochsFIFO.length && this.samplesFIFO.length >= this.samplesEpochLength) {//keep samplesFIFO length not greater than epoch duration
@@ -110,7 +108,7 @@ class DSProcessor extends require('stream').Transform {
             break;
         this.samplesFIFO.splice(0, s);
       }
-      console.log(`ssss epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}`);//  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
+      // console.log(`ssss epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}`);//  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
     });
     
     function _firstSampleOfEpoch(context, epoch, sampleTimestamp) {
