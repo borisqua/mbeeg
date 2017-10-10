@@ -25,31 +25,45 @@
     "channels": [
       1
     ],
-    "epoch":{
+    "epoch": {
       "duration": 1000
     },
     "dsp": {
       "vertical": {
         "steps": [
           {
-            "name":"butterworth4BulanovLowpass",
-            "parameters": [{
-              "name": "cutoff",
-              "value": 8
-            }]
+            "name": "butterworth4BulanovLowpass",
+            "parameters": [
+              {
+                "name": "cutoff",
+                "value": 8
+              }
+            ]
           },
           {
-            "name":"detrend",
-            "parameters":[]
+            "name": "detrend",
+            "parameters": []
           }
         ]
       },
       "horizontal": {
-        "depth": 5,
+        "depth": 0,
         "moving": false
       }
     },
-    "cycles": 5
+    "cycles": 0
+  },
+  "classification": {
+    "method": "integral",
+    "methods":[
+      {
+        "name": "integral",
+        "parameters":{
+          "start": 200,
+          "window": 300
+        }
+      }
+    ]
   },
   "decision": {
     "start": 2,
