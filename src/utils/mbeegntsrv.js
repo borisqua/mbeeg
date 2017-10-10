@@ -1,14 +1,9 @@
 "use strict";
 const
   Net = require('net')
+  , ntStimuli = new require('stream').PassThrough({objectMode: true})
   , {EBMLReader, OVReader, Stimuli, DSProcessor, EpochsProcessor, Classifier, DecisionMaker, Stringifier, NTVerdictStringifier, Tools} = require('mbeeg')
   , config = Tools.loadConfiguration(`config.json`)
-  , stimuli = new Stimuli({
-    stimuliArray: config.stimulation.sequence.stimuli
-    , generator: false
-    , signalDuration: config.stimulation.duration
-    , pauseDuration: config.stimulation.pause
-  })
   , ntDecisionStringifier = new Stringifier({
     chunkBegin: `{"class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellConceived", "cellId": `
     , chunkEnd: `, "timestamp": ${new Date().getTime()}}\r\n`
@@ -111,7 +106,7 @@ const
   })
   , samples = new OVReader({})
   , epochs = new DSProcessor({
-    stimuli: stimuli
+    stimuli: ntStimuli
     , samples: openVibeJSON.pipe(samples)
     , channels: config.signal.channels
     , epochDuration: config.signal.epoch.duration
@@ -136,11 +131,9 @@ const
   })
 ;
 
-stimuli.stopGenerator();
-stimuli.pause();
-
 let
-  stimulus = []
+  stimuli = {}
+  , stimulus = []
   , mode = 'vr'
   , running = false
 ;
@@ -148,22 +141,25 @@ let
 const
   mbEEGServer = Net.createServer(socket => {
     console.log(`client ${socket.remoteAddress}:${socket.remotePort} connected`);
-  
+    
     socket
       .on(`end`, () => {
+        // ntStimuli.unpipe();
         stimuli.unpipe();
         console.log('end: client disconnected');
       })
       .on(`close`, () => {
+        // ntStimuli.unpipe();
         stimuli.unpipe();
         console.log('close: client disconnected');
       })
       .on(`error`, () => {
-        stimuli.unpipe();
+        // ntStimuli.unpipe();
+        // stimuli.unpipe();
         console.log('error: client disconnected');
       })
       .on('data', chunk => {//to unpipe delete listener
-        // console.log(chunk.toString());//Show incoming chunks
+        console.log(chunk.toString());
         let message = JSON.parse(chunk.toString());
         switch (message.class) {
           case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings":
@@ -171,53 +167,48 @@ const
             console.log(`OK`);
             break;
           case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings":
-            config.stimulation.sequence.stimuli = message.objects;//TODO changing options in config object and file
+            featuresProcessor.setStimuliNumber(message.objects.length);
+            config.stimulation.sequence.stimuli= message.objects;//TODO changing options in config object and file
             console.log(`Incoming message:\r\nclass: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings`);
             console.log(`objects: ${JSON.stringify(message.objects)}`);
-            stimuli.resetStimuli({
-              stimuliIdArray: config.stimulation.sequence.stimuli
-              , stimulusDuration: config.stimulation.duration
-              , pauseDuration: config.stimulation.pause
-              , generator: true
-            });
             running = true;
             mode = 'vr';
-            stimuli.stopGenerator();
             break;
           case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStart":
-            config.stimulation.sequence.stimuli = message.cells;//TODO changing options in config object and file
-            config.stimulation.duration = message.flashDuration;//TODO changing options in config object and file
-            config.stimulation.pause = message.stepDelay;//TODO changing options in config object and file
-            stimuli.resetStimuli({
-              stimuliIdArray: config.stimulation.sequence.stimuli
-              , stimulusDuration: config.stimulation.duration
+            featuresProcessor.setStimuliNumber(message.objects.length);
+            config.stimulation.sequence.stimuli= message.cells;//TODO changing options in config object and file
+            config.stimulation.duration= message.flashDuration;//TODO changing options in config object and file
+            config.stimulation.pause= message.stepDelay;//TODO changing options in config object and file
+            stimuli = new Stimuli({
+              stimuliArray: config.stimulation.sequence.stimuli
+              , signalDuration: config.stimulation.duration
               , pauseDuration: config.stimulation.pause
-              , generator: true
             });
-            stimuli.resume();
             console.log(`Incoming message:\r\nclass: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStart`);
             console.log(`\r\nsignalDuration: ${JSON.stringify(message.flashDuration)}`);
             console.log(`\rpauseDuration: ${JSON.stringify(message.stepDelay)}`);
             console.log(`\r\nStimuli flow has started...\r\n`);
-            if (running) {
-              stimuli.runGenerator();
-              mode = 'carousel';
-            }
+            if (running)
+              stimuli.pipe(ntStimuli);
+            mode = 'carousel';
             break;
           case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop":
             console.log(`Incoming message: \r\nru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop`);
             if (mode === 'carousel') {
-              stimuli.unpipe();
-              stimuli.pause();
+              // stimuli = {};
+              // stimuli.unpipe();
               // stimuli.drain();
             }
+            // ntStimuli.unpipe();
+            // ntStimuli.drain();
             running = false;
             console.log(`Stimuli flow has stopped...`);
             break;
           case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellFlashing":
             if (running) {
               stimulus = [message.timestamp, message.cellId, 0];
-              stimuli.write(stimulus);
+              // ntStimuli.resume();
+              ntStimuli.write(stimulus);
             }
             break;
           default:

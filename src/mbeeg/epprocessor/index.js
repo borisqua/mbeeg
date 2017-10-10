@@ -6,6 +6,7 @@
 class EpochsProcessor extends require('stream').Transform {
   constructor({
                 epochs,
+                stimuliNumber = 0,
                 depth = 1,
                 moving = true,
                 movingStep = 1,
@@ -18,7 +19,7 @@ class EpochsProcessor extends require('stream').Transform {
               }) {
     super({objectMode: true});
     this.epochs = epochs;
-    this.stimuliNumber = this.epochs.stimuli.stimuliArray().length;
+    this.stimuliNumber = stimuliNumber;//this.epochs.stimuli.stimuliArray().length;
     this.depth = depth;
     this.moving = moving;
     this.movingStep = movingStep;
@@ -67,13 +68,17 @@ class EpochsProcessor extends require('stream').Transform {
     });
   }
   
+  setStimuliNumber(stimuliNumber){
+    this.stimuliNumber = stimuliNumber;
+  }
+  
   resetCycle() {
     if (!this.depth && this.stimuliFlows.every(k => k.every(ch => ch.every(s => s.length >= this.cycle)))) {
-      this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.splice(0, this.cycle))))
+      this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.splice(0, this.cycle))));
       this.cycle = 1;
     }
     else if (!this.depth && this.stimuliFlows.every(k => k.every(ch => ch.every(s => s.length >= this.cycle - 1)))) {
-      this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.splice(0, this.cycle - 1))))
+      this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.splice(0, this.cycle - 1))));
       this.cycle = 1;
     }
   }

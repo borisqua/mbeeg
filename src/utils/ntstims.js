@@ -48,7 +48,7 @@ let
   , mode = ''
   , running = false
   , message = {}
-  , stimuliArray = [0, 1, 2]//config.stimulation.sequence.stimuli
+  , stimuliArray = [0, 1, 2, 3, 4]//config.stimulation.sequence.stimuli
   , signalDuration = 100//config.stimulation.duration
   , pauseDuration = 200//config.stimulation.pause
   , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
@@ -128,12 +128,14 @@ const
     });
     replSrv.defineCommand('stop', {
       help: `Stop stimulation in selected mode`, action: () => {
-        if (mode === `vr`) {
-          // stimuli.pipe(ntrainerStringifier).pipe(mbeeg);//process.stdout);
-          // stimuli.unpipe();
-          // stimuli.pause();
-          stimuli = {};
-        }
+        // if (mode === `vr`) {
+        // stimuli.pipe(ntrainerStringifier).pipe(mbeeg);//process.stdout);
+        // stimuli.unpipe();
+        // stimuli.pause();
+        // stimuli = {};
+        // }
+        stimuli.unpipe();
+        stimuli.pause();
         running = false;
         message = {};
         message.class = "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop";
