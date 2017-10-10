@@ -11,9 +11,11 @@ const
   , featuresStringifier = new Stringifier({
     // beginWith: `{"features":[\r\n`
     chunkBegin: `{"feature":\r\n`
-    // , chunksDelimiter: `,\r\n `
-    , chunkEnd: `}`
+    , chunksDelimiter: `,\r\n `
+    , chunkEnd: `}\r\n`
     // , endWith: `]}`
+    , indentationSpace: 2
+    , stringifyAll: true
   })
   , epochsObjectifier = new Objectifier()
   , openVibeClient = new Net.Socket() //3. Create TCP client for openViBE eeg data server
@@ -30,7 +32,7 @@ const
         context.tcpcursor += 8;
         bufferTailLength -= 8;
       }
-      else if(!context.expectedEBMLChunkSize)
+      else if (!context.expectedEBMLChunkSize)
         break;
       if (bufferTailLength >= context.expectedEBMLChunkSize) {
         context.ebmlChunk = Buffer.from(context.tcpbuffer.slice(context.tcpcursor, context.tcpcursor + context.expectedEBMLChunkSize));
@@ -50,9 +52,7 @@ const
     ebmlSource: openVibeClient.connect(config.signal.port, config.signal.host, () => {})
     , ebmlCallback: tcpFeeder
   })
-  , samples = new OVReader({
-    ovStream: openVibeJSON
-  })
+  , samples = new OVReader({})
   , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
     signalDuration: config.stimulation.duration
     , pauseDuration: config.stimulation.pause
@@ -60,7 +60,7 @@ const
   })
   , epochs = new DSProcessor({
     stimuli: stimuli
-    , samples: samples
+    , samples: openVibeJSON.pipe(samples)
     , channels: config.signal.channels
     , epochDuration: config.signal.epoch.duration
     , processingSequence: config.signal.dsp.vertical.steps

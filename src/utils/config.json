@@ -47,11 +47,23 @@
         ]
       },
       "horizontal": {
-        "depth": 5,
+        "depth": 0,
         "moving": false
       }
     },
     "cycles": 0
+  },
+  "classification": {
+    "method": "integral",
+    "methods":[
+      {
+        "name": "integral",
+        "parameters":{
+          "start": 200,
+          "window": 300
+        }
+      }
+    ]
   },
   "decision": {
     "start": 2,

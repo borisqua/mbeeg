@@ -1,20 +1,14 @@
 "use strict";
 const
   Net = require('net')
-  , ntStimuli = new require('stream').PassThrough({objectMode: true})
-  , {
-    EBMLReader,
-    OVReader,
-    Stimuli,
-    DSProcessor,
-    EpochsProcessor,
-    Classifier,
-    DecisionMaker,
-    Stringifier,
-    NTVerdictStringifier,
-    Tools
-  } = require('mbeeg')
+  , {EBMLReader, OVReader, Stimuli, DSProcessor, EpochsProcessor, Classifier, DecisionMaker, Stringifier, NTVerdictStringifier, Tools} = require('mbeeg')
   , config = Tools.loadConfiguration(`config.json`)
+  , stimuli = new Stimuli({
+    stimuliArray: config.stimulation.sequence.stimuli
+    , generator: false
+    , signalDuration: config.stimulation.duration
+    , pauseDuration: config.stimulation.pause
+  })
   , ntDecisionStringifier = new Stringifier({
     chunkBegin: `{"class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellConceived", "cellId": `
     , chunkEnd: `, "timestamp": ${new Date().getTime()}}\r\n`
@@ -115,13 +109,10 @@ const
     ebmlSource: openVibeClient.connect(config.signal.port, config.signal.host, () => {})
     , ebmlCallback: tcpFeeder
   })
-  , samples = new OVReader({
-    ovStream: openVibeJSON
-    // , signalDescriptor: signalGlobalsDescriptor
-  })
+  , samples = new OVReader({})
   , epochs = new DSProcessor({
-    stimuli: ntStimuli
-    , samples: samples
+    stimuli: stimuli
+    , samples: openVibeJSON.pipe(samples)
     , channels: config.signal.channels
     , epochDuration: config.signal.epoch.duration
     , processingSequence: config.signal.dsp.vertical.steps
@@ -130,10 +121,13 @@ const
   , featuresProcessor = new EpochsProcessor({
     epochs: epochs
     , moving: false
-    , depth: 5
+    , depth: config.signal.dsp.horizontal.depth
+    , maximumCycleCount: config.decision.queue
     , stimuliNumber: config.stimulation.sequence.stimuli.length
   })
-  , classifier = new Classifier({})
+  , classifier = new Classifier({
+    method: config.classification.method
+  })
   , decisions = new DecisionMaker({
     start: config.decision.start
     , maxLength: config.decision.queue
@@ -142,12 +136,11 @@ const
   })
 ;
 
+stimuli.stopGenerator();
+stimuli.pause();
+
 let
-  stimuli = {}
-  , stimuliArray = config.stimulation.sequence.stimuli
-  , signalDuration = config.stimulation.duration
-  , pauseDuration = config.stimulation.pause
-  , stimulus = []
+  stimulus = []
   , mode = 'vr'
   , running = false
 ;
@@ -155,25 +148,22 @@ let
 const
   mbEEGServer = Net.createServer(socket => {
     console.log(`client ${socket.remoteAddress}:${socket.remotePort} connected`);
-    
+  
     socket
       .on(`end`, () => {
-        // ntStimuli.unpipe();
         stimuli.unpipe();
         console.log('end: client disconnected');
       })
       .on(`close`, () => {
-        // ntStimuli.unpipe();
         stimuli.unpipe();
         console.log('close: client disconnected');
       })
       .on(`error`, () => {
-        // ntStimuli.unpipe();
-        // stimuli.unpipe();
+        stimuli.unpipe();
         console.log('error: client disconnected');
       })
       .on('data', chunk => {//to unpipe delete listener
-        console.log(chunk.toString());
+        // console.log(chunk.toString());//Show incoming chunks
         let message = JSON.parse(chunk.toString());
         switch (message.class) {
           case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings":
@@ -181,45 +171,53 @@ const
             console.log(`OK`);
             break;
           case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings":
-            stimuliArray = message.object;//TODO changing options in config object and file
+            config.stimulation.sequence.stimuli = message.objects;//TODO changing options in config object and file
             console.log(`Incoming message:\r\nclass: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings`);
             console.log(`objects: ${JSON.stringify(message.objects)}`);
+            stimuli.resetStimuli({
+              stimuliIdArray: config.stimulation.sequence.stimuli
+              , stimulusDuration: config.stimulation.duration
+              , pauseDuration: config.stimulation.pause
+              , generator: true
+            });
             running = true;
             mode = 'vr';
+            stimuli.stopGenerator();
             break;
           case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStart":
-            signalDuration = message.flashDuration;//TODO changing options in config object and file
-            pauseDuration = message.stepDelay;//TODO changing options in config object and file
-            stimuli = new Stimuli({
-              stimuliArray: config.stimulation.sequence.stimuli
-              , signalDuration: config.stimulation.duration
+            config.stimulation.sequence.stimuli = message.cells;//TODO changing options in config object and file
+            config.stimulation.duration = message.flashDuration;//TODO changing options in config object and file
+            config.stimulation.pause = message.stepDelay;//TODO changing options in config object and file
+            stimuli.resetStimuli({
+              stimuliIdArray: config.stimulation.sequence.stimuli
+              , stimulusDuration: config.stimulation.duration
               , pauseDuration: config.stimulation.pause
+              , generator: true
             });
+            stimuli.resume();
             console.log(`Incoming message:\r\nclass: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStart`);
             console.log(`\r\nsignalDuration: ${JSON.stringify(message.flashDuration)}`);
             console.log(`\rpauseDuration: ${JSON.stringify(message.stepDelay)}`);
             console.log(`\r\nStimuli flow has started...\r\n`);
-            if (running)
-              stimuli.pipe(ntStimuli);
-            mode = 'carousel';
+            if (running) {
+              stimuli.runGenerator();
+              mode = 'carousel';
+            }
             break;
           case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop":
             console.log(`Incoming message: \r\nru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop`);
             if (mode === 'carousel') {
-              stimuli = {};
-              // stimuli.unpipe();
+              stimuli.unpipe();
+              stimuli.pause();
               // stimuli.drain();
             }
-            // ntStimuli.unpipe();
-            // ntStimuli.drain();
             running = false;
             console.log(`Stimuli flow has stopped...`);
             break;
           case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellFlashing":
             if (running) {
               stimulus = [message.timestamp, message.cellId, 0];
-              ntStimuli.resume();
-              ntStimuli.write(stimulus);
+              stimuli.write(stimulus);
             }
             break;
           default:

@@ -64,7 +64,7 @@ const
   , ovReader = new OVReader({
     ovStream: ebmlReader
   })
-  , samplingRate = ovReader.header.samplingRate //TODO publish in app common information about openViBE stream when it starts (current line doesn't work)
+  , samplingRate = ovReader.header.samplingRate
   , eegSampler = new EEGSampler({
     channels: [6]
     //, samplingRate: samplingRate

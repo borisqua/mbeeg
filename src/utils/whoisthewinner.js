@@ -27,7 +27,7 @@ const
         context.tcpcursor += 8;
         bufferTailLength -= 8;
       }
-      else if(!context.expectedEBMLChunkSize)
+      else if (!context.expectedEBMLChunkSize)
         break;
       if (bufferTailLength >= context.expectedEBMLChunkSize) {
         context.ebmlChunk = Buffer.from(context.tcpbuffer.slice(context.tcpcursor, context.tcpcursor + context.expectedEBMLChunkSize));
@@ -47,9 +47,7 @@ const
     ebmlSource: openVibeClient.connect(config.signal.port, config.signal.host, () => {})
     , ebmlCallback: tcpFeeder
   })
-  , samples = new OVReader({
-    ovStream: openVibeJSON
-  })
+  , samples = new OVReader({})
   , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
     signalDuration: config.stimulation.duration
     , pauseDuration: config.stimulation.pause
@@ -57,7 +55,7 @@ const
   })
   , epochs = new DSProcessor({
     stimuli: stimuli
-    , samples: samples
+    , samples: openVibeJSON.pipe(samples)
     , channels: config.signal.channels
     , epochDuration: config.signal.epoch.duration
     , processingSequence: config.signal.dsp.vertical.steps
@@ -66,10 +64,13 @@ const
   , featuresProcessor = new EpochsProcessor({
     epochs: epochs
     , moving: false
-    , depth: 5
+    , depth: config.signal.dsp.horizontal.depth
+    , maximumCycleCount: config.decision.queue
     , stimuliNumber: config.stimulation.sequence.stimuli.length
   })
-  , classifier = new Classifier({})
+  , classifier = new Classifier({
+    method: config.classification.method
+  })
   , decisions = new DecisionMaker({
     start: config.decision.start
     , maxLength: config.decision.queue
@@ -79,7 +80,7 @@ const
 ;
 
 cli.version('0.0.1')
-  .description(`Analyzing verdicts stream and making decision wick of keys had been chosen.`)
+  .description(`Analyzing verdicts stream and making decision which of keys had been chosen.`)
   .usage(`[option]`)
   .option(`-p --pipe`, `Gets epochs flow from stdin through pipe`)
   .option(`-i --internal`, `Gets epochs flow from source defined in config.json file`)

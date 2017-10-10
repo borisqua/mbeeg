@@ -4,7 +4,7 @@ module.exports = {
   
   EBMLReader: require('./ebml/reader')
   , OVReader: require('./openvibe/reader')
-  , Stimuli: require('./tools').Stimuli
+  , Stimuli: require('./stimuli')
   , DSProcessor: require('./dsprocessor')
   , EpochsProcessor: require('./epprocessor')
   , Classifier: require('./classifier')

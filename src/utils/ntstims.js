@@ -10,7 +10,7 @@ const
     , chunksDelimiter: `,`
     // , indentationSpace: 2
     // , stringifyAll: true
-  // , endWith: `\r\n`
+    // , endWith: `\r\n`
     , fields: [
       {name: "timestamp", type: "value"}
       , {name: "cellId", type: "value"}
@@ -92,8 +92,10 @@ const
           running = true;
           if (mode === 'carousel') {
             message.class = "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStart";
+            message.cells = stimuliArray;
             message.flashDuration = signalDuration;
             message.stepDelay = pauseDuration;
+            message.repeat = 0;
             if (mbeeg.write(JSON.stringify(message))) console.log(`started in 'carousel' mode`);
             else console.log(`Error: scene settings message sending failed.`);
           } else {

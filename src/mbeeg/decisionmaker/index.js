@@ -39,7 +39,7 @@ class DecisionMaker extends require('stream').Transform {
           this.result = verdict;
       }
       this.winnersQueue.push(this.result.reduce((ac, v, i, ar) => ar[ac] < v ? ac = i : ac, 0));//idx of max
-      // console.log(this.winnersQueue);
+      console.log(this.winnersQueue);
       if (this.winnersQueue[this.winnersQueue.length - 1] === this.winnersQueue[this.winnersQueue.length - 2]) {
         if (++this.winnersSeriesLength >= this.decisionThreshold) {
           cb(null, this.winnersQueue[this.winnersQueue.length - 1]);

@@ -80,11 +80,8 @@ class Tools {
    * @param {Number} windowWidth - width of analytical window in ms
    * @return {Number} - Sum of samples absolute values from within analytical window
    */
-  static absIntegral(feature, samplingRate, windowStart, windowWidth) {
-    let
-      start = samplingRate * windowStart / 1000,
-      end = start + samplingRate * windowWidth / 1000;
-    
+  static absIntegral({feature, start, window}) {
+    let end = feature.length * start / 1000 + feature.length * window / 1000;//feature length equal to sampling rate
     return Math.abs(feature.slice(start, end).reduce((acc, val) => acc + Math.abs(val), 0));
   }
   
@@ -178,18 +175,18 @@ class Tools {
       let sumxx = n * (n + 1) * (2 * n + 1) / 6;//sum of the squares of the first n natural numbers
       let a = (n * sumxy - sumx * sumy) / (n * sumxx - sumx * sumx);
       let b = (sumy - a * sumx) / n;
-  
+      
       let trend = new Array(n);
       let detrend = new Array(n);
-  
+      
       for (let i = 0; i < n; i++) {
         trend[i] = (i + 1) * a + b;
         detrend[i] = timeseries[i] - trend[i];
         // detrend[i] = ((timeseries[i] / trend[i]) - 1) * 100; //if trend[i] traverses zero there will be a problem
       }
-  
+      
       return detrend;
-    } catch (err){
+    } catch (err) {
       throw err;
     }
   }
@@ -256,84 +253,6 @@ class Tools {
   
 }
 
-class Stimuli extends require('stream').Transform {
-  constructor({
-                objectMode = true,
-                learning = false,
-                learningCycleDuration = 0,
-                stimuliArray = [],
-                learningArray = stimuliArray,
-                signalDuration = 0,
-                pauseDuration = 0,
-                nextSequence = arr => {
-                  return arr.sort(() => {
-                    return Math.random() - 0.5;
-                  })
-                },
-                nextTarget = (arr, previousTarget, learningCycle) => {
-                  if (previousTarget++ > arr.length - 1)
-                    return previousTarget = learningCycle = 0;
-                  else {
-                    learningCycle++;
-                    return previousTarget;
-                  }
-                }
-              }) {
-    super({objectMode: true});
-    this.idarray = stimuliArray.slice();
-    this.stimulus = [];
-    this.signalDuration = signalDuration;
-    this.pauseDuration = pauseDuration;
-    this.stimulusCycleDuration = signalDuration + pauseDuration;
-    this.stimulusCycle = -1;
-    this.currentStimulus = 0;
-    this.objectMode = objectMode;
-    this.learning = learning;
-    this.learningDuration = learningCycleDuration;
-    this.currentLearningCycle = 0;
-    this.learningArray = learningArray;
-    this.currentTargetStimulus = 0;
-    this._nextSequence = nextSequence;
-    this._nextTarget = nextTarget;
-    
-    this._resetStimuli();
-  }
-  
-  // noinspection JSUnusedGlobalSymbols
-  _read(size) {
-    setTimeout(() => {
-      
-      this.stimulus = [
-        new Date().getTime(),
-        this.idarray[this.currentStimulus],
-        this.learning && this.currentStimulus === this.currentTargetStimulus ? 1 : 0 //target field = in learning mode - true if target key, false if not, and null in online mode
-      ];
-      
-      if (this.objectMode) {
-        this.push(this.stimulus);
-      } else
-        this.push(`${JSON.stringify(this.stimulus)}`);
-      
-      this._checkCycles();
-    }, this.stimulusCycleDuration);
-  }
-  
-  _resetStimuli() {
-    this.stimulusCycle++;
-    this.currentStimulus = 0;
-    return this._nextSequence(this.idarray); //randomize idarray order
-  }
-  
-  _checkCycles() {
-    if (this.currentStimulus++ === this.idarray.length - 1) {
-      this._resetStimuli();
-      if (this.learning && this.currentLearningCycle > this.learningDuration - 1)
-        this._nextTarget(this.learningArray, this.currentTargetStimulus, this.currentLearningCycle);
-    }
-  }
-  
-}
-
 class Objectifier extends Transform {
   constructor() {
     super({objectMode: true});
@@ -372,7 +291,7 @@ class Stringifier extends Transform {
   // noinspection JSUnusedGlobalSymbols
   _transform(chunk, encoding, cb) {
     if (this.stringifyAll) cb(null, `${this.running ? this.delimiter : ''}${this.chunkBegin}${JSON.stringify(chunk)}${this.chunkEnd}`);
-    else cb(null, `${this.running ? this.delimiter : ''}${this.chunkBegin}${JSON.stringify(chunk,null, this.space)}${this.chunkEnd}`);
+    else cb(null, `${this.running ? this.delimiter : ''}${this.chunkBegin}${JSON.stringify(chunk, null, this.space)}${this.chunkEnd}`);
     this.running = true;
   }
 }
@@ -462,7 +381,6 @@ class Channels extends Transform {
 
 module.exports = {
   Tools: Tools
-  , Stimuli: Stimuli
   , Stringifier: Stringifier
   , Objectifier: Objectifier
   , NTVerdictStringifier: NTrainerVerdictStringifier

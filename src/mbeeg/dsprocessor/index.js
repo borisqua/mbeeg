@@ -70,6 +70,7 @@ class DSProcessor extends require('stream').Transform {
                 }
                 this.write(e);
                 this.epochsFIFO.shift();
+                break; //this is crucial 'break' because two adjacent samples can catisfy _firstSampleOfEpoch condition (epoch.timestamp and epoch.timestamp+epoch.samplingStep)
                 //i && i--;
                 // this.epochsFIFOlength--;
               }
