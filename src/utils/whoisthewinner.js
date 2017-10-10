@@ -66,7 +66,7 @@ const
     , moving: false
     , depth: config.signal.dsp.horizontal.depth
     , maximumCycleCount: config.decision.queue
-    , stimuliNumber: config.stimulation.sequence.stimuli.length
+    , stimuliIdArray: config.stimulation.sequence.stimuli
   })
   , classifier = new Classifier({
     method: config.classification.method

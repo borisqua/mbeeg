@@ -48,7 +48,7 @@ let
   , mode = ''
   , running = false
   , message = {}
-  , stimuliArray = [0, 1, 2, 3, 4]//config.stimulation.sequence.stimuli
+  , stimuliArray = [1, 2, 3, 4]//config.stimulation.sequence.stimuli
   , signalDuration = 100//config.stimulation.duration
   , pauseDuration = 200//config.stimulation.pause
   , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel

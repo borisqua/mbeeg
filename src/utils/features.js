@@ -89,7 +89,7 @@ if (cli.pipe) {
     epochs: epochsObjectifier
     , moving: config.signal.dsp.horizontal.moving //true means moving calculation in to depth as specified
     , depth: config.signal.dsp.horizontal.depth //0 means full depth
-    , stimuliNumber: config.stimulation.sequence.stimuli.length
+    , stimuliIdArray: config.stimulation.sequence.stimuli
   });
   if (cli.json) featuresProcessor.pipe(featuresStringifier).pipe(process.stdout);
   else featuresProcessor.pipe(plainStringifier).pipe(process.stdout);
@@ -98,7 +98,7 @@ if (cli.pipe) {
     epochs: epochs
     , moving: config.signal.dsp.horizontal.moving //true means moving calculation in to depth as specified
     , depth: config.signal.dsp.horizontal.depth //0 means full depth
-    , stimuliNumber: config.stimulation.sequence.stimuli.length
+    , stimuliIdArray: config.stimulation.sequence.stimuli
   });
   if (cli.json) featuresProcessor.pipe(featuresStringifier).pipe(process.stdout);
   else featuresProcessor.pipe(plainStringifier).pipe(process.stdout);

@@ -118,7 +118,7 @@ const
     , moving: false
     , depth: config.signal.dsp.horizontal.depth
     , maximumCycleCount: config.decision.queue
-    , stimuliNumber: config.stimulation.sequence.stimuli.length
+    , stimuliIdArray: config.stimulation.sequence.stimuli
   })
   , classifier = new Classifier({
     method: config.classification.method
@@ -162,12 +162,12 @@ const
         console.log(chunk.toString());
         let message = JSON.parse(chunk.toString());
         switch (message.class) {
-          case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings":
+          case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings"://SETTINGS
             console.log(`Incoming message:\r\n ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings`);
             console.log(`OK`);
             break;
-          case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings":
-            featuresProcessor.setStimuliNumber(message.objects.length);
+          case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings"://SCENE SETTINGS
+            featuresProcessor.setStimuliArray(message.objects);
             config.stimulation.sequence.stimuli= message.objects;//TODO changing options in config object and file
             console.log(`Incoming message:\r\nclass: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings`);
             console.log(`objects: ${JSON.stringify(message.objects)}`);
@@ -175,7 +175,7 @@ const
             mode = 'vr';
             break;
           case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStart":
-            featuresProcessor.setStimuliNumber(message.objects.length);
+            featuresProcessor.setStimuliArray(message.objects);
             config.stimulation.sequence.stimuli= message.cells;//TODO changing options in config object and file
             config.stimulation.duration= message.flashDuration;//TODO changing options in config object and file
             config.stimulation.pause= message.stepDelay;//TODO changing options in config object and file

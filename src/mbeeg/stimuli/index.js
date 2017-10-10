@@ -24,7 +24,7 @@ class Stimuli extends require('stream').Transform {
                 }
               }) {
     super({objectMode: true});
-    this.idarray = stimuliArray.slice();
+    this.stimuliIdArray = stimuliArray.slice();
     this.stimulus = [];
     this.signalDuration = signalDuration;
     this.pauseDuration = pauseDuration;
@@ -44,7 +44,7 @@ class Stimuli extends require('stream').Transform {
   }
   
   resetStimuli({stimuliIdArray, stimulusDuration, pauseDuration, generator = false}) {
-    this.idarray = stimuliIdArray;
+    this.stimuliIdArray = stimuliIdArray;
     this.signalDuration = stimulusDuration;
     this.pauseDuration = pauseDuration;
     this.generator = generator;
@@ -57,7 +57,7 @@ class Stimuli extends require('stream').Transform {
   }
   
   stimuliArray() {
-    return this.idarray;
+    return this.stimuliIdArray;
   }
   
   // noinspection JSUnusedGlobalSymbols
@@ -66,7 +66,7 @@ class Stimuli extends require('stream').Transform {
         
         this.stimulus = [
           new Date().getTime(),
-          this.idarray[this.currentStimulus],
+          this.stimuliIdArray[this.currentStimulus],
           this.learning && this.currentStimulus === this.currentTargetStimulus ? 1 : 0 //target field = in learning mode - true if target key, false if not, and null in online mode
         ];
         
@@ -83,11 +83,11 @@ class Stimuli extends require('stream').Transform {
   _resetStimuli() {
     this.stimulusCycle++;
     this.currentStimulus = 0;
-    return this._nextSequence(this.idarray); //randomize idarray order
+    return this._nextSequence(this.stimuliIdArray); //randomize stimuliIdArray order
   }
   
   _checkCycles() {
-    if (this.currentStimulus++ === this.idarray.length - 1) {
+    if (this.currentStimulus++ === this.stimuliIdArray.length - 1) {
       this._resetStimuli();
       if (this.learning && this.currentLearningCycle > this.learningDuration - 1)
         this._nextTarget(this.learningArray, this.currentTargetStimulus, this.currentLearningCycle);
