@@ -19,7 +19,7 @@ const
   })
   , epochsObjectifier = new Objectifier()
   , openVibeClient = new Net.Socket() //3. Create TCP client for openViBE eeg data server
-  , tcpFeeder = (context, tcpchunk) => {
+  , tcp2ebmlFeeder = (context, tcpchunk) => {
     if (context.tcpbuffer === undefined) {
       context.tcpbuffer = Buffer.alloc(0);
       context.tcpcursor = 0;
@@ -50,7 +50,7 @@ const
   }
   , openVibeJSON = new EBMLReader({
     ebmlSource: openVibeClient.connect(config.signal.port, config.signal.host, () => {})
-    , ebmlCallback: tcpFeeder
+    , ebmlCallback: tcp2ebmlFeeder
   })
   , samples = new OVReader({})
   , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel

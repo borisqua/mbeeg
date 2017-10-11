@@ -1,12 +1,12 @@
 "use strict";
 
-class Stimuli extends require('stream').Transform {
+class Stimuli extends require('stream').Readable {
   constructor({
                 objectMode = true,
                 learning = false,
                 learningCycleDuration = 0,
-                stimuliArray = [],
-                learningArray = stimuliArray,
+                stimuliIdArray = [],
+                learningArray = stimuliIdArray,
                 signalDuration = 0,
                 pauseDuration = 0,
                 nextSequence = arr => {
@@ -24,7 +24,7 @@ class Stimuli extends require('stream').Transform {
                 }
               }) {
     super({objectMode: true});
-    this.stimuliIdArray = stimuliArray.slice();
+    this.stimuliIdArray = stimuliIdArray.slice();
     this.stimulus = [];
     this.signalDuration = signalDuration;
     this.pauseDuration = pauseDuration;
@@ -43,15 +43,10 @@ class Stimuli extends require('stream').Transform {
     this._resetStimuli();
   }
   
-  resetStimuli({stimuliIdArray, stimulusDuration, pauseDuration, generator = false}) {
+  reset({stimuliIdArray, stimulusDuration, pauseDuration}) {
     this.stimuliIdArray = stimuliIdArray;
     this.signalDuration = stimulusDuration;
     this.pauseDuration = pauseDuration;
-    this.generator = generator;
-    this.resetCyclesCounter();
-  }
-  
-  resetCyclesCounter() {
     this.stimulusCycle = -1;
     this._resetStimuli();
   }
@@ -62,28 +57,29 @@ class Stimuli extends require('stream').Transform {
   
   // noinspection JSUnusedGlobalSymbols
   _read(size) {
-      setTimeout(() => {
-        
-        this.stimulus = [
-          new Date().getTime(),
-          this.stimuliIdArray[this.currentStimulus],
-          this.learning && this.currentStimulus === this.currentTargetStimulus ? 1 : 0 //target field = in learning mode - true if target key, false if not, and null in online mode
-        ];
-        
-        if (this.objectMode) {
-          this.push(this.stimulus)
-        } else
-          this.push(`${JSON.stringify(this.stimulus)}`);
-        
-        this._checkCycles();
-        
-      }, this.stimulusCycleDuration);
+    // console.log(`--DEBUG::Stimuli::NextStimulus--`);
+    setTimeout(() => {
+      
+      this.stimulus = [
+        new Date().getTime(),
+        this.stimuliIdArray[this.currentStimulus],
+        this.learning && this.currentStimulus === this.currentTargetStimulus ? 1 : 0 //target field = in learning mode - true if target key, false if not, and null in online mode
+      ];
+      
+      if (this.objectMode) {
+        this.push(this.stimulus)
+      } else
+        this.push(`${JSON.stringify(this.stimulus)}`);
+      
+      this._checkCycles();
+      
+    }, this.stimulusCycleDuration);
   }
   
   _resetStimuli() {
     this.stimulusCycle++;
     this.currentStimulus = 0;
-    return this._nextSequence(this.stimuliIdArray); //randomize stimuliIdArray order
+    return this._nextSequence(this.stimuliIdArray); //randomize idarray order
   }
   
   _checkCycles() {

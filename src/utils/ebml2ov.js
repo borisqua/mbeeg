@@ -13,7 +13,7 @@ const
     , endWith: `}\r\n`
     , indentationSpace: 2
   })
-  , tcpFeeder = (context, tcpchunk) => {
+  , tcp2ebmlFeeder = (context, tcpchunk) => {
     if (context.tcpbuffer === undefined) {
       context.tcpbuffer = Buffer.alloc(0);
       context.tcpcursor = 0;
@@ -44,7 +44,7 @@ const
   }
   , openVibeJSON = new EBMLReader({
     ebmlSource: openVibeClient.connect(config.signal.port, config.signal.host, () => {})
-    , ebmlCallback: tcpFeeder
+    , ebmlCallback: tcp2ebmlFeeder
   })
 ;
 

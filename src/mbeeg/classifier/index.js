@@ -16,10 +16,17 @@ class Classifier extends require('stream').Transform {
   
   // noinspection JSUnusedGlobalSymbols
   _transform(stimuliAvgEpochs, encoding, cb) {
+    console.log(`--DEBUG::            Classifier::NextVerdictReady--`);
     let classification = [];
-    for (let stimulusAvgChannels of stimuliAvgEpochs) {
-      this.methodParameters.feature = stimulusAvgChannels[0];//TODO instead feature[0] here should be procedure for every channel
-      classification[stimuliAvgEpochs.indexOf(stimulusAvgChannels)] = Tools.absIntegral(this.methodParameters)
+    for (let i=0; i< stimuliAvgEpochs.length; i++) {
+      let stimulusAvgChannels = stimuliAvgEpochs[i];
+      if(stimulusAvgChannels) {
+        for (let ch of stimulusAvgChannels)
+          this.methodParameters.feature = ch;//TODO instead feature[0] here should be procedure for every channel
+        classification[i] = Tools.absIntegral(this.methodParameters)
+      }else{
+        classification[i] = 0;
+      }
     }
     let sum = classification.reduce((a, b) => a + b);
     classification.forEach((v, i, arr) => arr[i] = v / sum);//normalization

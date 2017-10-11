@@ -23,6 +23,7 @@
       <w>fullscreen</w>
       <w>gsap</w>
       <w>idarray</w>
+      <w>jsons</w>
       <w>keybox</w>
       <w>laurin</w>
       <w>lightgrey</w>
@@ -46,6 +47,7 @@
       <w>samplingrate</w>
       <w>speedscale</w>
       <w>strikethrough</w>
+      <w>stringifiers</w>
       <w>sumx</w>
       <w>sumxx</w>
       <w>sumxy</w>

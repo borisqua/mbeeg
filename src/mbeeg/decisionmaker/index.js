@@ -42,6 +42,7 @@ class DecisionMaker extends require('stream').Transform {
       console.log(this.winnersQueue);
       if (this.winnersQueue[this.winnersQueue.length - 1] === this.winnersQueue[this.winnersQueue.length - 2]) {
         if (++this.winnersSeriesLength >= this.decisionThreshold) {
+          console.log(`--DEBUG::                DecisionMaker::NextDecisionReady--`);
           cb(null, this.winnersQueue[this.winnersQueue.length - 1]);
           this._reset();
           return;
@@ -50,9 +51,13 @@ class DecisionMaker extends require('stream').Transform {
         this.winnersSeriesLength = 1;
       }
       if (this.overallCounter - this.start + 1 >= this.queueMaxLength) {
+        console.log(`--DEBUG::                DecisionMaker::NextDecisionReady--`);
+        cb(null, -1);
         this._reset();
+        return;
       }
     }
+    console.log(`--DEBUG::                DecisionMaker::SkipOver--`);
     cb();
   }
 }

@@ -81,8 +81,11 @@ class Tools {
    * @return {Number} - Sum of samples absolute values from within analytical window
    */
   static absIntegral({feature, start, window}) {
-    let end = feature.length * start / 1000 + feature.length * window / 1000;//feature length equal to sampling rate
-    return Math.abs(feature.slice(start, end).reduce((acc, val) => acc + Math.abs(val), 0));
+    let //feature length equal to sampling rate
+      begin = feature.length * start / 1000,
+      end =  begin + feature.length * window / 1000
+    ;
+    return Math.abs(feature.slice(begin, end).reduce((acc, val) => acc + Math.abs(val), 0));
   }
   
   /**
@@ -95,7 +98,7 @@ class Tools {
    * @return {Array} time series filtered data (same size as input flow)
    */
   static butterworth4Bulanov(timeseries, samplingrate = 0, cutoff = 0, passthrough = false) {
-    console.log(`timeseries.length = ${timeseries.length}`);
+    console.log(`dsp::butterworth4::timeseries.length = ${timeseries.length}`);
     if (!timeseries.length) throw 'no timeseries in butterworth4';//return null;
     if (!cutoff || passthrough) return timeseries.slice();
     if (!samplingrate) throw 'Butterworth4 error! Non zero sampling rate parameter is required!';
@@ -296,7 +299,7 @@ class Stringifier extends Transform {
   }
 }
 
-class NTrainerVerdictStringifier extends Stringifier {
+class NTVerdictStringifier extends Stringifier {
   constructor(options = {fields: []}) {
     super(options);
     this.fields = options.fields;
@@ -326,7 +329,7 @@ class NTrainerVerdictStringifier extends Stringifier {
   
 }
 
-class NTrainerStimuliStringifier extends Stringifier {
+class NTStimuliStringifier extends Stringifier {
   constructor(options = {fields: []}) {
     super(options);
     this.fields = options.fields;
@@ -346,7 +349,7 @@ class NTrainerStimuliStringifier extends Stringifier {
       running = true;
     }
     output += `}${this.chunkEnd}`;
-    cb(null, `${JSON.stringify(JSON.parse(output), null, this.space)}`);
+    cb(null, `${JSON.stringify(JSON.parse(output), null, this.space)}\r\n`);
   }
   
 }
@@ -383,7 +386,7 @@ module.exports = {
   Tools: Tools
   , Stringifier: Stringifier
   , Objectifier: Objectifier
-  , NTVerdictStringifier: NTrainerVerdictStringifier
-  , NTStimuliStringifier: NTrainerStimuliStringifier
+  , NTVerdictStringifier: NTVerdictStringifier
+  , NTStimuliStringifier: NTStimuliStringifier
   , Channels: Channels
 };

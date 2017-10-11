@@ -7,6 +7,9 @@ const
   , ntDecisionStringifier = new Stringifier({
     chunkBegin: `{"class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellConceived", "cellId": `
     , chunkEnd: `, "timestamp": ${new Date().getTime()}}\r\n`
+    // , endWith: `\r\n`
+    // , indentationSpace: 2
+    // , stringifyAll: true
   })
   , ntrainerStringifier = new NTVerdictStringifier({
     chunkBegin: `{"class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventClassifierResult", "cells": [`
@@ -23,6 +26,49 @@ const
       },
       {name: "cellId", type: "id"},
       {name: "weight", type: "value"}]
+  })
+  , plainStringifier = new Stringifier({
+    chunkEnd: `\r\n`
+  })
+  , stimulusStringifier = new Stringifier({
+    chunkBegin: `{"stimulus":`
+    , chunksDelimiter: ``
+    , chunkEnd: `}\r\n`
+  })
+  , ovStringifier = new Stringifier({
+    beginWith: `{\r\n`
+    , chunkBegin: `"openViBE_Stream":`
+    , chunksDelimiter: `, `
+    , chunkEnd: `}`
+    , endWith: `}`
+    , indentationSpace: 2
+  })
+  , sampleStringifier = new Stringifier({
+    chunkBegin: `{"sample":`
+    , chunkEnd: `}\r\n`
+  })
+  , epochsStringifier = new Stringifier({
+    beginWith: `{"epochs": [\n`
+    , chunkBegin: `\r\n`
+    , chunksDelimiter: `,`
+    , chunkEnd: `\r\n`
+    , endWith: `]}`
+    // , indentationSpace: 2
+  })
+  , featuresStringifier = new Stringifier({
+    // beginWith: `{"features":[\r\n`
+    chunkBegin: `{"feature":\r\n`
+    // , chunksDelimiter: `,\r\n `
+    , chunkEnd: `}`
+    // , endWith: `]}`
+  })
+  , verdictStringifier = new Stringifier({
+    chunkBegin: `{"verdict":`
+    , chunkEnd: `}\r\n`
+  })
+  , decisionStringifier = new Stringifier({
+    chunkBegin: `{"decision":`
+    , chunkEnd: `}\r\n`
   })
   , openVibeClient = new Net.Socket() //3. Create TCP client for openViBE eeg data server
   , tcp2ebmlFeeder = (context, tcpchunk) => {
@@ -86,7 +132,9 @@ const
 ;
 
 let
-  stimulus = []
+  stimuli = {}
+  , stimulus = []
+  , mode = 'vr'
   , running = false
 ;
 
@@ -97,55 +145,86 @@ const
     socket
       .on(`end`, () => {
         // ntStimuli.unpipe();
+        stimuli.unpipe();
         console.log('end: client disconnected');
       })
       .on(`close`, () => {
         // ntStimuli.unpipe();
+        stimuli.unpipe();
         console.log('close: client disconnected');
       })
       .on(`error`, () => {
         // ntStimuli.unpipe();
+        // stimuli.unpipe();
         console.log('error: client disconnected');
       })
       .on('data', chunk => {//to unpipe delete listener
-        let messages = chunk.toString().split(`\r\n`);
-        for (let m = 0; m < messages.length; m++) {
-          if (messages[m]) {
-            // console.log(`Incoming-> ${messages[m]}`);
-            let message = JSON.parse(messages[m]);
-            // console.log(JSON.stringify(message, null, 0));
-            switch (message.class) {
-              case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings"://SETTINGS
-                console.log(`Incoming message:\r\n ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings`);
-                console.log(`OK`);
-                break;
-              case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings"://SCENE SETTINGS
-                config.stimulation.sequence.stimuli = message.objects;//TODO changing options in config object and file
-                console.log(`Incoming message:\r\nclass: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings`);
-                console.log(`objects: ${JSON.stringify(message.objects)}`);
-                featuresProcessor.reset(message.objects);
-                running = true;
-                ntStimuli.resume();
-                break;
-              case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop":
-                console.log(`Incoming message: \r\nru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop`);
-                running = false;
-                ntStimuli.pause();
-                console.log(`Stimuli flow has stopped...`);
-                break;
-              case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellFlashing":
-                if (running) {
-                  stimulus = [message.timestamp, message.cellId, 0];
-                  ntStimuli.write(stimulus);
-                  // ntStimuli.resume();
-                  console.log(`From switch-case-> ${[stimulus]}`);
-                }
-                break;
-              default:
-                console.log("ntClient::undefined message...");
+        // this.pipe(process.stdout);
+        console.log(chunk.toString());
+        let message = JSON.parse(chunk.toString());
+        switch (message.class) {
+          case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings"://SETTINGS
+            console.log(`Incoming message:\r\n ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings`);
+            console.log(`OK`);
+            break;
+          case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings"://SCENE SETTINGS
+            // if(stimuli) stimuli.unpipe();
+            // ntStimuli.pause();
+            // featuresProcessor.setStimuliArray(message.objects);
+            config.stimulation.sequence.stimuli = message.objects;//TODO changing options in config object and file
+            console.log(`Incoming message:\r\nclass: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings`);
+            console.log(`objects: ${JSON.stringify(message.objects)}`);
+            // stimuli.pipe(ntStimuli);
+            stimuli = new Stimuli({
+              stimuliArray: config.stimulation.sequence.stimuli
+              , signalDuration: config.stimulation.duration
+              , pauseDuration: config.stimulation.pause
+            });
+            ntStimuli.resume();
+            running = true;
+            mode = 'vr';
+            break;
+          case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStart":
+            if(stimuli) stimuli.unpipe();
+            // featuresProcessor.setStimuliArray(message.objects);
+            config.stimulation.sequence.stimuli = message.cells;//TODO changing options in config object and file
+            config.stimulation.duration = message.flashDuration;//TODO changing options in config object and file
+            config.stimulation.pause = message.stepDelay;//TODO changing options in config object and file
+            stimuli = new Stimuli({
+              stimuliArray: config.stimulation.sequence.stimuli
+              , signalDuration: config.stimulation.duration
+              , pauseDuration: config.stimulation.pause
+            });
+            console.log(`Incoming message:\r\nclass: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStart`);
+            console.log(`\r\nsignalDuration: ${JSON.stringify(message.flashDuration)}`);
+            console.log(`\rpauseDuration: ${JSON.stringify(message.stepDelay)}`);
+            console.log(`\r\nStimuli flow has started...\r\n`);
+            // if (running)
+            stimuli.pipe(ntStimuli);
+            // mode = 'carousel';
+            break;
+          case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop":
+            console.log(`Incoming message: \r\nru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop`);
+            stimuli.unpipe();
+            ntStimuli.unpipe();
+            if (mode === 'carousel') {
+              // stimuli = {};
+              // stimuli.drain();
             }
-            
-          }
+            // ntStimuli.unpipe();
+            // ntStimuli.drain();
+            running = false;
+            console.log(`Stimuli flow has stopped...`);
+            break;
+          case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellFlashing":
+            if (running) {
+              stimulus = [message.timestamp, message.cellId, 0];
+              ntStimuli.resume();
+              ntStimuli.write(stimulus);
+            }
+            break;
+          default:
+            console.log("ntClient::undefined message...");
         }
       });
     

@@ -138,6 +138,7 @@ class DSProcessor extends require('stream').Transform {
   
   // noinspection JSUnusedGlobalSymbols
   _transform(epoch, encoding, cb) {
+    console.log(`--DEBUG::    DSProcessor::NextEpochReady--`);
     for (let i = 0, channelsNumber = epoch.channels.length; i < channelsNumber; i++) {
       for (let step of this.processingSequence) {
         switch (step.name) {//TODO sometimes epoch.channels[i] is empty don't know why

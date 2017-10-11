@@ -6,7 +6,8 @@
 class EpochsProcessor extends require('stream').Transform {
   constructor({
                 epochs,
-                stimuliNumber = 0,
+                stimuliIdArray = [],
+                // stimuliNumber = 0,
                 depth = 1,
                 moving = true,
                 movingStep = 1,
@@ -19,7 +20,8 @@ class EpochsProcessor extends require('stream').Transform {
               }) {
     super({objectMode: true});
     this.epochs = epochs;
-    this.stimuliNumber = stimuliNumber;//this.epochs.stimuli.stimuliArray().length;
+    this.stimuliIdArray = stimuliIdArray.slice();
+    // this.stimuliNumber = stimuliNumber;//this.epochs.stimuli.stimuliArray().length;
     this.depth = depth;
     this.moving = moving;
     this.movingStep = movingStep;
@@ -34,7 +36,9 @@ class EpochsProcessor extends require('stream').Transform {
         , samplesNumber = epoch.channels[0].length
         // , epochCycle = epoch.cycle
       ;
-      
+  
+      console.log(`${epoch.key} in ${this.stimuliIdArray} = ${this.stimuliIdArray.every(s => s !== epoch.key)}`);
+      if (this.stimuliIdArray.every(s => s !== epoch.key)) return;
       for (let ch = 0; ch < channelsNumber; ch++) {
         for (let s = 0; s < samplesNumber; s++) {
           if (this.stimuliFlows[epoch.key] === undefined) {
@@ -49,7 +53,7 @@ class EpochsProcessor extends require('stream').Transform {
       }
       // console.log(JSON.stringify(this.stimuliFlows, null, 2));
       // if (this.stimuliFlows.length === this.stimuliNumber)
-      for (let i = 0; i < this.stimuliNumber; i++)
+      for (let i of this.stimuliIdArray)
         if (this.stimuliFlows[i] === undefined) return;
       if (this.depth && this.stimuliFlows.every(k => k.every(ch => ch.every(s => s.length >= this.depth)))) {
         // console.log(epoch.key);//it means that all of stimuli have been filled with samples into assigned depth
@@ -63,16 +67,18 @@ class EpochsProcessor extends require('stream').Transform {
       } else if (!this.depth && this.stimuliFlows.every(k => k.every(ch => ch.every(s => s.length >= this.cycle)))) {
         this.write(this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.slice(0, this.cycle)))));
         this.cycle++;
-        if (this.cycle > this.maximumCycleCount) this.resetCycle();
+        if (this.cycle > this.maximumCycleCount) this._resetCycle();
       }
     });
   }
   
-  setStimuliNumber(stimuliNumber){
-    this.stimuliNumber = stimuliNumber;
+  reset(stimuliArray) {
+    this.stimuliIdArray = stimuliArray;
+    this.stimuliFlows = [];
+    this.cycle = 1;
   }
   
-  resetCycle() {
+  _resetCycle() {
     if (!this.depth && this.stimuliFlows.every(k => k.every(ch => ch.every(s => s.length >= this.cycle)))) {
       this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.splice(0, this.cycle))));
       this.cycle = 1;
@@ -85,6 +91,7 @@ class EpochsProcessor extends require('stream').Transform {
   
   // noinspection JSUnusedGlobalSymbols
   _transform(cycle, encoding, cb) {
+    console.log(`--DEBUG::        EpochProcessor::NextFeatureReady--`);
     // console.log(JSON.stringify(cycle, null, 2));
     let cycleAvgEpochs;
     if (this.depth)

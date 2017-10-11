@@ -2,7 +2,7 @@
 const
   Client = require('net').Socket()
   , {EBMLReader, OVReader} = require('mbeeg')
-  , tcpFeeder = (context, tcpchunk) => {
+  , tcp2ebmlFeeder = (context, tcpchunk) => {
     if (context.tcpbuffer === undefined) {
       context.tcpbuffer = Buffer.alloc(0);
       context.tcpcursor = 0;
@@ -39,7 +39,7 @@ Client.on('close', () => {
 
 const ebmlReader = new EBMLReader({
   ebmlSource: Client.connect(1024, '127.0.0.1', () => { }),
-  ebmlCallback: tcpFeeder,
+  ebmlCallback: tcp2ebmlFeeder,
   objectMode: false
 });
 ebmlReader.pipe(process.stdout);
