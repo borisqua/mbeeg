@@ -22,7 +22,7 @@
     "host": "localhost",
     "port": 1024,
     "channels": [
-      1
+      2
     ],
     "epoch": {
       "duration": 1000

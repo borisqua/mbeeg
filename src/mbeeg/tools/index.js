@@ -75,9 +75,8 @@ class Tools {
    * absIntegral - calculates integral sum of abs of samples of feature series in the analytical window
    *
    * @param {Array} feature - source timeseries
-   * @param {Number} samplingRate - sampling rate for feature in Hz
-   * @param {Number} windowStart - start of analytical window in ms
-   * @param {Number} windowWidth - width of analytical window in ms
+   * @param {Number} start - start of analytical window in ms
+   * @param {Number} window - width of analytical window in ms
    * @return {Number} - Sum of samples absolute values from within analytical window
    */
   static absIntegral({feature, start, window}) {

@@ -141,9 +141,7 @@ const
     transform(samples, encoding, cb) {
       for (let s = 0; s < samples.length; s++) {
         cb(null, samples[s]);
-        return;
       }
-      cb();
     }
   })
 ;

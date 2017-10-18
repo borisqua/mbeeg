@@ -14,10 +14,14 @@ $(() => {
     e.preventDefault();
   });
   ipcRenderer.on(`ipcMain-reply`, (e, arg) => {//asynchronous-reply
-    let answer = `Asynchronous message reply ${arg}`;
+    let
+      answer = `Asynchronous message reply ${arg}`
+      , messageElement = $(`#message`)
+    ;
     // if (!$(`#message`).html()) $(`#message`).html(answer);
     // else $(`#message`).html(``);
-    !$(`#message`).html() && $(`#message`).html(answer) || $(`#message`).html(``);
+    !messageElement.html() && messageElement.html(answer) || messageElement.html(``);
+    // !$(`#message`).html() && $(`#message`).html(answer) || $(`#message`).html(``);
   });
   
 });

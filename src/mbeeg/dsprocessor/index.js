@@ -9,7 +9,7 @@ class DSProcessor extends require('stream').Transform {
   constructor({
                 stimuli
                 , samples
-                , channels
+                , channels //channels description in form of array with channel numbers started from 1
                 // , learning = false
                 , epochDuration
                 , processingSequence
@@ -60,7 +60,7 @@ class DSProcessor extends require('stream').Transform {
         
         for (let j = 0; j < this.samplesFIFO.length; j++) {
           let samp = this.samplesFIFO[j];
-          if (this.samplesFIFO.length - j >= this.samplesEpochLength) {
+          if (this.samplesFIFO.length - j >= this.epochLengthInSamples) {
             if (_firstSampleOfEpoch(this, e, samp[0])) {
               if (_completeEpoch(this, e, j)) {
                 e.full = true;
@@ -93,7 +93,7 @@ class DSProcessor extends require('stream').Transform {
         this.samplingRate = this.samples.header.samplingRate;
         this.timestamp = this.samples.header.timestamp;
         this.samplingStep = 1000 / this.samplingRate;
-        this.samplesEpochLength = this.epochDuration / this.samplingStep;
+        this.epochLengthInSamples = this.epochDuration / this.samplingStep;
       }
       
       for (let s = 0; s < samplesChunk.length; s++) {//adding timestamp field
@@ -101,8 +101,8 @@ class DSProcessor extends require('stream').Transform {
       }//TODO think about correction of timestamp by information from each next ovStreamJSON
       this.samplesFIFO = this.samplesFIFO.concat(samplesChunk);
       
-      if (!this.epochsFIFO.length && this.samplesFIFO.length >= this.samplesEpochLength) {//keep samplesFIFO length not greater than epoch duration
-        this.samplesFIFO.splice(0, this.samplesFIFO.length - this.samplesEpochLength);
+      if (!this.epochsFIFO.length && this.samplesFIFO.length >= this.epochLengthInSamples) {//keep samplesFIFO length not greater than epoch duration
+        this.samplesFIFO.splice(0, this.samplesFIFO.length - this.epochLengthInSamples);
         return;
       }
       if (this.epochsFIFO.length) {
@@ -122,10 +122,9 @@ class DSProcessor extends require('stream').Transform {
     
     function _completeEpoch(context, epoch, startSample) {
       try {
-        for (let s = startSample; s < startSample + context.samplesEpochLength; s++) {
+        for (let s = startSample; s < startSample + context.epochLengthInSamples; s++) {
           for (let ch = 0; ch < epoch.channels.length; ch++) {
-            if (context.channels.includes(ch + 1))
-              epoch.channels[ch].push(context.samplesFIFO[s][ch + 1]);
+            epoch.channels[ch].push(context.samplesFIFO[s][this.channels[ch + 1]]);
           }
         }
         return true;
