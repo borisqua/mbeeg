@@ -36,8 +36,9 @@ class EpochsProcessor extends require('stream').Transform {
         , samplesNumber = epoch.channels[0].length
         // , epochCycle = epoch.cycle
       ;
-  
-      console.log(`${epoch.key} in ${this.stimuliIdArray} = ${this.stimuliIdArray.every(s => s !== epoch.key)}`);
+      
+      if (this.stimuliIdArray.every(s => s !== epoch.key))
+        console.log(`--DEBUG::        EpochProcessor:: key ${epoch.key} not in keys array ${this.stimuliIdArray} = ${this.stimuliIdArray.every(s => s !== epoch.key)} so throw it away`);
       if (this.stimuliIdArray.every(s => s !== epoch.key)) return;
       for (let ch = 0; ch < channelsNumber; ch++) {
         for (let s = 0; s < samplesNumber; s++) {

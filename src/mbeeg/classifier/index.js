@@ -4,8 +4,8 @@ const
 
 class Classifier extends require('stream').Transform {
   constructor({
-                method = "integral",
-                methodParameters = {start: 200, window: 300},
+                method,
+                methodParameters,
                 objectMode = true
               }) {
     super({objectMode: true});
@@ -18,13 +18,13 @@ class Classifier extends require('stream').Transform {
   _transform(stimuliAvgEpochs, encoding, cb) {
     console.log(`--DEBUG::            Classifier::NextVerdictReady--`);
     let classification = [];
-    for (let i=0; i< stimuliAvgEpochs.length; i++) {
+    for (let i = 0; i < stimuliAvgEpochs.length; i++) {
       let stimulusAvgChannels = stimuliAvgEpochs[i];
-      if(stimulusAvgChannels) {
+      if (stimulusAvgChannels) {
         for (let ch of stimulusAvgChannels)
           this.methodParameters.feature = ch;//TODO instead feature[0] here should be procedure for every channel
         classification[i] = Tools.absIntegral(this.methodParameters)
-      }else{
+      } else {
         classification[i] = 0;
       }
     }

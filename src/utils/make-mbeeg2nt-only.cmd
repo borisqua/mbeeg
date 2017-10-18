@@ -1,0 +1,5 @@
+rem @ echo off
+del C:\Users\Boris\YandexDisk\localhost.chrome\distr\bin\mbeeg2nt\*.exe
+call pkg -t node6-win -c package_conf1.json -o ../../distr/bin/mbeeg2nt/ntstims.exe ntstims.js
+call pkg -t node6-win -c package_conf2.json -o ../../distr/bin/mbeeg2nt/mbeegntsrv.exe mbeegntsrv.js
+call pkg -t node6-win -c package_conf0.json -o ../../distr/bin/mbeeg2nt/tcpclient.exe tcpclient.js

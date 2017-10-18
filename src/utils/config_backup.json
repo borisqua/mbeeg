@@ -55,7 +55,7 @@
   },
   "decision": {
     "start": 2,
-    "queue": 5,
+    "cycles": 5,
     "threshold": 2,
     "method": "majority"
   },

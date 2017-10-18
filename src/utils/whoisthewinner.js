@@ -65,7 +65,7 @@ const
     epochs: epochs
     , moving: false
     , depth: config.signal.dsp.horizontal.depth
-    , maximumCycleCount: config.decision.queue
+    , maximumCycleCount: config.decision.cycles
     , stimuliIdArray: config.stimulation.sequence.stimuli
   })
   , classifier = new Classifier({
@@ -73,7 +73,7 @@ const
   })
   , decisions = new DecisionMaker({
     start: config.decision.start
-    , maxLength: config.decision.queue
+    , maxLength: config.decision.cycles
     , decisionThreshold: config.decision.threshold
     , method: config.decision.method
   })

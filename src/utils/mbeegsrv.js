@@ -134,7 +134,7 @@ const
   , classifier = new Classifier({})
   , decisions = new DecisionMaker({
     start: config.decision.start
-    , maxLength: config.decision.queue
+    , maxLength: config.decision.cycles
     , decisionThreshold: config.decision.threshold
     , method: config.decision.method
   })

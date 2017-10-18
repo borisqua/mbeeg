@@ -88,7 +88,7 @@ const
     epochs: epochs
     , moving: false
     , depth: config.signal.dsp.horizontal.depth
-    , maximumCycleCount: config.decision.queue
+    , maximumCycleCount: config.decision.cycles
     , stimuliIdArray: config.stimulation.sequence.stimuli
   })
   , classifier = new Classifier({

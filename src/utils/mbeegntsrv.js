@@ -71,17 +71,18 @@ const
     epochs: epochs
     , moving: false
     , depth: config.signal.dsp.horizontal.depth
-    , maximumCycleCount: config.decision.queue
+    , maximumCycleCount: config.decision.cycles
     , stimuliIdArray: config.stimulation.sequence.stimuli
   })
-  , classifier = new Classifier({
-    method: config.classification.method
-  })
   , decisions = new DecisionMaker({
-    start: config.decision.start
-    , maxLength: config.decision.queue
-    , decisionThreshold: config.decision.threshold
-    , method: config.decision.method
+    start: config.decision.methods.majority.start
+    , maxLength: config.decision.methods.majority.cycles
+    , decisionThreshold: config.decision.methods.majority.threshold
+    , method: config.decision.method //TODO it's enough to point method name that is index of config object property that contains needed parameters to invoke method
+  })
+  , classifier = new Classifier({
+    method: `integral` //TODO it's enough to point method name that is index of config object property that contains needed parameters to invoke method
+    , methodParameters: config.classification.methods[`integral`]
   })
 ;
 
@@ -116,19 +117,19 @@ const
             // console.log(JSON.stringify(message, null, 0));
             switch (message.class) {
               case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings"://SETTINGS
-                console.log(`Incoming message:\r\n ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings`);
+                console.log(`--DEBUG::mbeegntsrv::OnData:::\r\n ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings`);
                 console.log(`OK`);
                 break;
               case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings"://SCENE SETTINGS
                 config.stimulation.sequence.stimuli = message.objects;//TODO changing options in config object and file
-                console.log(`Incoming message:\r\nclass: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings`);
+                console.log(`--DEBUG::mbeegntsrv::OnData::\r\nclass: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings`);
                 console.log(`objects: ${JSON.stringify(message.objects)}`);
                 featuresProcessor.reset(message.objects);
                 running = true;
                 ntStimuli.resume();
                 break;
               case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop":
-                console.log(`Incoming message: \r\nru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop`);
+                console.log(`--DEBUG::mbeegntsrv::OnData::\r\nru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop`);
                 running = false;
                 ntStimuli.pause();
                 console.log(`Stimuli flow has stopped...`);
@@ -138,11 +139,11 @@ const
                   stimulus = [message.timestamp, message.cellId, 0];
                   ntStimuli.write(stimulus);
                   // ntStimuli.resume();
-                  console.log(`From switch-case-> ${[stimulus]}`);
+                  console.log(`--DEBUG::mbeegntsrv::OnData::MbeegEventCellFlashing ${[stimulus]}`);
                 }
                 break;
               default:
-                console.log("ntClient::undefined message...");
+                console.log("--DEBUG::mbeegntsrv::OnData:: ntClient undefined message...");
             }
             
           }

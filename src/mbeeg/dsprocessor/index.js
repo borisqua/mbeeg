@@ -47,7 +47,7 @@ class DSProcessor extends require('stream').Transform {
       epoch.full = false;
       epoch.timestamp = stimulus[0];
       epoch.target = stimulus[2];
-      epoch.channels = new Array(this.channels.length).fill([]);//TODO think about refactor epoch.channels into epoch.samples
+      epoch.channels = new Array(this.channels.length).fill([]);
       
       this.epochsFIFO.push(epoch);
       
@@ -124,7 +124,7 @@ class DSProcessor extends require('stream').Transform {
       try {
         for (let s = startSample; s < startSample + context.epochLengthInSamples; s++) {
           for (let ch = 0; ch < epoch.channels.length; ch++) {
-            epoch.channels[ch].push(context.samplesFIFO[s][this.channels[ch + 1]]);
+            epoch.channels[ch].push(context.samplesFIFO[s][context.channels[ch]]);
           }
         }
         return true;
@@ -142,7 +142,7 @@ class DSProcessor extends require('stream').Transform {
       for (let step of this.processingSequence) {
         switch (step.name) {//TODO sometimes epoch.channels[i] is empty don't know why
           case 'butterworth4BulanovLowpass':
-            epoch.channels[i] = Tools.butterworth4Bulanov(epoch.channels[i], epoch.samplingRate, step.parameters[0].value);
+            epoch.channels[i] = Tools.butterworth4Bulanov(epoch.channels[i], epoch.samplingRate, step.parameters.cutoff);
             break;
           case 'detrend':
             epoch.channels[i] = Tools.detrend(epoch.channels[i]);

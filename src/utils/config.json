@@ -1,4 +1,10 @@
 {
+  "service": {
+    "provider": "mbEEG",
+    "protocol": "IPC || TCP",
+    "host": "localhost",
+    "port": 9300
+  },
   "stimulation": {
     "duration": 100,
     "pause": 200,
@@ -32,16 +38,13 @@
         "steps": [
           {
             "name": "butterworth4BulanovLowpass",
-            "parameters": [
-              {
-                "name": "cutoff",
-                "value": 8
-              }
-            ]
+            "parameters": {
+              "cutoff": 8
+            }
           },
           {
             "name": "detrend",
-            "parameters": []
+            "parameters": {}
           }
         ]
       },
@@ -54,27 +57,22 @@
   },
   "classification": {
     "method": "integral",
-    "methods":[
-      {
-        "name": "integral",
-        "parameters":{
-          "start": 200,
-          "window": 300
-        }
+    "methods": {
+      "integral": {
+        "start": 200,
+        "window": 300
       }
-    ]
+    }
   },
   "decision": {
-    "start": 2,
-    "queue": 5,
-    "threshold": 2,
-    "method": "majority"
-  },
-  "service": {
-    "provider": "mbEEG",
-    "protocol": "IPC || TCP",
-    "host": "localhost",
-    "port": 9300
+    "method": "majority",
+    "methods": {
+      "majority": {
+        "start": 3,
+        "cycles": 10,
+        "threshold": 3
+      }
+    }
   },
   "keyboard": {
     "keys": [
