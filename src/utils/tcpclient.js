@@ -1,4 +1,5 @@
 "use strict";
+
 const
   Net = require('net')
   , {Tools}=require('mbeeg')
@@ -7,4 +8,5 @@ const
   
   })
 ;
+
 mbeeg.pipe(process.stdout);

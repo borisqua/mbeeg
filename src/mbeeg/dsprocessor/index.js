@@ -51,7 +51,6 @@ class DSProcessor extends require('stream').Transform {
       
       this.epochsFIFO.push(epoch);
       
-      // for (let i = 0; i < this.epochsFIFO.length; i++) {
       while (this.epochsFIFO.length) {
         let
           e = this.epochsFIFO[0]
@@ -70,9 +69,7 @@ class DSProcessor extends require('stream').Transform {
                 }
                 this.write(e);
                 this.epochsFIFO.shift();
-                break; //this is crucial 'break' because two adjacent samples can catisfy _firstSampleOfEpoch condition (epoch.timestamp and epoch.timestamp+epoch.samplingStep)
-                //i && i--;
-                // this.epochsFIFOlength--;
+                break; //this is crucial 'break' because two adjacent samples can catisfy same _firstSampleOfEpoch condition (>=epoch.timestamp && <=epoch.timestamp+epoch.samplingStep)
               }
               
             }
@@ -145,7 +142,7 @@ class DSProcessor extends require('stream').Transform {
             epoch.channels[i] = Tools.butterworth4Bulanov(epoch.channels[i], epoch.samplingRate, step.parameters.cutoff);
             break;
           case 'detrend':
-            epoch.channels[i] = Tools.detrend(epoch.channels[i]);
+            epoch.channels[i] = Tools.detrend(epoch.channels[i], true);
             break;
           case 'rereference':
             epoch.channels[i] = Tools.rereference(epoch.channels[i]);

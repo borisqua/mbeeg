@@ -82,7 +82,7 @@ class Tools {
   static absIntegral({feature, start, window}) {
     let //feature length equal to sampling rate
       begin = feature.length * start / 1000,
-      end =  begin + feature.length * window / 1000
+      end = begin + feature.length * window / 1000
     ;
     return Math.abs(feature.slice(begin, end).reduce((acc, val) => acc + Math.abs(val), 0));
   }
@@ -158,15 +158,12 @@ class Tools {
    * custom detrend of time series data
    *
    * @param {Array} timeseries - stream, buffer or object with values ot detrend
-   * @param {boolean} passtrough if true return trend & detrend equals to input timeseries (default = false)
+   * @param {Boolean} normalized - if false - absolute detrending, if true - relative percentage detrending
    * @return {Array} detrend - detrended data, the same size as series input is
    */
-  static detrend(timeseries, passtrough = false) {
+  static detrend(timeseries, normalized = false) {
     try {
-      if (passtrough) {
-        return timeseries.slice();
-      }
-      // if (!timeseries) throw `Detrend error! No input data!`;
+      if (!timeseries) throw `Detrend error! No input data!`;
       let n = timeseries.length;
       let sumxy = 0;
       for (let i = 0; i < n; i++) sumxy += (i + 1) * timeseries[i];
@@ -183,8 +180,10 @@ class Tools {
       
       for (let i = 0; i < n; i++) {
         trend[i] = (i + 1) * a + b;
-        detrend[i] = timeseries[i] - trend[i];
-        // detrend[i] = ((timeseries[i] / trend[i]) - 1) * 100; //if trend[i] traverses zero there will be a problem
+        if (normalized)
+          detrend[i] = ((timeseries[i] / trend[i]) - 1) * 100; //if trend[i] traverses zero there will be a problem
+        else
+          detrend[i] = timeseries[i] - trend[i];
       }
       
       return detrend;

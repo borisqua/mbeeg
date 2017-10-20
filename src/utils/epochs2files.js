@@ -1,5 +1,4 @@
 "use strict";
-//todo refactor epochs2files.js
 const
   Net = require('net')
   , fs = require('fs')
@@ -80,8 +79,8 @@ const
     , ebmlCallback: tcp2ebmlFeeder
   })
   , samplesRaw = new OVReader({})
-  // , samplesFiltered = new OVReader({})
-  // , samplesDetrended = new OVReader({})
+  , samplesFiltered = new OVReader({})
+  , samplesDetrended = new OVReader({})
   , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
     signalDuration: config.stimulation.duration
     , pauseDuration: config.stimulation.pause
@@ -145,12 +144,12 @@ const
     }
   })
 ;
-// openVibeJSON.pipe(ovStringifier).pipe(ovStreamFile);
+openVibeJSON.pipe(ovStringifier).pipe(ovStreamFile);
 openVibeJSON.pipe(samplesRaw).pipe(sampler).pipe(plainSamplesStringifier).pipe(samplesFile);
-// stimuli.pipe(plainStimsStringifier).pipe(stimuliFile);
+stimuli.pipe(plainStimsStringifier).pipe(stimuliFile);
 epochsRaw.pipe(epochsRawStringifier).pipe(epochsRawFile);
-// epochsFiltered.pipe(epochsFilteredStringifier).pipe(epochsFilteredFile);
-// epochsDetrended.pipe(epochsDetrendedStringifier).pipe(epochsDetrendedFile);
+epochsFiltered.pipe(epochsFilteredStringifier).pipe(epochsFilteredFile);
+epochsDetrended.pipe(epochsDetrendedStringifier).pipe(epochsDetrendedFile);
 
-// epochsRaw.pipe(channelsMonitor).pipe(process.stdout);
+epochsRaw.pipe(channelsMonitor).pipe(process.stdout);
 

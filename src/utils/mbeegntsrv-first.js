@@ -3,8 +3,7 @@ const
   Net = require('net')
   , fs = require('fs')
   , cli = require('commander')
-  , {PassThrough, Transform} = require('stream')
-  , ntStimuli = new PassThrough({objectMode: true})
+  , ntStimuli = new require('stream').PassThrough({objectMode: true})
   , {EBMLReader, OVReader, /*Stimuli,*/ DSProcessor, EpochsProcessor, Classifier, DecisionMaker, Stringifier, NTVerdictStringifier, Tools} = require('mbeeg')
   , config = Tools.loadConfiguration(`config.json`)
   , ntDecisionStringifier = new Stringifier({
@@ -26,34 +25,6 @@ const
       },
       {name: "cellId", type: "id"},
       {name: "weight", type: "value"}]
-  })
-  , epochsRawStringifier = new Stringifier({
-    beginWith: `{"epochs": [`
-    , chunksDelimiter: `,`
-    , chunkEnd: `\r\n`
-    , endWith: `]}\r\n`
-    // , stringifyAll: true
-    , indentationSpace: 2
-  })
-  , epochsFilteredStringifier = new Stringifier({
-    beginWith: `{"epochs": [`
-    , chunksDelimiter: `,`
-    , chunkEnd: `\r\n`
-    , endWith: `]}\r\n`
-    // , stringifyAll: true
-    , indentationSpace: 2
-  })
-  , epochsDetrendedStringifier = new Stringifier({
-    beginWith: `{"epochs": [`
-    , chunksDelimiter: `,`
-    , chunkEnd: `\r\n`
-    , endWith: `]}\r\n`
-    // , stringifyAll: true
-    , indentationSpace: 2
-  })
-  , featuresStringifier = new Stringifier({
-    chunkEnd: `\r\n`
-    , indentationSpace: 2
   })
   , openVibeClient = new Net.Socket() //create TCP client for openViBE eeg data server
   , tcp2ebmlFeeder = (context, tcpchunk) => {
@@ -90,43 +61,12 @@ const
     , ebmlCallback: tcp2ebmlFeeder
   })
   , samples = new OVReader({})
-  , sampler = new Transform({
-    objectMode: true,
-    transform(samples, encoding, cb) {
-      for (let s = 0; s < samples.length; s++)
-        cb(null, `${samples[s][0]}, ${samples[s][1]}, ${samples[s][2]}\r\n`);
-    }
-  })
   , epochs = new DSProcessor({//epochizator
     stimuli: ntStimuli
     , samples: openVibeJSON.pipe(samples)
     , channels: config.signal.channels
     , epochDuration: config.signal.epoch.duration
     , processingSequence: config.signal.dsp.vertical.steps
-    , cyclesLimit: config.signal.cycles
-  })
-  , epochsRaw = new DSProcessor({
-    stimuli: ntStimuli
-    , samples: openVibeJSON.pipe(samples)
-    , channels: config.signal.channels
-    , epochDuration: config.signal.epoch.duration
-    , processingSequence: []
-    , cyclesLimit: config.signal.cycles
-  })
-  , epochsFiltered = new DSProcessor({
-    stimuli: ntStimuli
-    , samples: openVibeJSON.pipe(samples)
-    , channels: config.signal.channels
-    , epochDuration: config.signal.epoch.duration
-    , processingSequence: config.signal.dsp.vertical.steps.slice(0, 1)
-    , cyclesLimit: config.signal.cycles
-  })
-  , epochsDetrended = new DSProcessor({
-    stimuli: ntStimuli
-    , samples: openVibeJSON.pipe(samples)
-    , channels: config.signal.channels
-    , epochDuration: config.signal.epoch.duration
-    , processingSequence: config.signal.dsp.vertical.steps.slice(0, 2)
     , cyclesLimit: config.signal.cycles
   })
   , featuresProcessor = new EpochsProcessor({//featurizator
@@ -149,16 +89,16 @@ const
 ;
 
 cli.version('0.0.1')
-  .description(`mbEEG server processes openViBE EEG Stream to detect P300 ERP signal and recognize user selection with variety of different filter and recognition algorithms.
+  .description(`mbEEG server processes openViBE EEG Stream to detect P300 ERP signal and recognize user selection with
+  \rvariety of different filter and recognition algorithms.
   \rIt can be used also as a tool to getting, saving and analyzing data flows emerged in the process of P300 ERP signal
   \rrecognition.`)
   .usage(`[option]`)
-  .option(`-c --cycles-limit <n>`, `Set cycles number to go`, parseInt)
-  .option(`-e --eeg [path]`, `Log eeg samples into file (default ./00-samples.csv)`)
-  .option(`-r --raw-epochs [path]`, `Log epochs with raw data (default ./01-epochs-raw.csv)`)
-  .option(`-f --filtered-epochs [path]`, `Log epochs with filtered data (default ./02-epochs-filtered.csv)`)
-  .option(`-d --detrended-epochs [path]`, `Log epochs with detrended data (default ./03-epochs-detrended.csv)`)
-  .option(`-a --averaged-features [path]`, `Log features with averaged data (default ./04-features-averaged.csv)`)
+  .option(`-e --eeg`, `Save eeg samples into file ./00-samples.csv`)
+  .option(`-r --raw-epochs`, `Save epochs with raw data into file ./01-epochs-raw.csv`)
+  .option(`-f --filtered-epochs`, `Save epochs with filtered data into file ./02-epochs-filtered.csv`)
+  .option(`-d --detrended-epochs`, `Save epochs with detrended data into file ./03-epochs-detrended.csv`)
+  .option(`-a --averaged-features`, `Save features with averaged data into file ./04-features-averaged.csv`)
   .parse(process.argv)
 ;
 
@@ -229,43 +169,52 @@ const
     mbEEGServer.getConnections((err, count) => {
       console.log(`Connections count is ${count}`);
       if (count === 1) {
-        //Start output to files if corresponding options specified
-        if (cli.eeg) { //create 00-samples.csv
-          let fileWithSamples = fs.createWriteStream(`./00-samples.csv`);
-          samples.pipe(sampler).pipe(fileWithSamples);
-        }
-        if (cli.rawEpochs) { //create 01-epochs-raw.csv
-          let fileWithRawEpochs = fs.createWriteStream(`./01-epochs-raw.csv`);
-          epochsRaw.pipe(epochsRawStringifier).pipe(fileWithRawEpochs);
-        }
-        if (cli.filteredEpochs) { //create 02-epochs-filtered.csv
-          let fileWithFilteredEpochs = fs.createWriteStream(`./02-epochs-filtered.csv`);
-          epochsFiltered.pipe(epochsFilteredStringifier).pipe(fileWithFilteredEpochs);
-        }
-        if (cli.detrendedEpochs) { //create 03-epochs-detrended.csv
-          let fileWithDetrendedEpochs = fs.createWriteStream(`./03-epochs-detrended.csv`);
-          epochsDetrended.pipe(epochsDetrendedStringifier).pipe(fileWithDetrendedEpochs);
-        }
-        if (cli.averagedEpochs) { //create 04-features-averaged.csv
-          let fileWithAvgFeatures = fs.createWriteStream(`./04-features-averaged.csv`);
-          featuresProcessor.pipe(featuresStringifier).pipe(fileWithAvgFeatures);
-        }
-        //start casting to first connected socket
+        // ntStimuli.pipe(plainStringifier).pipe(socket);//test
+        // stimuli.pipe(stimulusStringifier).pipe(socket);//test
+        // openVibeJSON.pipe(ovStringifier).pipe(process.stdout);
+        // samples.pipe(plainStringifier).pipe(process.stdout);
+        // samples.pipe(sampleStringifier).pipe(process.stdout);
+        // epochs.pipe(channelsMonitor).pipe(process.stdout);
+        // epochs.pipe(epochsStringifier).pipe(socket);//process.stdout);
+        // epochsStringifier.pipe(fs.createWriteStream(`${appRoot}/epochs.json`));
+        // featuresProcessor.pipe(plainStringifier).pipe(process.stdout);
+        // featuresProcessor.pipe(featuresStringifier).pipe(process.stdout);
+        // featuresProcessor.pipe(classifier).pipe(plainStringifier).pipe(process.stdout);
+        // featuresProcessor.pipe(classifier).pipe(verdictStringifier).pipe(process.stdout);
+        // featuresProcessor.pipe(classifier).pipe(decisions).pipe(decisionStringifier).pipe(process.stdout);
+        // featuresProcessor.pipe(classifier).pipe(ntrainerStringifier).pipe(process.stdout);
         featuresProcessor.pipe(classifier).pipe(ntVerdictStringifier).pipe(socket);
         classifier.pipe(decisions).pipe(ntDecisionStringifier).pipe(socket);
       } else {
-        //cast existing streams to just connected next sockets
+        // plainStringifier.pipe(socket);//test
+        // stimulusStringifier.pipe(socket);//test
         ntVerdictStringifier.pipe(socket);
         ntDecisionStringifier.pipe(socket);
       }
     });
   }).listen({port: config.service.port, host: config.service.host, exclusive: true}, () => {
-    console.log(`\r\n ... mbEEG TCP server started at ${config.service.host}:${config.service.port} ...\n
-    \r - to change server configuration use file config.json in the same directory as mbeegntsrv.exe
+    console.log(`\r\n ... mbEEG TCP server started at ${config.service.host}:${config.service.port} ...
+    \r - to change server configuration use file config.json in the same directory as mbEEG.exe is\n
     \r - to get help run with -h or --help option
     \r\n\r\n`)
   });
 
 openVibeClient.on(`close`, () => console.log(`Open ViBE connection closed`));
 mbEEGServer.on(`close`, () => console.log(`mbEEG sever verdict service closed.`));
+
+if(cli.eeg){ //create 00-samples.csv
+  let fileWithSamples = fs.createWriteStream(`./00-samples.csv`)
+}
+if(cli.rawEpochs){ //create 01-epochs-raw.csv
+  let fileWithRawEpochs = fs.createWriteStream(`./01-epochs-raw.csv`)
+}
+if(cli.filteredEpochs){ //create 02-epochs-filtered.csv
+  let fileWithFilteredEpochs  = fs.createWriteStream(`./02-epochs-filtered.csv`)
+}
+if(cli.detrendedEpochs){ //create 03-epochs-detrended.csv
+  let fileWithDetrendedEpochs  = fs.createWriteStream(`./03-epochs-detrended.csv`)
+}
+if(cli.averagedEpochs){ //create 04-features-averaged.csv
+  let fileWithAvgFeatures  = fs.createWriteStream(`./04-features-averaged.csv`)
+}
 
