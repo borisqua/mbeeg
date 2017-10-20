@@ -8,13 +8,6 @@ const
   , plainStringifier = new Stringifier({
     chunkEnd: `\r\n`
   })
-  , featuresStringifier = new Stringifier({
-    // beginWith: `{"features":[\r\n`
-    chunkBegin: `{"feature":\r\n`
-    // , chunksDelimiter: `,\r\n `
-    , chunkEnd: `}`
-    // , endWith: `]}`
-  })
   , verdictStringifier = new Stringifier({
     chunkBegin: `{"verdict":`
     , chunkEnd: `}\r\n`
@@ -74,7 +67,7 @@ const
   , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
     signalDuration: config.stimulation.duration
     , pauseDuration: config.stimulation.pause
-    , stimuliArray: config.stimulation.sequence.stimuli
+    , stimuliIdArray: config.stimulation.sequence.stimuli
   })
   , epochs = new DSProcessor({
     stimuli: stimuli
@@ -92,7 +85,8 @@ const
     , stimuliIdArray: config.stimulation.sequence.stimuli
   })
   , classifier = new Classifier({
-    method: config.classification.method
+    method: config.classification.method//TODO it's enough to point method name that is index of config object property that contains needed parameters to invoke method
+    , methodParameters: config.classification.methods[config.classification.method]
   })
 
 ;

@@ -3,7 +3,7 @@
 const
   Net = require('net')
   , cli = require('commander')
-  , {EBMLReader, OVReader, Stimuli, DSProcessor, EpochsProcessor, Classifier, DecisionMaker, Stringifier, NTVerdictStringifier, Objectifier, Tools} = require('mbeeg')
+  , {EBMLReader, OVReader, Stimuli, DSProcessor, EpochsProcessor, Classifier, DecisionMaker, Stringifier, Objectifier, Tools} = require('mbeeg')
   , config = Tools.loadConfiguration(`config.json`)
   , plainStringifier = new Stringifier({
     chunkEnd: `\r\n`
@@ -51,7 +51,7 @@ const
   , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
     signalDuration: config.stimulation.duration
     , pauseDuration: config.stimulation.pause
-    , stimuliArray: config.stimulation.sequence.stimuli
+    , stimuliIdArray: config.stimulation.sequence.stimuli
   })
   , epochs = new DSProcessor({
     stimuli: stimuli
@@ -69,12 +69,13 @@ const
     , stimuliIdArray: config.stimulation.sequence.stimuli
   })
   , classifier = new Classifier({
-    method: config.classification.method
+    method: config.classification.method//TODO it's enough to point method name that is index of config object property that contains needed parameters to invoke method
+    , methodParameters: config.classification.methods[config.classification.method]
   })
   , decisions = new DecisionMaker({
-    start: config.decision.start
-    , maxLength: config.decision.cycles
-    , decisionThreshold: config.decision.threshold
+    start: config.decision.methods[config.decision.method].start
+    , maxLength: config.decision.methods[config.decision.method].cycles
+    , decisionThreshold: config.decision.methods[config.decision.method].threshold
     , method: config.decision.method
   })
 ;

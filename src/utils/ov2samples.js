@@ -1,7 +1,8 @@
 "use strict";
 const
   Net = require('net')
-  , {EBMLReader, OVReader, Stringifier, Objectifier, Tools} = require('mbeeg')
+  , {EBMLReader, OVReader, Stringifier, Objectifier, Tools, Sampler} = require('mbeeg')
+  , sampler = new Sampler()
   , openVibeClient = new Net.Socket() //3. Create TCP client for openViBE eeg data server
   , config = Tools.loadConfiguration(`config.json`)
   , tcp2ebmlFeeder = (context, tcpchunk) => {
@@ -74,8 +75,11 @@ if (cli.pipe) {
   });
   if (cli.json)
     openVibeJSON.pipe(samples).pipe(sampleStringifier).pipe(process.stdout);
-  else
-    openVibeJSON.pipe(samples).pipe(plainStringifier).pipe(process.stdout);
+  else {
+    // openVibeJSON.pipe(samples).pipe(plainStringifier).pipe(process.stdout);
+    openVibeJSON.pipe(samples).pipe(sampler).pipe(process.stdout);
+    // openVibeJSON.pipe(samples).pipe(plainStringifier).pipe(process.stdout);
+  }
 }
 
 

@@ -83,8 +83,8 @@ const
     , method: config.decision.method //TODO it's enough to point method name that is index of config object property that contains needed parameters to invoke method
   })
   , classifier = new Classifier({
-    method: `integral` //TODO it's enough to point method name that is index of config object property that contains needed parameters to invoke method
-    , methodParameters: config.classification.methods[`integral`]
+    method: config.classification.method//TODO it's enough to point method name that is index of config object property that contains needed parameters to invoke method
+    , methodParameters: config.classification.methods[config.classification.method]
   })
 ;
 

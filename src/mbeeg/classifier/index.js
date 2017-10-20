@@ -22,7 +22,7 @@ class Classifier extends require('stream').Transform {
       let stimulusAvgChannels = stimuliAvgEpochs[i];
       if (stimulusAvgChannels) {
         for (let ch of stimulusAvgChannels)
-          this.methodParameters.feature = ch;//TODO instead feature[0] here should be procedure for every channel
+          this.methodParameters.feature = ch;
         classification[i] = Tools.absIntegral(this.methodParameters)
       } else {
         classification[i] = 0;

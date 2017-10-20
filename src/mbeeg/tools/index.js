@@ -163,7 +163,6 @@ class Tools {
    */
   static detrend(timeseries, normalized = false) {
     try {
-      if (!timeseries) throw `Detrend error! No input data!`;
       let n = timeseries.length;
       let sumxy = 0;
       for (let i = 0; i < n; i++) sumxy += (i + 1) * timeseries[i];
@@ -380,6 +379,28 @@ class Channels extends Transform {
   
 }
 
+class Sampler extends Transform {
+  constructor(){
+    super({objectMode: true});
+  }
+  
+  _transform(samples, encoding, cb) {
+    let
+      samplesLength = samples.length
+      , sampleLength = samples[0].length
+      , resultString = ''
+    ;
+    for (let s = 0; s < samplesLength; s++) {
+      for (let ss = 0; ss < sampleLength; ss++)
+        if (ss === sampleLength - 1)
+          resultString += `${samples[s][ss]}\r\n`;
+        else
+          resultString += `${samples[s][ss]}, `;
+    }
+    cb(null, resultString);
+  }
+}
+
 module.exports = {
   Tools: Tools
   , Stringifier: Stringifier
@@ -387,4 +408,5 @@ module.exports = {
   , NTVerdictStringifier: NTVerdictStringifier
   , NTStimuliStringifier: NTStimuliStringifier
   , Channels: Channels
+  , Sampler: Sampler
 };

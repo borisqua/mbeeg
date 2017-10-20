@@ -56,7 +56,7 @@ const
   , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
     signalDuration: config.stimulation.duration
     , pauseDuration: config.stimulation.pause
-    , stimuliArray: config.stimulation.sequence.stimuli
+    , stimuliIdArray: config.stimulation.sequence.stimuli
   })
   , epochs = new DSProcessor({
     stimuli: stimuli

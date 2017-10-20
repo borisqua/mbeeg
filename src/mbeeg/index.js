@@ -15,5 +15,6 @@ module.exports = {
   , NTVerdictStringifier: require('./tools').NTVerdictStringifier
   , NTStimuliStringifier: require('./tools').NTStimuliStringifier
   , Channels: require('./tools').Channels
+  , Sampler: require('./tools').Sampler
   
 };

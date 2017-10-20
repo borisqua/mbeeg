@@ -5,9 +5,6 @@ const
   , cli = require('commander')
   , {EBMLReader, OVReader, DSProcessor, Stimuli, Stringifier, Objectifier, Tools, Channels} = require('mbeeg')
   , config = Tools.loadConfiguration(`config.json`)
-  , plainStringifier = new Stringifier({
-    chunkEnd: `\r\n`
-  })
   , epochsStringifier = new Stringifier({
     beginWith: `{"epochs": [\n`
     , chunkBegin: ``
@@ -55,7 +52,7 @@ const
   , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
     signalDuration: config.stimulation.duration
     , pauseDuration: config.stimulation.pause
-    , stimuliArray: config.stimulation.sequence.stimuli
+    , stimuliIdArray: config.stimulation.sequence.stimuli
   })
   , channelsMonitor = new Channels({
     // keys: [20],

@@ -5,10 +5,10 @@ const
 
 class DecisionMaker extends require('stream').Transform {
   constructor({
-                start = 2
-                , maxLength = 5//12
-                , decisionThreshold = 2//3
-                , method = `majority`//SGD
+                start
+                , maxLength
+                , decisionThreshold
+                , method// = `majority`//SGD
               }) {
     super({objectMode: true});
     this.start = start;
