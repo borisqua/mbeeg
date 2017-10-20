@@ -27,34 +27,6 @@ const
       {name: "cellId", type: "id"},
       {name: "weight", type: "value"}]
   })
-  , epochsRawStringifier = new Stringifier({
-    beginWith: `{"epochs": [`
-    , chunksDelimiter: `,`
-    , chunkEnd: `\r\n`
-    , endWith: `]}\r\n`
-    // , stringifyAll: true
-    , indentationSpace: 2
-  })
-  , epochsFilteredStringifier = new Stringifier({
-    beginWith: `{"epochs": [`
-    , chunksDelimiter: `,`
-    , chunkEnd: `\r\n`
-    , endWith: `]}\r\n`
-    // , stringifyAll: true
-    , indentationSpace: 2
-  })
-  , epochsDetrendedStringifier = new Stringifier({
-    beginWith: `{"epochs": [`
-    , chunksDelimiter: `,`
-    , chunkEnd: `\r\n`
-    , endWith: `]}\r\n`
-    // , stringifyAll: true
-    , indentationSpace: 2
-  })
-  , featuresStringifier = new Stringifier({
-    chunkEnd: `\r\n`
-    , indentationSpace: 2
-  })
   , openVibeClient = new Net.Socket() //create TCP client for openViBE eeg data server
   , tcp2ebmlFeeder = (context, tcpchunk) => {
     if (context.tcpbuffer === undefined) {
@@ -90,43 +62,12 @@ const
     , ebmlCallback: tcp2ebmlFeeder
   })
   , samples = new OVReader({})
-  , sampler = new Transform({
-    objectMode: true,
-    transform(samples, encoding, cb) {
-      for (let s = 0; s < samples.length; s++)
-        cb(null, `${samples[s][0]}, ${samples[s][1]}, ${samples[s][2]}\r\n`);
-    }
-  })
   , epochs = new DSProcessor({//epochizator
     stimuli: ntStimuli
     , samples: openVibeJSON.pipe(samples)
     , channels: config.signal.channels
     , epochDuration: config.signal.epoch.duration
     , processingSequence: config.signal.dsp.vertical.steps
-    , cyclesLimit: config.signal.cycles
-  })
-  , epochsRaw = new DSProcessor({
-    stimuli: ntStimuli
-    , samples: openVibeJSON.pipe(samples)
-    , channels: config.signal.channels
-    , epochDuration: config.signal.epoch.duration
-    , processingSequence: []
-    , cyclesLimit: config.signal.cycles
-  })
-  , epochsFiltered = new DSProcessor({
-    stimuli: ntStimuli
-    , samples: openVibeJSON.pipe(samples)
-    , channels: config.signal.channels
-    , epochDuration: config.signal.epoch.duration
-    , processingSequence: config.signal.dsp.vertical.steps.slice(0, 1)
-    , cyclesLimit: config.signal.cycles
-  })
-  , epochsDetrended = new DSProcessor({
-    stimuli: ntStimuli
-    , samples: openVibeJSON.pipe(samples)
-    , channels: config.signal.channels
-    , epochDuration: config.signal.epoch.duration
-    , processingSequence: config.signal.dsp.vertical.steps.slice(0, 2)
     , cyclesLimit: config.signal.cycles
   })
   , featuresProcessor = new EpochsProcessor({//featurizator
@@ -231,22 +172,84 @@ const
       if (count === 1) {
         //Start output to files if corresponding options specified
         if (cli.eeg) { //create 00-samples.csv
+          const sampler = new Transform({
+            objectMode: true,
+            transform(samples, encoding, cb) {
+              for (let s = 0; s < samples.length; s++)
+                cb(null, `${samples[s][0]}, ${samples[s][1]}, ${samples[s][2]}\r\n`);
+            }
+          });
           let fileWithSamples = fs.createWriteStream(`./00-samples.csv`);
           samples.pipe(sampler).pipe(fileWithSamples);
         }
         if (cli.rawEpochs) { //create 01-epochs-raw.csv
+          const
+            epochsRawStringifier = new Stringifier({
+              beginWith: `{"epochs": [`
+              , chunksDelimiter: `,`
+              , chunkEnd: `\r\n`
+              , endWith: `]}\r\n`
+              // , stringifyAll: true
+              , indentationSpace: 2
+            })
+            , epochsRaw = new DSProcessor({
+              stimuli: ntStimuli
+              , samples: openVibeJSON.pipe(samples)
+              , channels: config.signal.channels
+              , epochDuration: config.signal.epoch.duration
+              , processingSequence: []
+              , cyclesLimit: config.signal.cycles
+            });
           let fileWithRawEpochs = fs.createWriteStream(`./01-epochs-raw.csv`);
           epochsRaw.pipe(epochsRawStringifier).pipe(fileWithRawEpochs);
         }
         if (cli.filteredEpochs) { //create 02-epochs-filtered.csv
+          const
+            epochsFilteredStringifier = new Stringifier({
+              beginWith: `{"epochs": [`
+              , chunksDelimiter: `,`
+              , chunkEnd: `\r\n`
+              , endWith: `]}\r\n`
+              // , stringifyAll: true
+              , indentationSpace: 2
+            })
+            , epochsFiltered = new DSProcessor({
+              stimuli: ntStimuli
+              , samples: openVibeJSON.pipe(samples)
+              , channels: config.signal.channels
+              , epochDuration: config.signal.epoch.duration
+              , processingSequence: config.signal.dsp.vertical.steps.slice(0, 1)
+              , cyclesLimit: config.signal.cycles
+            })
           let fileWithFilteredEpochs = fs.createWriteStream(`./02-epochs-filtered.csv`);
           epochsFiltered.pipe(epochsFilteredStringifier).pipe(fileWithFilteredEpochs);
         }
         if (cli.detrendedEpochs) { //create 03-epochs-detrended.csv
+          const
+            epochsDetrendedStringifier = new Stringifier({
+              beginWith: `{"epochs": [`
+              , chunksDelimiter: `,`
+              , chunkEnd: `\r\n`
+              , endWith: `]}\r\n`
+              // , stringifyAll: true
+              , indentationSpace: 2
+            })
+            , epochsDetrended = new DSProcessor({
+              stimuli: ntStimuli
+              , samples: openVibeJSON.pipe(samples)
+              , channels: config.signal.channels
+              , epochDuration: config.signal.epoch.duration
+              , processingSequence: config.signal.dsp.vertical.steps.slice(0, 2)
+              , cyclesLimit: config.signal.cycles
+            });
           let fileWithDetrendedEpochs = fs.createWriteStream(`./03-epochs-detrended.csv`);
           epochsDetrended.pipe(epochsDetrendedStringifier).pipe(fileWithDetrendedEpochs);
         }
         if (cli.averagedEpochs) { //create 04-features-averaged.csv
+          const featuresStringifier = new Stringifier({
+            chunkEnd: `\r\n`
+            , indentationSpace: 2
+          });
           let fileWithAvgFeatures = fs.createWriteStream(`./04-features-averaged.csv`);
           featuresProcessor.pipe(featuresStringifier).pipe(fileWithAvgFeatures);
         }
