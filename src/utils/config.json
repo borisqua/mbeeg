@@ -53,7 +53,7 @@
         "moving": false
       }
     },
-    "cycles": 0
+    "cycles": 5
   },
   "classification": {
     "method": "integral",

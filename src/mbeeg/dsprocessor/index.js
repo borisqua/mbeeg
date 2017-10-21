@@ -38,7 +38,7 @@ class DSProcessor extends require('stream').Transform {
       
       let epoch = {};
       epoch.key = stimulus[1];
-      epoch.cycle = this.stimuli.stimulusCycle;
+      epoch.cycle = stimulus[3];//this.stimuli.stimulusCycle;//TODO problems with cycles counting
       epoch.stimulusDuration = this.stimuli.signalDuration;
       epoch.stimulusPause = this.stimuli.pauseDuration;
       epoch.duration = this.epochDuration;

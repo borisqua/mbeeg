@@ -3,6 +3,11 @@
   <component name="CompassSettings">
     <option name="compassExecutableFilePath" value="C:/Ruby23-x64/bin/compass.bat" />
     <option name="compassSupportEnabled" value="true" />
+    <option name="importPaths">
+      <list>
+        <option value="C:/Ruby23-x64/lib/ruby/gems/2.3.0/gems/compass-core-1.0.3/stylesheets" />
+      </list>
+    </option>
   </component>
   <component name="NewModuleRootManager">
     <content url="file://$MODULE_DIR$">
@@ -21,5 +26,6 @@
     <orderEntry type="library" name="jquery" level="application" />
     <orderEntry type="library" name="mocha-DefinitelyTyped" level="application" />
     <orderEntry type="library" name="chai-DefinitelyTyped" level="application" />
+    <orderEntry type="library" name="compass-library" level="project" />
   </component>
 </module>

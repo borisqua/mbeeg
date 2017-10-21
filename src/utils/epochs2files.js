@@ -3,7 +3,7 @@ const
   Net = require('net')
   , fs = require('fs')
   , cli = require('commander')
-  , {EBMLReader, OVReader, DSProcessor, Stimuli, Stringifier, Tools, Channels} = require('mbeeg')
+  , {EBMLReader, OVReader, DSProcessor, Stimuli, Stringifier, Tools, Sampler, Channels} = require('mbeeg')
   , config = Tools.loadConfiguration(`config.json`)
   , ovStringifier = new Stringifier({
     beginWith: `{`
@@ -94,22 +94,22 @@ const
     , processingSequence: []//config.signal.dsp.vertical.steps
     , cyclesLimit: config.signal.cycles
   })
-  // , epochsFiltered = new DSProcessor({
-  //   stimuli: stimuli
-  //   , samples: samplesFiltered
-  //   , channels: config.signal.channels
-  //   , duration: config.signal.epoch.duration
-  //   , processingSequence: config.signal.dsp.vertical.steps.slice(0, 1)
-  //   , cyclesLimit: config.signal.cycles
-  // })
-  // , epochsDetrended = new DSProcessor({
-  //   stimuli: stimuli
-  //   , samples: samplesDetrended
-  //   , channels: config.signal.channels
-  //   , duration: config.signal.epoch.duration
-  //   , processingSequence: config.signal.dsp.vertical.steps
-  //   , cyclesLimit: config.signal.cycles
-  // })
+  , epochsFiltered = new DSProcessor({
+    stimuli: stimuli
+    , samples: samplesFiltered
+    , channels: config.signal.channels
+    , duration: config.signal.epoch.duration
+    , processingSequence: config.signal.dsp.vertical.steps.slice(0, 1)
+    , cyclesLimit: config.signal.cycles
+  })
+  , epochsDetrended = new DSProcessor({
+    stimuli: stimuli
+    , samples: samplesDetrended
+    , channels: config.signal.channels
+    , duration: config.signal.epoch.duration
+    , processingSequence: config.signal.dsp.vertical.steps
+    , cyclesLimit: config.signal.cycles
+  })
   , channelsMonitor = new Channels({
     // keys: [20],
     // channels: [1] //, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
@@ -120,8 +120,8 @@ let
   , samplesFile = fs.createWriteStream(`output/samples.json`)
   , stimuliFile = fs.createWriteStream(`output/stimuli.json`)
   , epochsRawFile = fs.createWriteStream(`output/epochsRaw.json`)
-  // , epochsFilteredFile = fs.createWriteStream(`output/epochsFiltered.json`)
-  // , epochsDetrendedFile = fs.createWriteStream(`output/epochsDetrended.json`)
+  , epochsFilteredFile = fs.createWriteStream(`output/epochsFiltered.json`)
+  , epochsDetrendedFile = fs.createWriteStream(`output/epochsDetrended.json`)
 ;
 
 cli.version('0.0.1')
@@ -135,14 +135,7 @@ cli.version('0.0.1')
 
 // if (process.argv.length <= 2) cli.help();
 const
-  sampler = new require('stream').Transform({
-    objectMode: true,
-    transform(samples, encoding, cb) {
-      for (let s = 0; s < samples.length; s++) {
-        cb(null, samples[s]);
-      }
-    }
-  })
+  sampler = new Sampler()
 ;
 openVibeJSON.pipe(ovStringifier).pipe(ovStreamFile);
 openVibeJSON.pipe(samplesRaw).pipe(sampler).pipe(plainSamplesStringifier).pipe(samplesFile);

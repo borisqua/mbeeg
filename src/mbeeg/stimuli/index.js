@@ -61,9 +61,10 @@ class Stimuli extends require('stream').Readable {
     setTimeout(() => {
       
       this.stimulus = [
-        new Date().getTime(),
-        this.stimuliIdArray[this.currentStimulus],
-        this.learning && this.currentStimulus === this.currentTargetStimulus ? 1 : 0 //target field = in learning mode - true if target key, false if not, and null in online mode
+        new Date().getTime()
+        ,this.stimuliIdArray[this.currentStimulus]
+        ,this.learning && this.currentStimulus === this.currentTargetStimulus ? 1 : 0 //target field = in learning mode - true if target key, false if not, and null in online mode
+        ,this.stimulusCycle//TODO problems with cycles counting
       ];
       
       if (this.objectMode) {
