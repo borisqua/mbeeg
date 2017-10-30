@@ -3,7 +3,7 @@ const
   Net = require('net')
   , fs = require('fs')
   , cli = require('commander')
-  , {EBMLReader, OVReader, DSProcessor, Stimuli, Stringifier, Tools, Sampler, Channels} = require('mbeeg')
+  , {EBMLReader, OVReader, Stimuli, DSProcessor, Stringifier, Tools, Sampler, Channels} = require('mbeeg')
   , config = Tools.loadConfiguration(`config.json`)
   , ovStringifier = new Stringifier({
     beginWith: `{`
@@ -78,13 +78,15 @@ const
     ebmlSource: openVibeClient.connect(config.signal.port, config.signal.host, () => {})
     , ebmlCallback: tcp2ebmlFeeder
   })
+  // , samples = new OVReader({})
   , samplesRaw = new OVReader({})
   , samplesFiltered = new OVReader({})
   , samplesDetrended = new OVReader({})
+  , sampler = new Sampler({objectMode: false})
   , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
     signalDuration: config.stimulation.duration
     , pauseDuration: config.stimulation.pause
-    , stimuliArray: config.stimulation.sequence.stimuli
+    , stimuliIdArray: config.stimulation.sequence.stimuli
   })
   , epochsRaw = new DSProcessor({
     stimuli: stimuli
@@ -110,18 +112,15 @@ const
     , processingSequence: config.signal.dsp.vertical.steps
     , cyclesLimit: config.signal.cycles
   })
-  , channelsMonitor = new Channels({
-    // keys: [20],
-    // channels: [1] //, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
-  })
+  , channelsMonitor = new Channels({})
 ;
 let
-  ovStreamFile = fs.createWriteStream(`output/ovStream.json`)
-  , samplesFile = fs.createWriteStream(`output/samples.json`)
-  , stimuliFile = fs.createWriteStream(`output/stimuli.json`)
-  , epochsRawFile = fs.createWriteStream(`output/epochsRaw.json`)
-  , epochsFilteredFile = fs.createWriteStream(`output/epochsFiltered.json`)
-  , epochsDetrendedFile = fs.createWriteStream(`output/epochsDetrended.json`)
+  ovStreamFile = fs.createWriteStream(`./logs/ovStream.json`)
+  , samplesFile = fs.createWriteStream(`./logs/samples.json`)
+  , stimuliFile = fs.createWriteStream(`./logs/stimuli.json`)
+  , epochsRawFile = fs.createWriteStream(`./logs/epochsRaw.json`)
+  , epochsFilteredFile = fs.createWriteStream(`./logs/epochsFiltered.json`)
+  , epochsDetrendedFile = fs.createWriteStream(`./logs/epochsDetrended.json`)
 ;
 
 cli.version('0.0.1')
@@ -134,15 +133,14 @@ cli.version('0.0.1')
 ;
 
 // if (process.argv.length <= 2) cli.help();
-const
-  sampler = new Sampler()
-;
+// const
+// ;
 openVibeJSON.pipe(ovStringifier).pipe(ovStreamFile);
-openVibeJSON.pipe(samplesRaw).pipe(sampler).pipe(plainSamplesStringifier).pipe(samplesFile);
-stimuli.pipe(plainStimsStringifier).pipe(stimuliFile);
+samplesRaw.pipe(sampler).pipe(plainSamplesStringifier).pipe(samplesFile);
+// stimuli.pipe(plainStimsStringifier).pipe(stimuliFile);
 epochsRaw.pipe(epochsRawStringifier).pipe(epochsRawFile);
-epochsFiltered.pipe(epochsFilteredStringifier).pipe(epochsFilteredFile);
-epochsDetrended.pipe(epochsDetrendedStringifier).pipe(epochsDetrendedFile);
+// epochsFiltered.pipe(epochsFilteredStringifier).pipe(epochsFilteredFile);
+// epochsDetrended.pipe(epochsDetrendedStringifier).pipe(epochsDetrendedFile);
 
-epochsRaw.pipe(channelsMonitor).pipe(process.stdout);
+// epochsFiltered.pipe(channelsMonitor).pipe(process.stdout);
 

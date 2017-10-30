@@ -41,7 +41,7 @@ fieldset {
   font-size: 10pt;
   background-color: lightgrey;
   color: grey;
-  border: 1px solid darkgrey; }
+  border: 0px solid darkgrey; }
 
 html {
   text-align: left;

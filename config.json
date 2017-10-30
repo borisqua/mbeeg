@@ -1,5 +1,6 @@
 {
   "stimulation": {
+    "port": 9350,
     "duration": 100,
     "pause": 200,
     "sequence": {
@@ -9,7 +10,36 @@
         0,
         1,
         2,
-        3
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32
       ],
       "dimensions": 1
     },
@@ -23,39 +53,21 @@
     "host": "localhost",
     "port": 1024,
     "channels": [
-      2
-    ],
-    "epoch":{
-      "duration": 1000
-    },
-    "dsp": {
-      "vertical": {
-        "steps": [
-          {
-            "name":"butterworth4BulanovLowpass",
-            "parameters": [{
-              "name": "cutoff",
-              "value": 8
-            }]
-          },
-          {
-            "name":"detrend",
-            "parameters":[]
-          }
-        ]
-      },
-      "horizontal": {
-        "depth": 5,
-        "moving": false
-      }
-    },
-    "cycles": 0
-  },
-  "decision": {
-    "start": 2,
-    "cycles": 5,
-    "threshold": 2,
-    "method": "majority"
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13,
+      14
+    ]
   },
   "service": {
     "provider": "mbEEG",

@@ -364,7 +364,7 @@ class Channels extends Transform {
   // noinspection JSUnusedGlobalSymbols
   _transform(epoch, encoding, cb) {
     if (!this.keys.length || this.keys.includes(epoch.key)) {
-      let result = `Cycle: ${epoch.cycle} - `;
+      let result = `Cycle: ${epoch.number} - `;
       for (let chN = 0; chN < epoch.channels.length; chN++) {
         if (!this.channels.length || this.channels.includes(chN)) {
           let fieldName = `key${('0' + epoch.key).substr(-2)}::ch${('0' + chN).substr(-2)}`;
@@ -380,24 +380,22 @@ class Channels extends Transform {
 }
 
 class Sampler extends Transform {
-  constructor(){
+  constructor({
+                objectMode = true
+              }) {
     super({objectMode: true});
+    this.objectMode = objectMode;
   }
   
   _transform(samples, encoding, cb) {
-    let
-      samplesLength = samples.length
-      , sampleLength = samples[0].length
-      , resultString = ''
-    ;
+    let samplesLength = samples.length;
     for (let s = 0; s < samplesLength; s++) {
-      for (let ss = 0; ss < sampleLength; ss++)
-        if (ss === sampleLength - 1)
-          resultString += `${samples[s][ss]}\r\n`;
-        else
-          resultString += `${samples[s][ss]}, `;
+      if (this.objectMode)
+        this.push(samples[s]);
+      else
+        this.push(JSON.stringify(samples[s]));
     }
-    cb(null, resultString);
+    cb();
   }
 }
 

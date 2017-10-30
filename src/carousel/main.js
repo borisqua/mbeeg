@@ -1,7 +1,7 @@
 "use strict";
 const
   {app, BrowserWindow, Menu, ipcMain, globalShortcut} = require('electron')
-  , template = require(`./app/menu`)
+  , template = require('./menu')
   // , ipcController = require('child_process').fork(`${appRoot}/src/core/controller/index.js`)
 ;
 
@@ -12,7 +12,7 @@ let winMain, winKeyboard, winConsole //winDebuggerLog;// Keep a global reference
 ;
 
 function createWindows() {
-  const window = require(`./app/window`);
+  const window = require('./window');
   // Menu.setApplicationMenu(menu);
   
   winMain = window({

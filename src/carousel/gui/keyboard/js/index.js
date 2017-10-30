@@ -1,9 +1,12 @@
 "use strict";
 
 const
-  {Tools} = require('mbeeg')
+  fs = require('fs')
+  , {Tools} = require('mbeeg')
   , {ipcRenderer} = require('electron')
+  , {TweenMax, TweenLite, Power2, TimelineLite} = require('gsap');
 ;
+
 
 $(() => {
   let
@@ -130,7 +133,6 @@ $(() => {
       }
     }
     //TODO LOADING & SAVING CONFIGURATION SHOULD BE IN RESPONSIBILITY OF CONTROLLER IN COOPERATION WITH CONSOLE RENDERER
-    const fs = require('fs');
     fs.writeFile(`config.json`, JSON.stringify(config, null, 2), (err) => {
       if (err) throw err;
     });
@@ -152,14 +154,14 @@ $(() => {
         "background-size": "60%"
         // "left":  config.keyboard.keybox.width //* config.keyboard.keys[i].column
       })
-    // .hover(
-    //   function () {
-    //     $(this).css({"background-size": "100%"});
-    //   },
-    //   function () {
-    //     $(this).css({"background-size": "60%"});
-    //   }
-    // )
+      .hover(
+        function () {
+          $(this).css({"background-size": "100%"});
+        },
+        function () {
+          $(this).css({"background-size": "60%"});
+        }
+      )
     ;
     
     viewport.append(keybox);

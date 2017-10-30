@@ -1,5 +1,4 @@
 "use strict";
-
 const
   Net = require('net')
   , cli = require('commander')

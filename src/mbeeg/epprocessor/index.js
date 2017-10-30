@@ -7,21 +7,18 @@ class EpochsProcessor extends require('stream').Transform {
   constructor({
                 epochs,
                 stimuliIdArray = [],
-                // stimuliNumber = 0,
                 depth = 1,
                 moving = true,
                 movingStep = 1,
                 maximumCycleCount = 15,
                 // learning = false,
-                // window = 200,
-                // offset = 200,
                 // sequence = `avg, detrend`,
                 objectMode = true
               }) {
     super({objectMode: true});
     this.epochs = epochs;
+    this.epochInWork = 0;
     this.stimuliIdArray = stimuliIdArray.slice();
-    // this.stimuliNumber = stimuliNumber;//this.epochs.stimuli.stimuliArray().length;
     this.depth = depth;
     this.moving = moving;
     this.movingStep = movingStep;
@@ -31,10 +28,10 @@ class EpochsProcessor extends require('stream').Transform {
     this.maximumCycleCount = maximumCycleCount;
     
     epochs.on(`data`, epoch => {
+      this.epochInWork = epoch.number;
       let
         channelsNumber = epoch.channels.length
         , samplesNumber = epoch.channels[0].length
-        // , epochCycle = epoch.cycle
       ;
       
       if (this.stimuliIdArray.every(s => s !== epoch.key))
@@ -73,8 +70,8 @@ class EpochsProcessor extends require('stream').Transform {
     });
   }
   
-  reset(stimuliArray) {
-    this.stimuliIdArray = stimuliArray;
+  reset(stimuliIdArray) {
+    this.stimuliIdArray = stimuliIdArray;
     this.stimuliFlows = [];
     this.cycle = 1;
   }

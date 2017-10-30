@@ -27,5 +27,6 @@
     <orderEntry type="library" name="mocha-DefinitelyTyped" level="application" />
     <orderEntry type="library" name="chai-DefinitelyTyped" level="application" />
     <orderEntry type="library" name="compass-library" level="project" />
+    <orderEntry type="library" name="GSAP" level="project" />
   </component>
 </module>

@@ -17,7 +17,7 @@ process.stdout.write(`Please enter the cycle number: `);
 cycle = 1;
 console.log(cycle);
 for (let epoch of log.epochs) {
-  if (+epoch.cycle === cycle) {
+  if (+epoch.number === cycle) {
     for (let chN = 0; chN < epoch.channels.length; chN++) {
       let fieldName = `key${('0' + epoch.key).substr(-2)}::ch${('0' + chN).substr(-2)}`;
       fields.push({key: +epoch.key, channel: chN, fieldName: fieldName, data: epoch.channels[chN]});

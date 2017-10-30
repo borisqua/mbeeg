@@ -52,7 +52,7 @@ class OVStreamReader extends require('stream').Transform {
       ;
       if (!this.header.timestamp) {
         this.header.timestamp = this._getChildProperties(ovStreamJsonChunk, `timestamp`).value;
-        this.header.timestamp = this.header.timestamp - rows * 1000 / this.header.samplingRate; //by default epoch timestamp equals to last sample timestamp, so let's move timestamp to the first one
+        this.header.timestamp = this.header.timestamp - rows * 1000 / this.header.samplingRate; // because by default epoch timestamp equals to last sample timestamp, so let's move timestamp to the first one
       }
       for (let column = 0, columns = this.header.signal.matrix.dimensions[0].length; column < columns; column++) {
         // for (let row = 0; row < rows; row++) {

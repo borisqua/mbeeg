@@ -2,7 +2,7 @@
   "name": "mberp",
   "version": "0.0.1",
   "description": "p300 eeg processing and classification software",
-  "main": "./src/app/main.js",
+  "main": "./src/carousel/main.js",
   "scripts": {
     "start": "electron .",
     "test": "test"
@@ -27,6 +27,7 @@
     "electron-debug": "^1.2.0",
     "electron-inspector": "^0.1.4",
     "electron-rebuild": "^1.5.11",
+    "electron-winstaller": "^2.6.3",
     "json2csv": "^3.11.2",
     "node-inspector": "^1.1.1",
     "qunitjs": "^2.4.0"

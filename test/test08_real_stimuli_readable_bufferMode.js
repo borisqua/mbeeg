@@ -8,7 +8,7 @@ const
     objectMode: false,
     signalDuration: config.stimulation.duration,
     pauseDuration: config.stimulation.pause,
-    stimuliArray: config.stimulation.sequence.stimuli
+    cycles: config.stimulation.sequence.stimuli
   })
 ;
 

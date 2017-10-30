@@ -17,7 +17,7 @@ class Channels extends Transform {
   // noinspection JSUnusedGlobalSymbols
   _transform(epoch, encoding, cb) {
     if (!this.keys.length || this.keys.includes(epoch.key)) {
-      let result = `Cycle: ${epoch.cycle} - `;
+      let result = `Cycle: ${epoch.number} - `;
       for (let chN = 0; chN < epoch.channels.length; chN++) {
         if (!this.channels.length || this.channels.includes(chN)) {
           let fieldName = `key${('0' + epoch.key).substr(-2)}::ch${('0' + chN).substr(-2)}`;

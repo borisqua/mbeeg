@@ -13,18 +13,17 @@ class DSProcessor extends require('stream').Transform {
                 // , learning = false
                 , epochDuration
                 , processingSequence
-                , cyclesLimit
+                // , cyclesLimit
                 , objectMode = true
               }) {
     super({objectMode: true});
     
-    this.stimuli = stimuli;
-    this.samples = samples;
     this.channels = channels;
     // this.learning = learning;
     this.epochDuration = epochDuration;
     this.processingSequence = processingSequence;
-    this.cyclesLimit = cyclesLimit;
+    this._stimuliCounter = 0;
+    // this.cyclesLimit = cyclesLimit;
     this.objectMode = objectMode;
     
     this.epochsFIFO = [];
@@ -38,11 +37,11 @@ class DSProcessor extends require('stream').Transform {
       
       let epoch = {};
       epoch.key = stimulus[1];
-      epoch.cycle = stimulus[3];//this.stimuli.stimulusCycle;//TODO problems with cycles counting
-      epoch.stimulusDuration = this.stimuli.signalDuration;
-      epoch.stimulusPause = this.stimuli.pauseDuration;
+      epoch.number = this._stimuliCounter++;
+      // epoch.stimulusDuration = stimuli.signalDuration;
+      // epoch.stimulusPause = stimuli.pauseDuration;
       epoch.duration = this.epochDuration;
-      epoch.samplingRate = this.samples.header.samplingRate;
+      epoch.samplingRate = samples.header.samplingRate;
       epoch.state = `raw`;
       epoch.full = false;
       epoch.timestamp = stimulus[0];
@@ -63,10 +62,10 @@ class DSProcessor extends require('stream').Transform {
             if (_firstSampleOfEpoch(this, e, samp[0])) {
               if (_completeEpoch(this, e, j)) {
                 e.full = true;
-                if (this.cyclesLimit && this.cyclesLimit < e.cycle) { //stop if output is limited
-                  this.unpipe();
-                  process.exit(0);
-                }
+                // if (this.cyclesLimit && this.cyclesLimit < e.cycle) { //stop if output is limited
+                //   this.unpipe();
+                //   process.exit(0);
+                // }
                 this.write(e);
                 this.epochsFIFO.shift();
                 break; //this is crucial 'break' because two adjacent samples can catisfy same _firstSampleOfEpoch condition (>=epoch.timestamp && <=epoch.timestamp+epoch.samplingStep)
@@ -84,11 +83,12 @@ class DSProcessor extends require('stream').Transform {
       // console.log(`---- epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
     });
     
-    samples.on('data', samplesChunk => {
+    samples.on('data', chunk => {
       // preventDefault();
+      let samplesChunk = chunk.slice();
       if (!this.timestamp) {
-        this.samplingRate = this.samples.header.samplingRate;
-        this.timestamp = this.samples.header.timestamp;
+        this.samplingRate = samples.header.samplingRate;
+        this.timestamp = samples.header.timestamp;
         this.samplingStep = 1000 / this.samplingRate;
         this.epochLengthInSamples = this.epochDuration / this.samplingStep;
       }
@@ -134,10 +134,10 @@ class DSProcessor extends require('stream').Transform {
   
   // noinspection JSUnusedGlobalSymbols
   _transform(epoch, encoding, cb) {
-    console.log(`--DEBUG::    DSProcessor::NextEpochReady--`);
+    console.log(`--DEBUG::    DSProcessor::NextEpochReady--Key=${epoch.key} Epoch number=${epoch.number}`);
     for (let i = 0, channelsNumber = epoch.channels.length; i < channelsNumber; i++) {
-      for (let step of this.processingSequence) {
-        switch (step.name) {//TODO sometimes epoch.channels[i] is empty don't know why
+      for (let step of this.processingSequence) {//TODO make each DSP stage as distinct Transformer stream
+        switch (step.name) {
           case 'butterworth4BulanovLowpass':
             epoch.channels[i] = Tools.butterworth4Bulanov(epoch.channels[i], epoch.samplingRate, step.parameters.cutoff);
             break;
@@ -151,7 +151,6 @@ class DSProcessor extends require('stream').Transform {
         epoch.state = step.name;
       }
     }
-    // if (epoch.cycle > 0)
     if (this.objectMode)
       cb(null, epoch);//For output into objectType pipe
     else

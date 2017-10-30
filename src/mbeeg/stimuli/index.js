@@ -51,7 +51,7 @@ class Stimuli extends require('stream').Readable {
     this._resetStimuli();
   }
   
-  stimuliArray() {
+  stimuliIdArray() {
     return this.stimuliIdArray;
   }
   

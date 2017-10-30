@@ -2,9 +2,12 @@
 const
   Net = require('net')
   , fs = require('fs')
-  , cli = require('commander')
+  , fileSamples = fs.createWriteStream(`./logs/00sample.csv`)
+  , fileEpochs = fs.createWriteStream(`./logs/01epoch.csv`)
+  , fileFeatures = fs.createWriteStream(`./logs/02feature.csv`)
   , ntStimuli = new require('stream').PassThrough({objectMode: true})
   , {EBMLReader, OVReader, Sampler, DSProcessor, EpochsProcessor, Classifier, DecisionMaker, Stringifier, NTVerdictStringifier, Tools} = require('mbeeg')
+  , sampler = new Sampler({objectMode: true})
   , config = Tools.loadConfiguration(`config.json`)
   , ntDecisionStringifier = new Stringifier({
     chunkBegin: `{"class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellConceived", "cellId": `
@@ -25,6 +28,21 @@ const
       },
       {name: "cellId", type: "id"},
       {name: "weight", type: "value"}]
+  })
+  , plainSamplesStringifier = new Stringifier({
+    chunkEnd: `\r\n`
+  })
+  , epochsRawStringifier = new Stringifier({
+    beginWith: `{"epochs": [`
+    , chunksDelimiter: `,`
+    , chunkEnd: `\r\n`
+    , endWith: `]}\r\n`
+    // , stringifyAll: true
+    , indentationSpace: 2
+  })
+  , featuresStringifier = new Stringifier({
+    chunkEnd: `\r\n`
+    , indentationSpace: 2
   })
   , openVibeClient = new Net.Socket() //create TCP client for openViBE eeg data server
   , tcp2ebmlFeeder = (context, tcpchunk) => {
@@ -60,7 +78,7 @@ const
     ebmlSource: openVibeClient.connect(config.signal.port, config.signal.host, () => {})
     , ebmlCallback: tcp2ebmlFeeder
   })
-  ,samples = new OVReader({})
+  , samples = new OVReader({})
   , epochs = new DSProcessor({//epochizator
     stimuli: ntStimuli
     , samples: openVibeJSON.pipe(samples)
@@ -87,22 +105,11 @@ const
     , methodParameters: config.classification.methods[`integral`]
   })
 ;
-cli.version('0.0.1')
-  .description(`mbEEG server processes openViBE EEG Stream to detect P300 ERP signal and recognize user selection with variety of different filter and recognition algorithms.
-  \rIt can be used also as a tool to getting, saving and analyzing data flows emerged in the process of P300 ERP signal
-  \rrecognition.`)
-  .usage(`[option]`)
-  // .option(`-c --cycles-limit <n>`, `Set cycles number to go`, parseInt)
-  .option(`-e --eeg [path]`, `Log eeg samples into file (default ./00-samples.csv)`)
-  .option(`-r --raw-epochs [path]`, `Log epochs with raw data (default ./01-epochs-raw.csv)`)
-  .option(`-f --filtered-epochs [path]`, `Log epochs with filtered data (default ./02-epochs-filtered.csv)`)
-  .option(`-d --detrended-epochs [path]`, `Log epochs with detrended data (default ./03-epochs-detrended.csv)`)
-  .option(`-a --averaged-features [path]`, `Log features with averaged data (default ./04-features-averaged.csv)`)
-  .parse(process.argv)
-;
 
 let
-  stimulus = []
+  stimuliIdArray = []
+  , lastEpoch = 0
+  , stimulus = []
   , running = false
 ;
 
@@ -136,10 +143,12 @@ const
                   console.log(`OK`);
                   break;
                 case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings"://SCENE SETTINGS
-                  config.stimulation.sequence.stimuli = message.objects;//TODO changing options in config object and file
+                  stimuliIdArray = message.objects;
+                  if (!lastEpoch)
+                    lastEpoch = config.signal.cycles * stimuliIdArray.length;
                   console.log(`--DEBUG::mbeegntsrv::OnData::\r\nclass: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings`);
-                  console.log(`objects: ${JSON.stringify(message.objects)}`);
-                  featuresProcessor.reset(message.objects);
+                  console.log(`objects: ${JSON.stringify(stimuliIdArray)}`);
+                  featuresProcessor.reset(stimuliIdArray);
                   running = true;
                   ntStimuli.resume();
                   break;
@@ -153,14 +162,21 @@ const
                   if (running) {
                     stimulus = [message.timestamp, message.cellId, 0];
                     ntStimuli.write(stimulus);
-                    // ntStimuli.resume();
-                    console.log(`--DEBUG::mbeegntsrv::OnData::MbeegEventCellFlashing ${[stimulus]}`);
+                    
+                    let epochInProcess = featuresProcessor.epochInWork ? featuresProcessor.epochInWork : 0;
+                    if (lastEpoch) {
+                      console.log(`--DEBUG::mbeegntsrv::OnData::MbeegEventCellFlashing ${[stimulus]}; cycle = ${Math.ceil(epochInProcess / stimuliIdArray.length)}; last cycle set to ${lastEpoch / stimuliIdArray.length}`);
+                      if (featuresProcessor.epochInWork > lastEpoch) {
+                        console.log(`--DEBUG::mbeegntsrv::OnData::MbeegEventCellFlashing - exit due to reaching cycles limit set by config.signal.cycles`);
+                        process.exit(0);
+                      }
+                    } else
+                      console.log(`--DEBUG::mbeegntsrv::OnData::MbeegEventCellFlashing ${[stimulus]}; cycle = ${Math.ceil(epochInProcess / stimuliIdArray.length)}; `);
                   }
                   break;
                 default:
                   console.log("--DEBUG::mbeegntsrv::OnData:: ntClient undefined message...");
               }
-              
             }
           }
         });
@@ -168,91 +184,21 @@ const
       mbEEGServer.getConnections((err, count) => {
         console.log(`Connections count is ${count}`);
         if (count === 1) {
-          //Start output to files if corresponding options specified
-          if (cli.eeg) { //create 00-samples.csv
-            const
-              sampler = new Sampler()
-              , fileWithSamples = fs.createWriteStream(`./00-samples.csv`);
-            samples.pipe(sampler).pipe(fileWithSamples);
-            samples.pipe(sampler).pipe(process.stdout);
+          if(lastEpoch) {//log samples, epochs and features into files
+            samples.pipe(sampler).pipe(plainSamplesStringifier).pipe(fileSamples);
+            // samples.pipe(sampler).pipe(plainSamplesStringifier).pipe(process.stdout);
+            epochs.pipe(epochsRawStringifier).pipe(fileEpochs);
+            // epochs.pipe(epochsRawStringifier).pipe(process.stdout);
+            featuresProcessor.pipe(featuresStringifier).pipe(fileFeatures);
+            // featuresProcessor.pipe(featuresStringifier).pipe(process.stdout);
           }
-          if (cli.rawEpochs) { //create 01-epochs-raw.csv
-            const
-              epochsRawStringifier = new Stringifier({
-                beginWith: `{"epochs": [`
-                , chunksDelimiter: `,`
-                , chunkEnd: `\r\n`
-                , endWith: `]}\r\n`
-                // , stringifyAll: true
-                , indentationSpace: 2
-              })
-              , epochsRaw = new DSProcessor({
-                stimuli: ntStimuli
-                , samples: openVibeJSON.pipe(samples)
-                , channels: config.signal.channels
-                , epochDuration: config.signal.epoch.duration
-                , processingSequence: []
-                , cyclesLimit: config.signal.cycles
-              });
-            let fileWithRawEpochs = fs.createWriteStream(`./01-epochs-raw.csv`);
-            // epochsRaw.pipe(epochsRawStringifier).pipe(fileWithRawEpochs);
-            epochsRaw.pipe(epochsRawStringifier).pipe(process.stdout);
-          }
-          if (cli.filteredEpochs) { //create 02-epochs-filtered.csv
-            const
-              epochsFilteredStringifier = new Stringifier({
-                beginWith: `{"epochs": [`
-                , chunksDelimiter: `,`
-                , chunkEnd: `\r\n`
-                , endWith: `]}\r\n`
-                // , stringifyAll: true
-                , indentationSpace: 2
-              })
-              , epochsFiltered = new DSProcessor({
-                stimuli: ntStimuli
-                , samples: openVibeJSON.pipe(samples)
-                , channels: config.signal.channels
-                , epochDuration: config.signal.epoch.duration
-                , processingSequence: config.signal.dsp.vertical.steps.slice(0, 1)
-                , cyclesLimit: signal.cycles
-              });
-            let fileWithFilteredEpochs = fs.createWriteStream(`./02-epochs-filtered.csv`);
-            epochsFiltered.pipe(epochsFilteredStringifier).pipe(fileWithFilteredEpochs);
-          }
-          if (cli.detrendedEpochs) { //create 03-epochs-detrended.csv
-            const
-              epochsDetrendedStringifier = new Stringifier({
-                beginWith: `{"epochs": [`
-                , chunksDelimiter: `,`
-                , chunkEnd: `\r\n`
-                , endWith: `]}\r\n`
-                // , stringifyAll: true
-                , indentationSpace: 2
-              })
-              , epochsDetrended = new DSProcessor({
-                stimuli: ntStimuli
-                , samples: openVibeJSON.pipe(samples)
-                , channels: config.signal.channels
-                , epochDuration: config.signal.epoch.duration
-                , processingSequence: config.signal.dsp.vertical.steps.slice(0, 2)
-                , cyclesLimit: signal.cycles
-              });
-            let fileWithDetrendedEpochs = fs.createWriteStream(`./03-epochs-detrended.csv`);
-            epochsDetrended.pipe(epochsDetrendedStringifier).pipe(fileWithDetrendedEpochs);
-          }
-          if (cli.averagedEpochs) { //create 04-features-averaged.csv
-            const featuresStringifier = new Stringifier({
-              chunkEnd: `\r\n`
-              , indentationSpace: 2
-            });
-            let fileWithAvgFeatures = fs.createWriteStream(`./04-features-averaged.csv`);
-            featuresProcessor.pipe(featuresStringifier).pipe(fileWithAvgFeatures);
-          }
-          //start casting to first connected socket
+          //start piping to first connected socket
           featuresProcessor.pipe(classifier).pipe(ntVerdictStringifier).pipe(socket);
           classifier.pipe(decisions).pipe(ntDecisionStringifier).pipe(socket);
+          
         } else {
-          //cast existing streams to just connected next sockets
+          
+          //pipe existing stringified streams to just connected next sockets
           ntVerdictStringifier.pipe(socket);
           ntDecisionStringifier.pipe(socket);
         }

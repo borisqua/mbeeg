@@ -4,7 +4,7 @@ const
   {Stimuli, Stringifier, NTStimuliStringifier, Tools} = require('mbeeg')
   , config = Tools.loadConfiguration(`config.json`)
   , stimuli = new Stimuli({
-    stimuliArray: config.stimulation.sequence.stimuli,
+    cycles: config.stimulation.sequence.stimuli,
     signalDuration: config.stimulation.duration,
     pauseDuration: config.stimulation.pause
   })
@@ -59,21 +59,21 @@ const
     replSrv = repl.start({prompt: '> '});
     
     let
-      start = (stimuliArray, signalDuration, pauseDuration) => {
+      start = (cycles, signalDuration, pauseDuration) => {
         stimuli.resume();
-        stimuliArray = JSON.parse(stimuliArray);
-        console.log(stimuliArray);
+        cycles = JSON.parse(cycles);
+        console.log(cycles);
         message.class = "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings";
-        message.objects = stimuliArray;
+        message.objects = cycles;
         stimuli.reset({
-          stimuliIdArray: stimuliArray,
+          stimuliIdArray: cycles,
           signalDuration: signalDuration,
           pauseDuration: pauseDuration
         });
         if (!mbeeg.write(`${JSON.stringify(message)}\r\n`))
           console.log(`Error: scene settings message sending failed.`);
         else {
-          console.log(`started with ${stimuliArray} sequence...`);
+          console.log(`started with ${cycles} sequence...`);
           if (!running) {
             stimuli.pipe(ntStringifier).pipe(mbeeg);//process.stdout);
             running = true;
