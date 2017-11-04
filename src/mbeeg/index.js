@@ -2,13 +2,18 @@
 
 module.exports = {
   
+  //Core
   EBMLReader: require('./ebml/reader')
   , OVReader: require('./openvibe/reader')
   , Stimuli: require('./stimuli')
-  , DSProcessor: require('./dsprocessor')
-  , EpochsProcessor: require('./epprocessor')
+  , Epochs: require('./epochs')
+  , EpochSeries: require('./epochseries')
+  , DSVProcessor: require('./dsvprocessor')
+  , DSHProcessor: require('./dshprocessor')
   , Classifier: require('./classifier')
   , DecisionMaker: require('./decisionmaker')
+  
+  //Helpers
   , Tools: require('./tools').Tools
   , Stringifier: require('./tools').Stringifier
   , Objectifier: require('./tools').Objectifier
@@ -16,5 +21,8 @@ module.exports = {
   , NTStimuliStringifier: require('./tools').NTStimuliStringifier
   , Channels: require('./tools').Channels
   , Sampler: require('./tools').Sampler
+  , EpochsHorizontalLogger: require('./tools').EpochsHorizontalLogger
+  , EpochsVerticalLogger: require('./tools').EpochsVerticalLogger
+  , FeatureHorizontalLogger: require('./tools').FeatureHorizontalLogger
   
 };

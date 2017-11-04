@@ -1,6 +1,6 @@
 "use strict";
 //TODO 3.Detecting samples or epochs leaks
-//TODO 4.Refactor to use writable capabilities of the DSProcessor stream, by writing merged stream of stimuli and eeg data. For this purpose DSProcess should have capability to distinguish chunks of this two streams.
+//TODO 4.Refactor to use writable capabilities of the Epochs stream, by writing merged stream of stimuli and eeg data. For this purpose DSProcess should have capability to distinguish chunks of this two streams.
 const
   Tools = require('../tools').Tools
 ;

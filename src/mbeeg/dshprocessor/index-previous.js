@@ -3,7 +3,7 @@
 /**
  * @class classifier transforms input sample sequence into array of pairs (identity, probability of identification)
  */
-class EpochsProcessor extends require('stream').Transform {
+class EpochsProcessor extends require('stream').Transform {//TODO split into two classes reformation and featurization
   constructor({
                 epochs,
                 stimuliIdArray = [],
@@ -27,17 +27,18 @@ class EpochsProcessor extends require('stream').Transform {
     this.cycle = 1;
     this.maximumCycleCount = maximumCycleCount;
     
-    epochs.on(`data`, epoch => {
+    epochs.on(`data`, epoch => {//TODO move this to _transform
       this.epochInWork = epoch.number;
       let
         channelsNumber = epoch.channels.length
         , samplesNumber = epoch.channels[0].length
       ;
-      
-      if (this.stimuliIdArray.every(s => s !== epoch.key))
+      if (this.stimuliIdArray.every(s => s !== epoch.key)) {//this key not considering now
         console.log(`--DEBUG::        EpochProcessor:: key ${epoch.key} not in keys array ${this.stimuliIdArray} = ${this.stimuliIdArray.every(s => s !== epoch.key)} so throw it away`);
-      if (this.stimuliIdArray.every(s => s !== epoch.key)) return;
-      for (let ch = 0; ch < channelsNumber; ch++) {
+        return;
+        // cb();
+      }
+      for (let ch = 0; ch < channelsNumber; ch++) {//[keyN [channelN [sampleN [sN..]]]]
         for (let s = 0; s < samplesNumber; s++) {
           if (this.stimuliFlows[epoch.key] === undefined) {
             this.stimuliFlows[epoch.key] = new Array(channelsNumber).fill([]);
@@ -50,22 +51,31 @@ class EpochsProcessor extends require('stream').Transform {
         }
       }
       // console.log(JSON.stringify(this.stimuliFlows, null, 2));
-      // if (this.stimuliFlows.length === this.stimuliNumber)
       for (let i of this.stimuliIdArray)
-        if (this.stimuliFlows[i] === undefined) return;
-      if (this.depth && this.stimuliFlows.every(k => k.every(ch => ch.every(s => s.length >= this.depth)))) {
-        // console.log(epoch.key);//it means that all of stimuli have been filled with samples into assigned depth
-        if (moving) {
-          this.write(this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.slice(0, this.depth)))));
-          for (let s = 0; s < this.movingStep; s++)
-            this.stimuliFlows.forEach(key => key.forEach(ch => ch.forEach(samples => samples.shift())));
-        } else {
-          this.write(this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.splice(0, this.depth)))));
+        if (this.stimuliFlows[i] === undefined) {//stimuliFlows is not full yet
+          return;
+          // cb();
         }
-      } else if (!this.depth && this.stimuliFlows.every(k => k.every(ch => ch.every(s => s.length >= this.cycle)))) {
+      if (this.depth && this.stimuliFlows.every(k => k.every(ch => ch.every(s => s.length >= this.depth)))) {//averaging depth has assigned and every sample vector is filled at least to that depth
+        // console.log(epoch.key);//it means that all of stimuli have been filled with samples into assigned depth
+        if (moving) {//calculation of moving average is required
+          this.write(this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.slice(0, this.depth)))));
+          //cb(null, this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.slice(0, this.depth)))));
+          for (let s = 0; s < this.movingStep; s++)//now delete processed samples
+            this.stimuliFlows.forEach(key => key.forEach(ch => ch.forEach(samples => samples.shift())));
+        } else {//calculation of consequitive averages is required
+          this.write(this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.splice(0, this.depth)))));
+          // cb(null, this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.splice(0, this.depth)))));
+        }
+      } else if (!this.depth && this.stimuliFlows.every(k => k.every(ch => ch.every(s => s.length >= this.cycle)))) {//averaging depth wasn't assigned, it means that averaging on depth of all processed cycles is required
         this.write(this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.slice(0, this.cycle)))));
+        // cb(null, this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.slice(0, this.cycle)))));
         this.cycle++;
-        if (this.cycle > this.maximumCycleCount) this._resetCycle();
+        if (this.cycle > this.maximumCycleCount) {
+          // this._resetCycle();
+          this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.splice(0, this.cycle - 1))));
+          this.cycle = 1;
+        }
       }
     });
   }
@@ -77,14 +87,15 @@ class EpochsProcessor extends require('stream').Transform {
   }
   
   _resetCycle() {
-    if (!this.depth && this.stimuliFlows.every(k => k.every(ch => ch.every(s => s.length >= this.cycle)))) {
+    // if (!this.depth && this.stimuliFlows.every(k => k.every(ch => ch.every(s => s.length >= this.cycle)))) {
+    if (!this.depth && this.stimuliFlows.every(k => k.every(ch => ch.every(s => s.length >= this.cycle - 1)))) {
       this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.splice(0, this.cycle))));
       this.cycle = 1;
     }
-    else if (!this.depth && this.stimuliFlows.every(k => k.every(ch => ch.every(s => s.length >= this.cycle - 1)))) {
-      this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.splice(0, this.cycle - 1))));
-      this.cycle = 1;
-    }
+    // else if (!this.depth && this.stimuliFlows.every(k => k.every(ch => ch.every(s => s.length >= this.cycle - 1)))) {
+    //   this.stimuliFlows.map(key => key.map(ch => ch.map(samples => samples.splice(0, this.cycle - 1))));
+    //   this.cycle = 1;
+    // }
   }
   
   // noinspection JSUnusedGlobalSymbols

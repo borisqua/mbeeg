@@ -2,11 +2,31 @@
 const
   Net = require('net')
   , fs = require('fs')
-  , fileSamples = fs.createWriteStream(`./logs/00sample.csv`)
-  , fileEpochs = fs.createWriteStream(`./logs/01epoch.csv`)
-  , fileFeatures = fs.createWriteStream(`./logs/02feature.csv`)
-  , ntStimuli = new require('stream').PassThrough({objectMode: true})
-  , {EBMLReader, OVReader, Sampler, DSProcessor, EpochsProcessor, Classifier, DecisionMaker, Stringifier, NTVerdictStringifier, Tools} = require('mbeeg')
+  , fileSamples = fs.createWriteStream(`./logs/00samp.csv`)
+  , fileEpochsRawH = fs.createWriteStream(`./logs/10epraw.csv`)
+  , fileEpochsRawV = fs.createWriteStream(`./logs/11epraw.csv`)
+  , fileEpochsFilterH = fs.createWriteStream(`./logs/20epfilt.csv`)
+  , fileEpochsFilterV = fs.createWriteStream(`./logs/21epfilt.csv`)
+  , fileEpochsDetrendH = fs.createWriteStream(`./logs/30epdetr.csv`)
+  , fileEpochsDetrendV = fs.createWriteStream(`./logs/31epdetr.csv`)
+  , fileEpochsDetrendNormH = fs.createWriteStream(`./logs/32epdetr.csv`)
+  , fileEpochsAvgH = fs.createWriteStream(`./logs/40epavg.csv`)
+  , fileEpochsAvgV = fs.createWriteStream(`./logs/41epavg.csv`)
+  , fileFeaturesH = fs.createWriteStream(`./logs/50feat.csv`)
+  , fileFeaturesV = fs.createWriteStream(`./logs/51feat.csv`)
+  , {PassThrough} = require('stream')
+  , ntStimuli = new PassThrough({objectMode: true})
+  // , epochsToFeatureProcessor = new PassThrough({objectMode: true})
+  // , epochsToRawLogH = new PassThrough({objectMode: true})
+  // , epochsToFilteredLogH = new PassThrough({objectMode: true})
+  // , epochsToDetrendedLogH = new PassThrough({objectMode: true})
+  // , epochsToRawLogV = new PassThrough({objectMode: true})
+  // , epochsToFilteredLogV = new PassThrough({objectMode: true})
+  // , epochsToDetrendedLogV = new PassThrough({objectMode: true})
+  , { EBMLReader, OVReader, Sampler,
+    Epochs, DSVProcessor, DSHProcessor, EpochsHorizontalLogger, EpochsVerticalLogger,
+    FeatureHorizontalLogger,
+    Classifier, DecisionMaker, Stringifier, NTVerdictStringifier, Tools } = require('mbeeg')
   , sampler = new Sampler({objectMode: true})
   , config = Tools.loadConfiguration(`config.json`)
   , ntDecisionStringifier = new Stringifier({
@@ -29,21 +49,21 @@ const
       {name: "cellId", type: "id"},
       {name: "weight", type: "value"}]
   })
-  , plainSamplesStringifier = new Stringifier({
-    chunkEnd: `\r\n`
+  , epochsRawH = new EpochsHorizontalLogger()
+  , epochsRawV = new EpochsVerticalLogger()
+  , epochsFilteredH = new EpochsHorizontalLogger()
+  , epochsFilteredV = new EpochsVerticalLogger()
+  , epochsDetrendedH = new EpochsHorizontalLogger()
+  , epochsDetrendedV = new EpochsVerticalLogger()
+  , epochsDetrendedNormalizedH = new EpochsHorizontalLogger()
+  , epochsDetrendedNormalizedV = new EpochsVerticalLogger()
+  , featuresH = new FeatureHorizontalLogger({
+    stimuliIdArray: config.stimulation.sequence.stimuli
   })
-  , epochsRawStringifier = new Stringifier({
-    beginWith: `{"epochs": [`
-    , chunksDelimiter: `,`
-    , chunkEnd: `\r\n`
-    , endWith: `]}\r\n`
-    // , stringifyAll: true
-    , indentationSpace: 2
-  })
-  , featuresStringifier = new Stringifier({
-    chunkEnd: `\r\n`
-    , indentationSpace: 2
-  })
+  // , featuresStringifier = new Stringifier({
+  //   chunkEnd: `\r\n`
+  //   , indentationSpace: 2
+  // })
   , openVibeClient = new Net.Socket() //create TCP client for openViBE eeg data server
   , tcp2ebmlFeeder = (context, tcpchunk) => {
     if (context.tcpbuffer === undefined) {
@@ -78,21 +98,27 @@ const
     ebmlSource: openVibeClient.connect(config.signal.port, config.signal.host, () => {})
     , ebmlCallback: tcp2ebmlFeeder
   })
-  , samples = new OVReader({})
-  , epochs = new DSProcessor({//epochizator
+  , samples = new OVReader()
+  , epochs = new Epochs({//epochizator
     stimuli: ntStimuli
     , samples: openVibeJSON.pipe(samples)
+    , cycleLength: config.stimulation.sequence.stimuli.length
     , channels: config.signal.channels
     , epochDuration: config.signal.epoch.duration
     , processingSequence: config.signal.dsp.vertical.steps
     , cyclesLimit: config.signal.cycles
   })
-  , featuresProcessor = new EpochsProcessor({//featurizator
-    epochs: epochs
-    , moving: false
-    , depth: config.signal.dsp.horizontal.depth
-    , maximumCycleCount: config.decision.cycles
-    , stimuliIdArray: config.stimulation.sequence.stimuli
+  , butterworth4 = new DSProcessor({
+    action: Tools.butterworth4Bulanov
+    , actionParameters: config.signal.dsp.vertical.methods.butterworth4Bulanov
+  })
+  , detrend = new DSProcessor({
+    action: Tools.detrend
+    , actionParameters: config.signal.dsp.vertical.methods.detrend
+  })
+  , detrendNormalized = new DSProcessor({
+    action: Tools.detrend
+    , actionParameters: config.signal.dsp.vertical.methods.detrendNormalized
   })
   , decisions = new DecisionMaker({
     start: config.decision.methods.majority.start
@@ -108,6 +134,7 @@ const
 
 let
   stimuliIdArray = []
+  , featuresProcessor = {}
   , lastEpoch = 0
   , stimulus = []
   , running = false
@@ -148,7 +175,9 @@ const
                     lastEpoch = config.signal.cycles * stimuliIdArray.length;
                   console.log(`--DEBUG::mbeegntsrv::OnData::\r\nclass: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings`);
                   console.log(`objects: ${JSON.stringify(stimuliIdArray)}`);
+                  epochs.setCyclesLength(stimuliIdArray.length);
                   featuresProcessor.reset(stimuliIdArray);
+                  featuresH.setStimuliIdArray(stimuliIdArray);
                   running = true;
                   ntStimuli.resume();
                   break;
@@ -168,6 +197,9 @@ const
                       console.log(`--DEBUG::mbeegntsrv::OnData::MbeegEventCellFlashing ${[stimulus]}; cycle = ${Math.ceil(epochInProcess / stimuliIdArray.length)}; last cycle set to ${lastEpoch / stimuliIdArray.length}`);
                       if (featuresProcessor.epochInWork > lastEpoch) {
                         console.log(`--DEBUG::mbeegntsrv::OnData::MbeegEventCellFlashing - exit due to reaching cycles limit set by config.signal.cycles`);
+                        fileSamples.end();
+                        fileEpochsRawH.end();
+                        fileFeaturesH.end();
                         process.exit(0);
                       }
                     } else
@@ -184,13 +216,37 @@ const
       mbEEGServer.getConnections((err, count) => {
         console.log(`Connections count is ${count}`);
         if (count === 1) {
-          if(lastEpoch) {//log samples, epochs and features into files
-            samples.pipe(sampler).pipe(plainSamplesStringifier).pipe(fileSamples);
+          if (config.signal.cycles) {//log samples, epochs and features into files
+            samples.pipe(sampler).pipe(fileSamples);
+            epochs.pipe(epochsRawH).pipe(fileEpochsRawH);
+            epochs.pipe(epochsRawV).pipe(fileEpochsRawV);
+            epochs.pipe(butterworth4);
+            butterworth4.pipe(epochsFilteredH).pipe(fileEpochsFilterH);
+            butterworth4.pipe(epochsFilteredV).pipe(fileEpochsFilterV);
+            butterworth4.pipe(detrend);//TODO if move this line before pipe to file (2 lines up) then detrend modifies butterworth file output
+            butterworth4.pipe(detrendNormalized);
+            detrend.pipe(epochsDetrendedH).pipe(fileEpochsDetrendH);
+            detrend.pipe(epochsDetrendedV).pipe(fileEpochsDetrendV);
+            detrendNormalized.pipe(epochsDetrendedNormalizedH).pipe(fileEpochsDetrendNormH);
+            featuresProcessor = new EpochsProcessor({//featurizator
+              epochs: detrend
+              , moving: false
+              , depth: config.signal.dsp.horizontal.depth
+              , maximumCycleCount: config.decision.methods.majority.cycles //TODO consider reset of maximumCycleCount according to decisionmaker's reset of decision cycle
+              , stimuliIdArray: config.stimulation.sequence.stimuli
+            });
+            featuresProcessor.pipe(featuresH).pipe(fileFeaturesH);
             // samples.pipe(sampler).pipe(plainSamplesStringifier).pipe(process.stdout);
-            epochs.pipe(epochsRawStringifier).pipe(fileEpochs);
             // epochs.pipe(epochsRawStringifier).pipe(process.stdout);
-            featuresProcessor.pipe(featuresStringifier).pipe(fileFeatures);
             // featuresProcessor.pipe(featuresStringifier).pipe(process.stdout);
+          } else {
+            featuresProcessor = new EpochsProcessor({//featurizator
+              epochs: epochs.pipe(butterworth4).pipe(detrend)
+              , moving: false
+              , depth: config.signal.dsp.horizontal.depth
+              , maximumCycleCount: config.decision.methods.majority.cycles //TODO consider reset of maximumCycleCount according to decisionmaker's reset of decision cycle
+              , stimuliIdArray: config.stimulation.sequence.stimuli
+            });
           }
           //start piping to first connected socket
           featuresProcessor.pipe(classifier).pipe(ntVerdictStringifier).pipe(socket);

@@ -3,7 +3,7 @@
 const
   Net = require('net')
   , cli = require('commander')
-  , {EBMLReader, OVReader, Stimuli, DSProcessor, EpochsProcessor, Classifier, DecisionMaker, Stringifier, Objectifier, Tools} = require('mbeeg')
+  , {EBMLReader, OVReader, Stimuli, Epochs, DSVProcessor, DSHProcessor, Classifier, DecisionMaker, Stringifier, /*Objectifier,*/ Tools} = require('mbeeg')
   , config = Tools.loadConfiguration(`config.json`)
   , plainStringifier = new Stringifier({
     chunkEnd: `\r\n`
@@ -12,7 +12,7 @@ const
     chunkBegin: `{"decision":`
     , chunkEnd: `}\r\n`
   })
-  , featureObjectifier = new Objectifier()
+  // , featureObjectifier = new Objectifier()
   , openVibeClient = new Net.Socket() //3. Create TCP client for openViBE eeg data server
   , tcp2ebmlFeeder = (context, tcpchunk) => {
     if (context.tcpbuffer === undefined) {
@@ -47,13 +47,13 @@ const
     ebmlSource: openVibeClient.connect(config.signal.port, config.signal.host, () => {})
     , ebmlCallback: tcp2ebmlFeeder
   })
-  , samples = new OVReader({})
-  , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
+  , samples = new OVReader()
+  , stimuli = new Stimuli({ //should pipe simultaneously to the epochs and to the carousel
     signalDuration: config.stimulation.duration
     , pauseDuration: config.stimulation.pause
     , stimuliIdArray: config.stimulation.sequence.stimuli
   })
-  , epochs = new DSProcessor({
+  , epochs = new Epochs({
     stimuli: stimuli
     , samples: openVibeJSON.pipe(samples)
     , channels: config.signal.channels
@@ -61,8 +61,14 @@ const
     , processingSequence: config.signal.dsp.vertical.steps
     , cyclesLimit: config.signal.cycles
   })
+  , butterworth4 = new DSProcessor({
+    action: Tools.butterworth4Bulanov
+  })
+  , detrend = new DSProcessor({
+    action: Tools.detrend
+  })
   , featuresProcessor = new EpochsProcessor({
-    epochs: epochs
+    epochs: epochs.pipe(butterworth4).pipe(detrend)
     , moving: false
     , depth: config.signal.dsp.horizontal.depth
     , maximumCycleCount: config.decision.cycles
@@ -83,27 +89,29 @@ const
 cli.version('0.0.1')
   .description(`Analyzing verdicts stream and making decision which of keys had been chosen.`)
   .usage(`[option]`)
-  .option(`-p --pipe`, `Gets epochs flow from stdin through pipe`)
-  .option(`-i --internal`, `Gets epochs flow from source defined in config.json file`)
+  // .option(`-p --pipe`, `Gets epochs flow from stdin through pipe`)
+  // .option(`-i --internal`, `Gets epochs flow from source defined in config.json file`)
   .option(`-j --json`, `Wraps features array into json.`)
   // .option(`-n, --neurotrainer`, `Outputs wrapped into Neuro Trainer specific json`)
   .parse(process.argv)
 ;
 
-if (process.argv.length <= 2) {
-  cli.help();
-  return;
-}
+// if (process.argv.length <= 2) {
+//   cli.help();
+//   return;
+// }
 
-if (cli.pipe) {
-  process.stdin.pipe(featureObjectifier);
-  
-  if (cli.json) featureObjectifier.pipe(classifier).pipe(decisions).pipe(decisionStringifier).pipe(process.stdout);
-  else featureObjectifier.pipe(classifier).pipe(decisions).pipe(plainStringifier).pipe(process.stdout);
-} else if (cli.internal) {
-  if (cli.json) featuresProcessor.pipe(classifier).pipe(decisions).pipe(decisionStringifier).pipe(process.stdout);
-  else featuresProcessor.pipe(classifier).pipe(decisions).pipe(plainStringifier).pipe(process.stdout);
-} else {
-  cli.help();
-  return;
-}
+// if (cli.pipe) {
+//   process.stdin.pipe(featureObjectifier);
+//
+//   if (cli.json) featureObjectifier.pipe(classifier).pipe(decisions).pipe(decisionStringifier).pipe(process.stdout);
+//   else featureObjectifier.pipe(classifier).pipe(decisions).pipe(plainStringifier).pipe(process.stdout);
+// } else if (cli.internal) {
+  if (cli.json)
+    featuresProcessor.pipe(classifier).pipe(decisions).pipe(decisionStringifier).pipe(process.stdout);
+  else
+    featuresProcessor.pipe(classifier).pipe(decisions).pipe(plainStringifier).pipe(process.stdout);
+// } else {
+//   cli.help();
+//   return;
+// }

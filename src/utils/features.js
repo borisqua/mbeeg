@@ -3,7 +3,7 @@
 const
   Net = require('net')
   , cli = require('commander')
-  , {EBMLReader, OVReader, Stimuli, DSProcessor, EpochsProcessor, Stringifier, Objectifier, Tools} = require('mbeeg')
+  , {EBMLReader, OVReader, Stimuli, Epochs, DSVProcessor, DSHProcessor, Stringifier, /*Objectifier,*/ Tools} = require('mbeeg')
   , config = Tools.loadConfiguration(`config.json`)
   , plainStringifier = new Stringifier({
     chunkEnd: `\r\n`
@@ -17,7 +17,7 @@ const
     , indentationSpace: 2
     , stringifyAll: true
   })
-  , epochsObjectifier = new Objectifier()
+  // , epochsObjectifier = new Objectifier()
   , openVibeClient = new Net.Socket() //3. Create TCP client for openViBE eeg data server
   , tcp2ebmlFeeder = (context, tcpchunk) => {
     if (context.tcpbuffer === undefined) {
@@ -52,13 +52,13 @@ const
     ebmlSource: openVibeClient.connect(config.signal.port, config.signal.host, () => {})
     , ebmlCallback: tcp2ebmlFeeder
   })
-  , samples = new OVReader({})
-  , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
+  , samples = new OVReader()
+  , stimuli = new Stimuli({ //should pipe simultaneously to the epochs and to the carousel
     signalDuration: config.stimulation.duration
     , pauseDuration: config.stimulation.pause
     , stimuliIdArray: config.stimulation.sequence.stimuli
   })
-  , epochs = new DSProcessor({
+  , epochs = new Epochs({
     stimuli: stimuli
     , samples: openVibeJSON.pipe(samples)
     , channels: config.signal.channels
@@ -66,43 +66,49 @@ const
     , processingSequence: config.signal.dsp.vertical.steps
     , cyclesLimit: config.signal.cycles
   })
+  , butterworth4 = new DSProcessor({
+    action: Tools.butterworth4Bulanov
+  })
+  , detrend = new DSProcessor({
+    action: Tools.detrend
+  })
 ;
-let featuresProcessor = {};
+let featuresProcessor;
 
 cli.version('0.0.1')
   .description(`Features generator. Gets epoch flow and produces stream of features ready to classification.`)
   .usage(`[option]`)
-  .option(`-p --pipe`, `Gets epochs flow from stdin through pipe`)
-  .option(`-i --internal`, `Gets epochs flow from source defined in config.json file`)
+  // .option(`-p --pipe`, `Gets epochs flow from stdin through pipe`)
+  // .option(`-i --internal`, `Gets epochs flow from source defined in config.json file`)
   .option(`-j --json`, `Wraps features array into json.`)
   .parse(process.argv)
 ;
 
-if (process.argv.length <= 2) {
-  cli.help();
-  return;
-}
+// if (process.argv.length <= 2) {
+//   cli.help();
+//   process.exit(0);
+// }
 
-if (cli.pipe) {
-  process.stdin.pipe(epochsObjectifier);
+// if (cli.pipe) {
+//   process.stdin.pipe(epochsObjectifier);
+//   featuresProcessor = new EpochSeries({
+//     epochs: epochsObjectifier
+//     , moving: config.signal.dsp.horizontal.moving //true means moving calculation in to depth as specified
+//     , depth: config.signal.dsp.horizontal.depth //0 means full depth
+//     , stimuliIdArray: config.stimulation.sequence.stimuli
+//   });
+  // if (cli.json) featuresProcessor.pipe(featuresStringifier).pipe(process.stdout);
+  // else featuresProcessor.pipe(plainStringifier).pipe(process.stdout);
+// } else if (cli.internal) {
   featuresProcessor = new EpochsProcessor({
-    epochs: epochsObjectifier
+    epochs: epochs.pipe(butterworth4).pipe(detrend)
     , moving: config.signal.dsp.horizontal.moving //true means moving calculation in to depth as specified
     , depth: config.signal.dsp.horizontal.depth //0 means full depth
     , stimuliIdArray: config.stimulation.sequence.stimuli
   });
   if (cli.json) featuresProcessor.pipe(featuresStringifier).pipe(process.stdout);
   else featuresProcessor.pipe(plainStringifier).pipe(process.stdout);
-} else if (cli.internal) {
-  featuresProcessor = new EpochsProcessor({
-    epochs: epochs
-    , moving: config.signal.dsp.horizontal.moving //true means moving calculation in to depth as specified
-    , depth: config.signal.dsp.horizontal.depth //0 means full depth
-    , stimuliIdArray: config.stimulation.sequence.stimuli
-  });
-  if (cli.json) featuresProcessor.pipe(featuresStringifier).pipe(process.stdout);
-  else featuresProcessor.pipe(plainStringifier).pipe(process.stdout);
-} else {
-  cli.help();
-  return;
-}
+// } else {
+//   cli.help();
+//   return;
+// }

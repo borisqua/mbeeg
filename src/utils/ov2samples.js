@@ -2,7 +2,7 @@
 const
   Net = require('net')
   , {EBMLReader, OVReader, Stringifier, Objectifier, Tools, Sampler} = require('mbeeg')
-  , sampler = new Sampler()
+  , sampler = new Sampler({objectMode: false})
   , openVibeClient = new Net.Socket() //3. Create TCP client for openViBE eeg data server
   , config = Tools.loadConfiguration(`config.json`)
   , tcp2ebmlFeeder = (context, tcpchunk) => {

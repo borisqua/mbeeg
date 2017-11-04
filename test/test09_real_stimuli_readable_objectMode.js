@@ -4,7 +4,7 @@ const
   , {Transform} = require('stream')
   , Stimuli = require(`${appRoot}/src/core/dsprocessor/stimuli.js`)
   , config = require(`${appRoot}/config`) //1. Load configuration - config.json file with stimuli, dsp and carousel parameters
-  , stimuli = new Stimuli({ //should pipe simultaneously to the dsprocessor and to the carousel
+  , stimuli = new Stimuli({ //should pipe simultaneously to the epochs and to the carousel
     // objectMode: false,
     signalDuration: config.stimulation.duration,
     pauseDuration: config.stimulation.pause,

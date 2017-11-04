@@ -96,7 +96,7 @@ class Tools {
    * @param {boolean} passthrough if true function returns array equal to input timeseries (default = false)
    * @return {Array} time series filtered data (same size as input flow)
    */
-  static butterworth4Bulanov(timeseries, samplingrate = 0, cutoff = 0, passthrough = false) {
+  static butterworth4Bulanov({timeseries, samplingrate = 0, cutoff = 0, passthrough = false}) {
     console.log(`dsp::butterworth4::timeseries.length = ${timeseries.length}`);
     if (!timeseries.length) throw 'no timeseries in butterworth4';//return null;
     if (!cutoff || passthrough) return timeseries.slice();
@@ -161,7 +161,7 @@ class Tools {
    * @param {Boolean} normalized - if false - absolute detrending, if true - relative percentage detrending
    * @return {Array} detrend - detrended data, the same size as series input is
    */
-  static detrend(timeseries, normalized = false) {
+  static detrend({timeseries, normalized = false}) {
     try {
       let n = timeseries.length;
       let sumxy = 0;
@@ -390,13 +390,107 @@ class Sampler extends Transform {
   _transform(samples, encoding, cb) {
     let samplesLength = samples.length;
     for (let s = 0; s < samplesLength; s++) {
-      if (this.objectMode)
-        this.push(samples[s]);
-      else
+      if (this.objectMode) {
+        this.push(`${samples[s].join()}\r\n`);
+      } else
         this.push(JSON.stringify(samples[s]));
     }
     cb();
   }
+}
+
+class EpochsHorizontalLogger extends Transform {
+  constructor({
+                objectMode = true
+              } = {}) {
+    super({objectMode: true});
+    this.objectMode = objectMode;
+  }
+  
+  _transform(epoch, encoding, cb) {
+    let row = [];
+    for (let ch = 0, channelsNumber = epoch.channels.length; ch < channelsNumber; ch++) {
+      row.unshift(...epoch.channels[ch]);
+    }
+    row.unshift(epoch.cycle);
+    row.unshift(epoch.key);
+    row.unshift(epoch.timestamp);
+    if (this.objectMode)
+      cb(null, `${row.join()}\r\n`);
+    else
+      cb(null, JSON.stringify(row));
+  }
+}
+
+class EpochsVerticalLogger extends Transform {
+  constructor({
+                objectMode = true
+              } = {}) {
+    super({objectMode: true});
+    this.objectMode = objectMode;
+  }
+  
+  _transform(epoch, encoding, cb) {
+    let
+      row = []
+      , samples = epoch.channels[0].length
+      , channels = epoch.channels.length
+      , timestamp = epoch.timestamp
+      , delta = epoch.duration / epoch.samplingRate
+    ;
+    for (let s = 0; s < samples; s++) {
+      row = [];
+      for (let ch = 0; ch < channels; ch++) {
+        row.push(epoch.channels[ch][s]);
+        row.unshift(epoch.cycle);
+        row.unshift(epoch.key);
+        row.unshift(timestamp);
+        timestamp += delta;
+        if (this.objectMode)
+          this.push(`${row.join()}\r\n`);
+        else
+          this.push(JSON.stringify(row));
+      }
+    }
+    cb();
+  }
+}
+
+class FeatureHorizontalLogger extends Transform {
+  constructor({
+                objectMode = true
+                , stimuliIdArray
+              } = {}) {
+    super({objectMode: true});
+    this.objectMode = objectMode;
+    this.stimuliIdArray = stimuliIdArray;
+  }
+  
+  _transform(cycle, encoding, cb) {
+    let
+      row = []
+      , channels = cycle[this.stimuliIdArray[0]].length;
+    ;
+    
+    for (let key of this.stimuliIdArray) {
+      row = [];
+      for (let ch = 0; ch < channels; ch++)
+        row.unshift(...cycle[key][ch]);
+      
+      row.unshift(key);
+      
+      if (this.objectMode)
+        this.push(`${row.join()}\r\n`);
+      else
+        this.push(JSON.stringify(row));
+    }
+    cb();
+  }
+  
+  setStimuliIdArray(newArray) {
+    this.stimuliIdArray = newArray;
+  }
+  
 }
 
 module.exports = {
@@ -407,4 +501,7 @@ module.exports = {
   , NTStimuliStringifier: NTStimuliStringifier
   , Channels: Channels
   , Sampler: Sampler
+  , EpochsHorizontalLogger: EpochsHorizontalLogger
+  , EpochsVerticalLogger: EpochsVerticalLogger
+  , FeatureHorizontalLogger: FeatureHorizontalLogger
 };

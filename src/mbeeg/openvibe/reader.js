@@ -9,7 +9,7 @@ class OVStreamReader extends require('stream').Transform {
   constructor({
                 ovStream,
                 objectMode = true
-              }) {
+              }={}) {
     super({objectMode: true});
     this.objectMode = objectMode;
     this.header = {

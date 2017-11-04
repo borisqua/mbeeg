@@ -2,7 +2,7 @@
 const
   Net = require('net')
   , cli = require('commander')
-  , {EBMLReader, OVReader, Epochs, Stimuli, Stringifier, Objectifier, Tools, Channels} = require('mbeeg')
+  , {EBMLReader, OVReader, Epochs, DSVProcessor, Stimuli, Stringifier, Objectifier, Tools, Channels} = require('mbeeg')
   , config = Tools.loadConfiguration(`config.json`)
   , epochsStringifier = new Stringifier({
     beginWith: `{"epochs": [\n`
@@ -57,6 +57,14 @@ const
     // keys: [20],
     // channels: [1] //, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
   })
+  , butterworth4 = new DSProcessor({
+    action: Tools.butterworth4Bulanov
+    , actionParameters: config.signal.dsp.vertical.methods.butterworth4Bulanov
+  })
+  , detrend = new DSProcessor({
+    action: Tools.detrend
+    , actionParameters: config.signal.dsp.vertical.methods.detrend
+  })
 ;
 let epochs = {};
 
@@ -92,7 +100,7 @@ if (cli.pipe) {
 
 // if (process.argv.length <= 2) cli.help();
 if (cli.channels)
-  epochs.pipe(channelsMonitor).pipe(process.stdout);
+  epochs.pipe(butterworth4).pipe(detrend).pipe(channelsMonitor).pipe(process.stdout);
 else
-  epochs.pipe(epochsStringifier).pipe(process.stdout);
+  epochs.pipe(butterworth4).pipe(detrend).pipe(epochsStringifier).pipe(process.stdout);
 
