@@ -6,7 +6,7 @@ const
   eegCSV = require('csv-streamify')({objectMode: true}),
   EEG = require(`${appRoot}/src/core/dsprocessor/eeg.js`),
   Stimuli = require(`${appRoot}/test/mock_stimuli_transform.js`),
-  DSProcessor = require(`${appRoot}/src/core/dsprocessor`),
+  DSVProcessor = require(`${appRoot}/src/core/dsprocessor`),
   EpochsProcessor = require(`${appRoot}/src/core/epprocessor`)
 ;
 
@@ -21,7 +21,7 @@ let stimuli = new Stimuli({
   objectMode: true
 });
 
-const epochs = new DSProcessor({
+const epochs = new DSVProcessor({
     stimuli:
       fs.createReadStream(`${appRoot}/test/dsprocessor/data/integral/stimuli45.csv`)
         .pipe(stimuliCSV)

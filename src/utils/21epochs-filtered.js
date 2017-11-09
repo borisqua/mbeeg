@@ -57,7 +57,7 @@ const
     // keys: [20],
     // channels: [1] //, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]
   })
-  , butterworth4 = new DSProcessor({
+  , butterworth4 = new DSVProcessor({
     action: Tools.butterworth4Bulanov
   , actionParameters: config.signal.dsp.vertical.methods.butterworth4Bulanov
   })

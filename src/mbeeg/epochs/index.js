@@ -9,7 +9,6 @@ class Epochs extends require('stream').Transform {
                 // , learning = false
                 , epochDuration
                 , processingSequence
-                , objectMode = true
               }) {
     super({objectMode: true});
     this.cycleLength = cycleLength;
@@ -18,7 +17,6 @@ class Epochs extends require('stream').Transform {
     this.epochDuration = epochDuration;
     this.processingSequence = processingSequence;
     this._stimuliCounter = 0;
-    this.objectMode = objectMode;
     
     this.epochsFIFO = [];
     this.samplesFIFO = [];
@@ -123,14 +121,11 @@ class Epochs extends require('stream').Transform {
   
   // noinspection JSUnusedGlobalSymbols
   _transform(epoch, encoding, cb) {
-    console.log(`--DEBUG::    DSProcessor::NextEpochReady--Key=${epoch.key} Epoch number=${epoch.number}`);
-    if (this.objectMode)
-      cb(null, epoch);//For output into objectType pipe
-    else
-      cb(null, JSON.stringify(epoch, null, 2)); //For output into process.stdout (and maybe TCP)
+    console.log(`--DEBUG::    DSVProcessor::NextEpochReady--Key=${epoch.key} Epoch number=${epoch.number}`);
+    cb(null, epoch);
   }
   
-  setCyclesLength(newValue){
+  setCyclesLength(newValue) {
     this.cycleLength = newValue;
   }
 }

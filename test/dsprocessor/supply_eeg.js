@@ -12,7 +12,7 @@ class EEG extends Readable {
   constructor(options = {objectMode: true}) {
     super(options);
     this.eegArray = [];
-    fs.createReadStream(`${appRoot}/test/dsprocessor/data/raweeg.csv`)
+    fs.createReadStream(`${appRoot}/test/DSVProcessor/data/raweeg.csv`)
       .on('error', (err) => {
         throw err;
       })

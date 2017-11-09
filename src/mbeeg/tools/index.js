@@ -15,6 +15,39 @@ const
  */
 class Tools {
   
+  static copyObject(sourceObject) {
+    let copy;
+    
+    // Handle the 3 simple types, and null or undefined
+    if (null == sourceObject || "object" != typeof sourceObject) return sourceObject;
+    // Handle Date
+    if (sourceObject instanceof Date) {
+      copy = new Date();
+      copy.setTime(sourceObject.getTime());
+      return copy;
+    }
+    
+    // Handle Array
+    if (sourceObject instanceof Array) {
+      copy = [];
+      for (let i = 0, len = sourceObject.length; i < len; i++) {
+        copy[i] = this.copyObject(sourceObject[i]);
+      }
+      return copy;
+    }
+    
+    // Handle Object
+    if (sourceObject instanceof Object) {
+      copy = {};
+      for (let attr in sourceObject) {
+        if (sourceObject.hasOwnProperty(attr)) copy[attr] = this.copyObject(sourceObject[attr]);
+      }
+      return copy;
+    }
+    
+    throw new Error("Unable to copy obj! Its type isn't supported.");
+  }
+  
   /**
    * Returns configuration object with information obtained from configuration file
    * @param {String} path - path to configuration file
@@ -97,7 +130,7 @@ class Tools {
    * @return {Array} time series filtered data (same size as input flow)
    */
   static butterworth4Bulanov({timeseries, samplingrate = 0, cutoff = 0, passthrough = false}) {
-    console.log(`dsp::butterworth4::timeseries.length = ${timeseries.length}`);
+    console.log(`               Tools::butterworth4::timeseries.length = ${timeseries.length}`);
     if (!timeseries.length) throw 'no timeseries in butterworth4';//return null;
     if (!cutoff || passthrough) return timeseries.slice();
     if (!samplingrate) throw 'Butterworth4 error! Non zero sampling rate parameter is required!';
@@ -163,29 +196,36 @@ class Tools {
    */
   static detrend({timeseries, normalized = false}) {
     try {
-      let n = timeseries.length;
-      let sumxy = 0;
-      for (let i = 0; i < n; i++) sumxy += (i + 1) * timeseries[i];
-      let sumx = n * (n + 1) / 2; //sum of the first n natural numbers
-      let sumy = 0;
-      for (let i = 0; i < n; i++) sumy += timeseries[i];
-      // let sumxx = Math.pow(n, 3) / 3 + Math.pow(n, 2) / 2 + n / 6; //sum of the squares of the first n natural numbers
-      let sumxx = n * (n + 1) * (2 * n + 1) / 6;//sum of the squares of the first n natural numbers
-      let a = (n * sumxy - sumx * sumy) / (n * sumxx - sumx * sumx);
-      let b = (sumy - a * sumx) / n;
+      console.log(`               Tools::detrend${normalized ? '_normalized' : '_absolute'}::timeseries.length = ${timeseries.length}`);
+      let
+        n = timeseries.length
+        , sumxy = 0
+        , sumy = 0
+        , sumx = n * (n + 1) / 2 //sum of the first n natural numbers
+        , sumxx = n * (n + 1) * (2 * n + 1) / 6 //sum of the squares of the first n natural numbers
+      ;
       
-      let trend = new Array(n);
-      let detrend = new Array(n);
+      for (let i = 0; i < n; i++) {
+        sumy += timeseries[i];
+        sumxy += (i + 1) * timeseries[i];
+      }
+      
+      let
+        a = (n * sumxy - sumx * sumy) / (n * sumxx - sumx * sumx)
+        , b = (sumy - a * sumx) / n
+        , trend = new Array(n)
+        , detrended = new Array(n)
+      ;
       
       for (let i = 0; i < n; i++) {
         trend[i] = (i + 1) * a + b;
         if (normalized)
-          detrend[i] = ((timeseries[i] / trend[i]) - 1) * 100; //if trend[i] traverses zero there will be a problem
+          detrended[i] = ((timeseries[i] / trend[i]) - 1) * 100; //if trend[i] traverses zero there will be a problem
         else
-          detrend[i] = timeseries[i] - trend[i];
+          detrended[i] = timeseries[i] - trend[i];
       }
       
-      return detrend;
+      return detrended;
     } catch (err) {
       throw err;
     }
@@ -273,7 +313,7 @@ class Stringifier extends Transform {
                 , endWith = ``
                 , indentationSpace = 0
                 , stringifyAll = false
-              }) {
+              } = {}) {
     super({objectMode: true});
     this.chunkBegin = chunkBegin;
     this.delimiter = chunksDelimiter;
@@ -302,26 +342,28 @@ class NTVerdictStringifier extends Stringifier {
     this.fields = options.fields;
   }
   
-  _transform(chunk, encoding, cb) {
+  _transform(verdicts, encoding, cb) {
     let output = this.chunkBegin;
     let running = false;
     
-    for (let i = 0; i < chunk.length; i++) {
-      output += running ? this.delimiter : '';
-      let running2 = false;
-      for (let j = 0; j < this.fields.length; j++) {
-        output += `${running2 ? this.delimiter : '{'} "${this.fields[j].name}": `;
-        if (this.fields[j].type === "literal") output += `"${this.fields[j].content}"`;
-        else if (this.fields[j].type === "id") output += `${i}`;
-        else if (this.fields[j].type === "value") output += `${chunk[i]}`;
-        
-        running2 = true;
+    for (let verdict of verdicts) {
+      for (let i = 0; i < verdict.length; i++) {
+        output += running ? this.delimiter : '';
+        let running2 = false;
+        for (let j = 0; j < this.fields.length; j++) {
+          output += `${running2 ? this.delimiter : '{'} "${this.fields[j].name}": `;
+          if (this.fields[j].type === "literal") output += `"${this.fields[j].content}"`;
+          else if (this.fields[j].type === "id") output += `${i}`;
+          else if (this.fields[j].type === "value") output += `${verdict[i]}`;
+          running2 = true;
+        }
+        output += `}`;
+        running = true
       }
-      output += `}`;
-      running = true
+      output += `${this.chunkEnd}`;
+      this.push(`${JSON.stringify(JSON.parse(output), null, this.space)}\r\n`);
     }
-    output += `${this.chunkEnd}`;
-    cb(null, `${JSON.stringify(JSON.parse(output), null, this.space)}\r\n`);
+    cb();
   }
   
 }
@@ -380,31 +422,24 @@ class Channels extends Transform {
 }
 
 class Sampler extends Transform {
-  constructor({
-                objectMode = true
-              }) {
+  constructor() {
     super({objectMode: true});
-    this.objectMode = objectMode;
   }
   
   _transform(samples, encoding, cb) {
-    let samplesLength = samples.length;
-    for (let s = 0; s < samplesLength; s++) {
-      if (this.objectMode) {
+    if (Array.isArray(samples[0])) {
+      let samplesLength = samples.length;
+      for (let s = 0; s < samplesLength; s++)
         this.push(`${samples[s].join()}\r\n`);
-      } else
-        this.push(JSON.stringify(samples[s]));
-    }
+    } else
+      this.push(`${samples.join()}\r\n`);
     cb();
   }
 }
 
 class EpochsHorizontalLogger extends Transform {
-  constructor({
-                objectMode = true
-              } = {}) {
+  constructor() {
     super({objectMode: true});
-    this.objectMode = objectMode;
   }
   
   _transform(epoch, encoding, cb) {
@@ -415,19 +450,13 @@ class EpochsHorizontalLogger extends Transform {
     row.unshift(epoch.cycle);
     row.unshift(epoch.key);
     row.unshift(epoch.timestamp);
-    if (this.objectMode)
-      cb(null, `${row.join()}\r\n`);
-    else
-      cb(null, JSON.stringify(row));
+    cb(null, `${row.join()}\r\n`);
   }
 }
 
 class EpochsVerticalLogger extends Transform {
-  constructor({
-                objectMode = true
-              } = {}) {
+  constructor() {
     super({objectMode: true});
-    this.objectMode = objectMode;
   }
   
   _transform(epoch, encoding, cb) {
@@ -446,10 +475,7 @@ class EpochsVerticalLogger extends Transform {
         row.unshift(epoch.key);
         row.unshift(timestamp);
         timestamp += delta;
-        if (this.objectMode)
-          this.push(`${row.join()}\r\n`);
-        else
-          this.push(JSON.stringify(row));
+        this.push(`${row.join()}\r\n`);
       }
     }
     cb();
@@ -457,32 +483,57 @@ class EpochsVerticalLogger extends Transform {
 }
 
 class FeatureHorizontalLogger extends Transform {
-  constructor({
-                objectMode = true
-                , stimuliIdArray
-              } = {}) {
+  constructor({stimuliIdArray}) {
     super({objectMode: true});
-    this.objectMode = objectMode;
     this.stimuliIdArray = stimuliIdArray;
   }
   
-  _transform(cycle, encoding, cb) {
+  _transform(features, encoding, cb) {
     let
-      row = []
-      , channels = cycle[this.stimuliIdArray[0]].length;
+      row
+      , channels = features[this.stimuliIdArray[0]].length
     ;
     
     for (let key of this.stimuliIdArray) {
       row = [];
       for (let ch = 0; ch < channels; ch++)
-        row.unshift(...cycle[key][ch]);
+        row.push(...features[key][ch]);
       
       row.unshift(key);
       
-      if (this.objectMode)
-        this.push(`${row.join()}\r\n`);
-      else
-        this.push(JSON.stringify(row));
+      this.push(`${row.join()}\r\n`);
+    }
+    cb();
+  }
+  
+  setStimuliIdArray(newArray) {
+    this.stimuliIdArray = newArray;
+  }
+  
+}
+
+class FeatureVerticalLogger extends Transform {
+  constructor({stimuliIdArray}) {
+    super({objectMode: true});
+    this.stimuliIdArray = stimuliIdArray;
+  }
+  
+  _transform(features, encoding, cb) {
+    let
+      row
+      , channels = features[this.stimuliIdArray[0]].length
+      , samples = features[this.stimuliIdArray[0]][0].length
+    ;
+    
+    for (let key of this.stimuliIdArray) {
+      for (let ch = 0; ch < channels; ch++) {
+        for (let s = 0; s < samples; s++) {
+          row = [];
+          row.push(key);
+          row.push(features[key][ch][s]);
+          this.push(`${row.join()}\r\n`);
+        }
+      }
     }
     cb();
   }
@@ -504,4 +555,5 @@ module.exports = {
   , EpochsHorizontalLogger: EpochsHorizontalLogger
   , EpochsVerticalLogger: EpochsVerticalLogger
   , FeatureHorizontalLogger: FeatureHorizontalLogger
+  , FeatureVerticalLogger: FeatureVerticalLogger
 };

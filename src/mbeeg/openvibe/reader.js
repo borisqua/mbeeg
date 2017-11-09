@@ -6,12 +6,8 @@
  * openViBE stream, such as samplingRate, data matrix and description of its dimensions, sizes, column/row names etc.
  */
 class OVStreamReader extends require('stream').Transform {
-  constructor({
-                ovStream,
-                objectMode = true
-              }={}) {
+  constructor() {
     super({objectMode: true});
-    this.objectMode = objectMode;
     this.header = {
       timestamp: 0,
       samplingRate: 0,
@@ -25,7 +21,6 @@ class OVStreamReader extends require('stream').Transform {
     };
   }
   
-  // ovStream.on(`data`, chunk => {
   _getSamples(ovStreamJsonChunk) {
     if (!this.header.samplingRate)
       this.header.samplingRate = this._getChildProperties(ovStreamJsonChunk, `OVTK_NodeId_Header_Signal_SamplingRate`).value;
@@ -159,19 +154,13 @@ class OVStreamReader extends require('stream').Transform {
           matrixContainer.matrix.dimensions[d][l] = labels[l].value;
         }
       }
-    } else {
-    
     }
   }
   
   // noinspection JSUnusedGlobalSymbols
   _transform(ovStreamJsonChunk, encoding, cb) {
     let samples = this._getSamples(ovStreamJsonChunk);
-    if (this.objectMode) {
-      cb(null, samples);
-    } else {
-      cb(null, `${JSON.stringify(samples, null, 2)}\n`);
-    }
+    cb(null, samples);
   }
 }
 

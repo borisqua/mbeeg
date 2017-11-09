@@ -11,7 +11,7 @@ module.exports = {
   , DSVProcessor: require('./dsvprocessor')
   , DSHProcessor: require('./dshprocessor')
   , Classifier: require('./classifier')
-  , DecisionMaker: require('./decisionmaker')
+  , Decisions: require('./decisions')
   
   //Helpers
   , Tools: require('./tools').Tools
@@ -24,5 +24,6 @@ module.exports = {
   , EpochsHorizontalLogger: require('./tools').EpochsHorizontalLogger
   , EpochsVerticalLogger: require('./tools').EpochsVerticalLogger
   , FeatureHorizontalLogger: require('./tools').FeatureHorizontalLogger
+  , FeatureVerticalLogger: require('./tools').FeatureVerticalLogger
   
 };

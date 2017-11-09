@@ -2,7 +2,6 @@
 
 class Stimuli extends require('stream').Readable {
   constructor({
-                objectMode = true,
                 learning = false,
                 learningCycleDuration = 0,
                 stimuliIdArray = [],
@@ -14,9 +13,12 @@ class Stimuli extends require('stream').Readable {
                     return Math.random() - 0.5;
                   })
                 },
-                nextTarget = (arr, previousTarget, learningCycle) => {
-                  if (previousTarget++ > arr.length - 1)
-                    return previousTarget = learningCycle = 0;
+                nextTarget = (arr, previousTarget, learningCycle) => {//TODO learning mode
+                  if (++previousTarget > arr.length - 1) {
+                    // previousTarget = 0;
+                    // learningCycle = 0;
+                    return 0;
+                  }
                   else {
                     learningCycle++;
                     return previousTarget;
@@ -31,7 +33,6 @@ class Stimuli extends require('stream').Readable {
     this.stimulusCycleDuration = signalDuration + pauseDuration;
     this.stimulusCycle = -1;
     this.currentStimulus = 0;
-    this.objectMode = objectMode;
     this.learning = learning;
     this.learningDuration = learningCycleDuration;
     this.currentLearningCycle = 0;
@@ -62,15 +63,12 @@ class Stimuli extends require('stream').Readable {
       
       this.stimulus = [
         new Date().getTime()
-        ,this.stimuliIdArray[this.currentStimulus]
-        ,this.learning && this.currentStimulus === this.currentTargetStimulus ? 1 : 0 //target field = in learning mode - true if target key, false if not, and null in online mode
-        ,this.stimulusCycle//TODO problems with cycles counting
+        , this.stimuliIdArray[this.currentStimulus]
+        , this.learning && this.currentStimulus === this.currentTargetStimulus ? 1 : 0 //target field = in learning mode - true if target key, false if not, and null in online mode
+        , this.stimulusCycle//TODO consider problems with cycles counting from stimuli/samples to classification/decision levels
       ];
-      
-      if (this.objectMode) {
-        this.push(this.stimulus)
-      } else
-        this.push(`${JSON.stringify(this.stimulus)}`);
+  
+      this.push(this.stimulus);
       
       this._checkCycles();
       

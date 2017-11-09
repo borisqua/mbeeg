@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <file url="PROJECT" libraries="{GSAP, angular, chai-DefinitelyTyped, electron-DefinitelyTyped, jQuery-2.0.0, jquery, mocha-DefinitelyTyped}" />
+    <file url="PROJECT" libraries="{GSAP, jQuery-2.0.0}" />
     <includedPredefinedLibrary name="Node.js Core" />
     <includedPredefinedLibrary name="WebGL" />
+    <excludedPredefinedLibrary name="localhost.chrome/brain/node_modules" />
   </component>
 </project>

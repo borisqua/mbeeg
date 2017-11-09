@@ -2,7 +2,7 @@
 const
   fs = require('fs'),
   csv = require('csv'),
-  dsProcessor = require(`./core/dsprocessor`);
+  dsProcessor = require(`./core/dsvrocessor`);
 
 let
   parser = csv.parse(),

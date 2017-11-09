@@ -26,7 +26,7 @@ stimuli dataflow from some stimuli source by abstract interface
 ## TODO
 
 ### Core
-#### dsprocessor
+#### DSVProcessor
 1. ~~Test on gauge dataset~~
 2. ~~Pipe stimuli from keyboard~~
 3. Using external Math/Stat/NN libraries

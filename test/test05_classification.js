@@ -8,7 +8,7 @@ const
   EEG = require(`${appRoot}/src/core/dsprocessor/eeg.js`),
   Stimuli = require(`${appRoot}/test/mock_stimuli_transform.js`),
   Classifier = require(`${appRoot}/src/core/classifier`),
-  DSProcessor = require(`${appRoot}/src/core/dsprocessor`),
+  DSVProcessor = require(`${appRoot}/src/core/dsprocessor`),
   EpochsProcessor = require(`${appRoot}/src/core/epprocessor`);
 
 let eeg = new EEG({
