@@ -488,7 +488,8 @@ class FeatureHorizontalLogger extends Transform {
     this.stimuliIdArray = stimuliIdArray;
   }
   
-  _transform(features, encoding, cb) {
+  _transform(chunk, encoding, cb) {
+    let features = Tools.copyObject(chunk);
     let
       row
       , channels = features[this.stimuliIdArray[0]].length

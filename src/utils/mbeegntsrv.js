@@ -6,14 +6,15 @@ const
   , fileStimuli = fs.createWriteStream(`./logs/00stim.csv`)
   , fileSamples = fs.createWriteStream(`./logs/01samp.csv`)
   , fileEpochsRawH = fs.createWriteStream(`./logs/10ep-raw-h.csv`)
-  // , fileEpochsRawV = fs.createWriteStream(`./logs/11ep-raw-v.csv`)
   , fileEpochsFilterH = fs.createWriteStream(`./logs/20ep-filt-h.csv`)
-  // , fileEpochsFilterV = fs.createWriteStream(`./logs/21ep-filt-v.csv`)
   , fileEpochsDetrendH = fs.createWriteStream(`./logs/30ep-detr-h.csv`)
-  // , fileEpochsDetrendV = fs.createWriteStream(`./logs/31ep-detr-v.csv`)
   , fileEpochsDetrendNormH = fs.createWriteStream(`./logs/32ep-detr-norm-h.csv`)
-  // , fileEpochsDetrendNormV = fs.createWriteStream(`./logs/32ep-detr-norm-v.csv`)
   , fileFeaturesH = fs.createWriteStream(`./logs/40feat-h.csv`)
+  , fileFeaturesWindowedH = fs.createWriteStream(`./logs/50featw-h.csv`)
+  // , fileEpochsRawV = fs.createWriteStream(`./logs/11ep-raw-v.csv`)
+  // , fileEpochsFilterV = fs.createWriteStream(`./logs/21ep-filt-v.csv`)
+  // , fileEpochsDetrendV = fs.createWriteStream(`./logs/31ep-detr-v.csv`)
+  // , fileEpochsDetrendNormV = fs.createWriteStream(`./logs/32ep-detr-norm-v.csv`)
   // , fileFeaturesV = fs.createWriteStream(`./logs/41feat-v.csv`)
   , {PassThrough} = require('stream')
   , ntStimuli = new PassThrough({objectMode: true})
@@ -54,15 +55,20 @@ const
       {name: "weight", type: "value"}]
   })
   , epochsRawH = new EpochsHorizontalLogger()
-  // , epochsRawV = new EpochsVerticalLogger()
   , epochsFilteredH = new EpochsHorizontalLogger()
-  // , epochsFilteredV = new EpochsVerticalLogger()
   , epochsDetrendedH = new EpochsHorizontalLogger()
-  // , epochsDetrendedV = new EpochsVerticalLogger()
   , epochsDetrendedNormalizedH = new EpochsHorizontalLogger()
+  // , epochsRawV = new EpochsVerticalLogger()
+  // , epochsFilteredV = new EpochsVerticalLogger()
+  // , epochsDetrendedV = new EpochsVerticalLogger()
   // , epochsDetrendedNormalizedV = new EpochsVerticalLogger()
   , featuresH = new FeatureHorizontalLogger({
     stimuliIdArray: config.stimulation.sequence.stimuli
+  })
+  , featuresWindowedH = new FeatureHorizontalLogger({
+    stimuliIdArray: config.stimulation.sequence.stimuli
+    , start: config.classification.methods.absIntegral.start
+    , window: config.classification.methods.absIntegral.window
   })
   , featuresV = new FeatureVerticalLogger({
     stimuliIdArray: config.stimulation.sequence.stimuli
@@ -179,6 +185,7 @@ const
                   epochs.setCyclesLength(stimuliIdArray.length);
                   epochSeries.reset(stimuliIdArray);
                   featuresH.setStimuliIdArray(stimuliIdArray);
+                  featuresWindowedH.setStimuliIdArray(stimuliIdArray);
                   featuresV.setStimuliIdArray(stimuliIdArray);
                   running = true;
                   ntStimuli.resume();
@@ -211,6 +218,7 @@ const
                         // fileEpochsDetrendNormV.end();
                         fileFeaturesH.end();
                         // fileFeaturesV.end();
+                        fileFeaturesWindowedH.end();
                         process.exit(0);
                       }
                     } else
@@ -229,61 +237,37 @@ const
         if (count === 1) {
           if (config.signal.cycles) {//log samples, epochs and features into files
             ntStimuli
-              .on('error', error => {throw error;})
               .pipe(stimuler)
-              .on('error', error => {throw error;})
-              .pipe(fileStimuli)
-              .on('error', error => {throw error;});
+              .pipe(fileStimuli);
             samples
-              .on('error', error => {throw error;})
               .pipe(sampler)
-              .on('error', error => {throw error;})
-              .pipe(fileSamples)
-              .on('error', error => {throw error;});
+              .pipe(fileSamples);
             epochs
-              .on('error', error => {throw error;})
               .pipe(butterworth4)
-              .on('error', error => {throw error;})
               .pipe(detrendNormalized)
-              .on('error', error => {throw error;})
               .pipe(epochSeries)
-              .on('error', error => {throw error;})
-              .pipe(features)
-              .on('error', error => {throw error;});
+              .pipe(features);
             
             //output epochs data to files
             epochs
-              .on('error', error => {throw error;})
               .pipe(epochsRawH)
-              .on('error', error => {throw error;})
-              .pipe(fileEpochsRawH)
-              .on('error', error => {throw error;});
+              .pipe(fileEpochsRawH);
             butterworth4
-              .on('error', error => {throw error;})
               .pipe(detrend)
-              .on('error', error => {throw error;})
               .pipe(epochsDetrendedH)
-              .on('error', error => {throw error;})
-              .pipe(fileEpochsDetrendH)
-              .on('error', error => {throw error;});
+              .pipe(fileEpochsDetrendH);
             butterworth4
-              .on('error', error => {throw error;})
               .pipe(epochsFilteredH)
-              .on('error', error => {throw error;})
-              .pipe(fileEpochsFilterH)
-              .on('error', error => {throw error;});
+              .pipe(fileEpochsFilterH);
             detrendNormalized
-              .on('error', error => {throw error;})
               .pipe(epochsDetrendedNormalizedH)
-              .on('error', error => {throw error;})
-              .pipe(fileEpochsDetrendNormH)
-              .on('error', error => {throw error;});
+              .pipe(fileEpochsDetrendNormH);
             features
-              .on('error', error => {throw error;})
               .pipe(featuresH)
-              .on('error', error => {throw error;})
-              .pipe(fileFeaturesH)
-              .on('error', error => {throw error;});
+              .pipe(fileFeaturesH);
+            features
+              .pipe(featuresWindowedH)
+              .pipe(fileFeaturesWindowedH);
             // epochs.pipe(epochsRawV).pipe(fileEpochsRawV);
             // butterworth4.pipe(epochsFilteredV).pipe(fileEpochsFilterV);
             // detrend.pipe(epochsDetrendedV).pipe(fileEpochsDetrendV);
@@ -291,15 +275,10 @@ const
             // features.pipe(featuresV).pipe(fileFeaturesV);
           } else {
             epochs
-              .on('error', error => {throw error;})
               .pipe(butterworth4)
-              .on('error', error => {throw error;})
               .pipe(detrendNormalized)
-              .on('error', error => {throw error;})
               .pipe(epochSeries)
-              .on('error', error => {throw error;})
-              .pipe(features)
-              .on('error', error => {throw error;});
+              .pipe(features);
           }
           //start piping to first connected socket
           features.pipe(classifier);
@@ -323,6 +302,22 @@ const
     \r\n\r\n`)
   });
 
-openVibeClient.on(`close`, () => console.log(`Open ViBE connection closed`));
+// let ovConnAttemptCounter = 1;
+openVibeClient
+  .on(`close`, () => {
+    console.log(`OpenViBE connection closed.`);
+    // console.log(`OpenViBE connection closed. Trying to reconnect ...`);
+    // while (true) {
+    //   setInterval(() => {
+    //     openVibeClient.connect(config.signal.port, config.signal.host, () => {})
+    //   }, 5000);
+    //   ovConnAttemptCounter++;
+    // }
+  })
+// .on(`error`, error => {
+//   console.log(`No response from OpenViBE acquisition server.
+// Connection attempt ${ovConnAttemptCounter} failed.`)
+// })
+;
 mbEEGServer.on(`close`, () => console.log(`mbEEG sever verdict service closed.`));
 
