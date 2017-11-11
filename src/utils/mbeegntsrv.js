@@ -11,6 +11,8 @@ const
   , fileEpochsDetrendNormH = fs.createWriteStream(`./logs/32ep-detr-norm-h.csv`)
   , fileFeaturesH = fs.createWriteStream(`./logs/40feat-h.csv`)
   , fileFeaturesWindowedH = fs.createWriteStream(`./logs/50featw-h.csv`)
+  , fileVerdictsAbsH = fs.createWriteStream(`./logs/60verdabs-h.csv`)
+  , fileVerdictsNormH = fs.createWriteStream(`./logs/62verdnorm-h.csv`)
   // , fileEpochsRawV = fs.createWriteStream(`./logs/11ep-raw-v.csv`)
   // , fileEpochsFilterV = fs.createWriteStream(`./logs/21ep-filt-v.csv`)
   // , fileEpochsDetrendV = fs.createWriteStream(`./logs/31ep-detr-v.csv`)
@@ -136,7 +138,14 @@ const
   , classifier = new Classifier({
     method: Tools.absIntegral
     , methodParameters: config.classification.methods.absIntegral
+    , postprocessing: Tools.normalizeVectorBySum
   })
+  , classifierAbs = new Classifier({
+    method: Tools.absIntegral
+    , methodParameters: config.classification.methods.absIntegral
+  })
+  , verdictsAbs = new Sampler()//TODO unify sampling and other logging preparations in mbeeg.Tools helpers library
+  , verdictsNorm = new Sampler()
   , decisions = new Decisions(config.decision.methods.majority)
 ;
 
@@ -282,6 +291,9 @@ const
           }
           //start piping to first connected socket
           features.pipe(classifier);
+          features.pipe(classifierAbs);
+          classifierAbs.pipe(verdictsAbs).pipe(fileVerdictsAbsH);
+          classifier.pipe(verdictsNorm).pipe(fileVerdictsNormH);
           //classifier.pipe to csv and then to file
           classifier.pipe(ntVerdictStringifier).pipe(socket);
           classifier.pipe(decisions).pipe(ntDecisionStringifier).pipe(socket);

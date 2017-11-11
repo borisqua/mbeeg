@@ -78,6 +78,13 @@
       "absIntegral": {
         "start": 200,
         "window": 300
+      },
+      "postprocessing": {
+        "methods":{
+          "normalizeVectorBySum":{
+            "vector":[]
+          }
+        }
       }
     }
   },

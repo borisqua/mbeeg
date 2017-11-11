@@ -22,7 +22,8 @@ class Decisions extends require('stream').Transform {
   }
   
   // noinspection JSUnusedGlobalSymbols
-  _transform(verdicts, encoding, cb) {
+  _transform(chunk, encoding, cb) {
+    let verdicts = require('mbeeg').Tools.copyObject(chunk);
     for (let verdict of verdicts)
       if (++this.overallCounter >= this.start) {
         this.result = verdict;

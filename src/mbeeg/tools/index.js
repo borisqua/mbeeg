@@ -121,6 +121,15 @@ class Tools {
   }
   
   /**
+   * @function normalizeVecotorBySum calculates values of vector elements if norm equal to sum of vector elements
+   * @param vector - vector to normolize
+   */
+  static normalizeVectorBySum(vector) {
+    let sum = vector.reduce((a, b) => a + b);
+    return vector.map(v => v / sum);//normalization
+  }
+  
+  /**
    * lowpass fourth order Butterworth filter with zero-phase (or forward backward filtering)
    *
    * @param {Array} timeseries - stream, buffer or object with values to filter
@@ -482,10 +491,16 @@ class EpochsVerticalLogger extends Transform {
   }
 }
 
-class FeatureHorizontalLogger extends Transform {
-  constructor({stimuliIdArray}) {
+class FeatureHorizontalLogger extends Transform {//TODO eliminate start, window and other Bulanov's demands for windowed features
+  constructor({
+                stimuliIdArray
+                , start = 0
+                , window = 0
+              }) {
     super({objectMode: true});
     this.stimuliIdArray = stimuliIdArray;
+    this.start = start;
+    this.window = window;
   }
   
   _transform(chunk, encoding, cb) {
@@ -493,12 +508,21 @@ class FeatureHorizontalLogger extends Transform {
     let
       row
       , channels = features[this.stimuliIdArray[0]].length
+      , start = Math.round(this.start * features[this.stimuliIdArray[0]][0].length / 1000)
+      , window = Math.round(start + this.window * features[this.stimuliIdArray[0]][0].length / 1000)
     ;
     
     for (let key of this.stimuliIdArray) {
       row = [];
       for (let ch = 0; ch < channels; ch++)
-        row.push(...features[key][ch]);
+        if (!this.window)
+          row.push(...features[key][ch]);
+        else {
+          console.log(`all features length ${features[this.stimuliIdArray[0]][0].length} windowed features start ${start} and window ${window}`);
+          for (let i = start; i < window; i++) {
+            row.push(features[key][ch][i]);
+          }
+        }
       
       row.unshift(key);
       
