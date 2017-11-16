@@ -45,7 +45,7 @@ class Stimuli extends require('stream').Readable {
   }
   
   reset({stimuliIdArray, stimulusDuration, pauseDuration}) {
-    this.stimuliIdArray = stimuliIdArray;
+    this.stimuliIdArray = stimuliIdArray.slice();
     this.signalDuration = stimulusDuration;
     this.pauseDuration = pauseDuration;
     this.stimulusCycle = -1;

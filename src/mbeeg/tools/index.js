@@ -4,6 +4,7 @@ const
   , fs = require('fs')
   // , fili = require('fili')
   // , json2csv = require('json2csv')
+  , log = require('debug')('mbeeg:Tools')
 ;
 
 /**
@@ -114,8 +115,8 @@ class Tools {
    */
   static absIntegral({feature, start, window}) {
     let //feature length equal to sampling rate
-      begin = feature.length * start / 1000,
-      end = begin + feature.length * window / 1000
+      begin = Math.round(feature.length * start / 1000),
+      end = Math.round(begin + feature.length * window / 1000)
     ;
     return Math.abs(feature.slice(begin, end).reduce((acc, val) => acc + Math.abs(val), 0));
   }
@@ -139,7 +140,7 @@ class Tools {
    * @return {Array} time series filtered data (same size as input flow)
    */
   static butterworth4Bulanov({timeseries, samplingrate = 0, cutoff = 0, passthrough = false}) {
-    console.log(`               Tools::butterworth4::timeseries.length = ${timeseries.length}`);
+    log(`               ::butterworth4::timeseries.length = ${timeseries.length}`);
     if (!timeseries.length) throw 'no timeseries in butterworth4';//return null;
     if (!cutoff || passthrough) return timeseries.slice();
     if (!samplingrate) throw 'Butterworth4 error! Non zero sampling rate parameter is required!';
@@ -205,7 +206,7 @@ class Tools {
    */
   static detrend({timeseries, normalized = false}) {
     try {
-      console.log(`               Tools::detrend${normalized ? '_normalized' : '_absolute'}::timeseries.length = ${timeseries.length}`);
+      log(`               ::detrend${normalized ? '_normalized' : '_absolute'}::timeseries.length = ${timeseries.length}`);
       let
         n = timeseries.length
         , sumxy = 0
@@ -415,7 +416,7 @@ class Channels extends Transform {
   // noinspection JSUnusedGlobalSymbols
   _transform(epoch, encoding, cb) {
     if (!this.keys.length || this.keys.includes(epoch.key)) {
-      let result = `Cycle: ${epoch.number} - `;
+      let result = `Epoch number: ${epoch.number} - `;
       for (let chN = 0; chN < epoch.channels.length; chN++) {
         if (!this.channels.length || this.channels.includes(chN)) {
           let fieldName = `key${('0' + epoch.key).substr(-2)}::ch${('0' + chN).substr(-2)}`;
@@ -518,7 +519,7 @@ class FeatureHorizontalLogger extends Transform {//TODO eliminate start, window 
         if (!this.window)
           row.push(...features[key][ch]);
         else {
-          console.log(`all features length ${features[this.stimuliIdArray[0]][0].length} windowed features start ${start} and window ${window}`);
+          log(`all features length ${features[this.stimuliIdArray[0]][0].length} windowed features start ${start} and window ${window}`);
           for (let i = start; i < window; i++) {
             row.push(features[key][ch][i]);
           }

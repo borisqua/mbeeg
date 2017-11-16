@@ -2,6 +2,7 @@
 
 const
   Net = require('net')
+  , log = require('debug')('utils:mbeegntsrv')
   , fs = require('fs')
   , fileStimuli = fs.createWriteStream(`./logs/00stim.csv`)
   , fileSamples = fs.createWriteStream(`./logs/01samp.csv`)
@@ -131,7 +132,7 @@ const
   })
   , epochSeries = new EpochSeries({
     stimuliIdArray: config.stimulation.sequence.stimuli
-    , depth: config.signal.dsp.horizontal.methods.absIntegral.depth
+    // , depth: config.decision.methods.majority.cycles
     , incremental: config.signal.dsp.horizontal.methods.absIntegral.incremental
   })
   , features = new DSHProcessor()
@@ -151,6 +152,7 @@ const
 
 let
   stimuliIdArray = []
+  , stimulusNumber = -1
   , lastEpoch = 0
   , stimulus = []
   , running = false
@@ -182,16 +184,16 @@ const
               // console.log(JSON.stringify(message, null, 0));
               switch (message.class) {
                 case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings"://SETTINGS
-                  console.log(`--DEBUG::mbeegntsrv::OnData:::\r\n ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings`);
-                  console.log(`OK`);
+                  log(`  ::mbeegntsrv::OnData::: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings`);
+                  console.log(`NT have started.`);
                   break;
                 case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings"://SCENE SETTINGS
                   stimuliIdArray = message.objects;
                   if (!lastEpoch)
-                    lastEpoch = config.signal.cycles * stimuliIdArray.length;
-                  console.log(`--DEBUG::mbeegntsrv::OnData::\r\nclass: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings`);
-                  console.log(`objects: ${JSON.stringify(stimuliIdArray)}`);
-                  epochs.setCyclesLength(stimuliIdArray.length);
+                    lastEpoch = config.signal.cycles * stimuliIdArray.length - 1;
+                  log(`::NT scene settings:: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings`);
+                  log(`::NT scene settings:: stimuli idarray: ${JSON.stringify(stimuliIdArray)}`);
+                  epochs.reset(stimuliIdArray.length);
                   epochSeries.reset(stimuliIdArray);
                   featuresH.setStimuliIdArray(stimuliIdArray);
                   featuresWindowedH.setStimuliIdArray(stimuliIdArray);
@@ -200,21 +202,21 @@ const
                   ntStimuli.resume();
                   break;
                 case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop":
-                  console.log(`--DEBUG::mbeegntsrv::OnData::\r\nru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop`);
+                  log(`::NT stops stimulation`);
                   running = false;
                   ntStimuli.pause();
                   console.log(`Stimuli flow has stopped...`);
                   break;
                 case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellFlashing":
                   if (running) {
+                    stimulusNumber++;
                     stimulus = [message.timestamp, message.cellId, 0];
                     ntStimuli.write(stimulus);
                     
-                    let epochInProcess = epochSeries.epochInWork ? epochSeries.epochInWork : 0;
                     if (lastEpoch) {
-                      console.log(`--DEBUG::mbeegntsrv::OnData::MbeegEventCellFlashing ${[stimulus]}; cycle = ${Math.ceil(epochInProcess / stimuliIdArray.length)}; last cycle set to ${lastEpoch / stimuliIdArray.length}`);
-                      if (epochInProcess > lastEpoch) {
-                        console.log(`--DEBUG::mbeegntsrv::OnData::MbeegEventCellFlashing - exit due to reaching cycles limit set by config.signal.cycles`);
+                      log(`  ::NT has sent next stimulus [${[stimulus]}] key/#/cycle ${stimulus[1]}/${stimulusNumber}/${Math.floor(stimulusNumber / stimuliIdArray.length)}; last epoch/cycle set to ${lastEpoch}/${Math.floor(lastEpoch / stimuliIdArray.length)}`);
+                      if (stimulusNumber > lastEpoch) {
+                        log(`  ::Exit due to reaching cycles limit set by config.signal.cycles`);
                         fileStimuli.end();
                         fileSamples.end();
                         fileEpochsRawH.end();
@@ -231,11 +233,11 @@ const
                         process.exit(0);
                       }
                     } else
-                      console.log(`--DEBUG::mbeegntsrv::OnData::MbeegEventCellFlashing ${[stimulus]}; cycle = ${Math.ceil(epochInProcess / stimuliIdArray.length)}; `);
+                      log(`  ::NT has sent next stimulus [${[stimulus]}]; key/#/cycle ${stimulus[1]}/${stimulusNumber}/${Math.floor(stimulusNumber / stimuliIdArray.length)}; `);
                   }
                   break;
                 default:
-                  console.log("--DEBUG::mbeegntsrv::OnData:: ntClient undefined message...");
+                  log("NT has sent undefined message...");
               }
             }
           }

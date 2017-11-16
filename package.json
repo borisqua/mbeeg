@@ -24,6 +24,7 @@
   "homepage": "https://github.com/borisqua/mbERP#readme",
   "devDependencies": {
     "csv-streamify": "^3.0.4",
+    "debug": "^3.1.0",
     "electron-debug": "^1.2.0",
     "electron-inspector": "^0.1.4",
     "electron-rebuild": "^1.5.11",

@@ -20,6 +20,8 @@ html
 						label(for="randomSpeed0" ) scale
 						label(for="randomSpeed0" ) random
 						label(for="randomSpeed0" ) reverse
+						//label(for="randomSpeed0" ) easing
+						//label(for="randomSpeed0" ) bezier
 					.inputbox
 						label.centered(for="speedSlider0" ) row 1
 						input.centered.ui-slider(type="range" min="0" max="1" step="0.01" value="0" id="speedSlider0" index="0")
@@ -29,6 +31,13 @@ html
 						label(for="reverseMovement0" ) &nbsp;
 						input.reverse(type="checkbox" id="reverseMovement0" index="0")
 						label(for="reverseMovement0" ) &nbsp;
+						//input(type="checkbox" id="bezier" )
+						//select(id="easing")
+						//	option linear
+						//	option swing
+						//	option rough
+						//	option(selected=true) slow motion
+						//	option stepped
 					.inputbox
 						label.centered(for="speedSlider1" ) row 2
 						input.centered.ui-slider(type="range" min="0" max="1" step="0.01" value="0" id="speedSlider1" index="1")
@@ -47,34 +56,35 @@ html
 						label(for="reverseMovement2" ) &nbsp;
 						input.reverse(type="checkbox" id="reverseMovement2" index="2")
 						label(for="reverseMovement2" ) &nbsp;
-				fieldset(class="effects")
-					legend effects
-					.inputbox
-						label(for="bezier" ) add bezier path
-						input(type="checkbox" id="bezier" )
-					.inputbox
-						label(for="easing" ) easing
-						select(id="easing")
-							option linear
-							option swing
-							option rough
-							option(selected=true) slow motion
-							option stepped
-					.inputbox
-						button(id="restart") restart
-					.inputbox
+				//fieldset(class="effects")
+					//legend effects
+					//.inputbox
+						//label(for="bezier" ) add bezier path
+						//input(type="checkbox" id="bezier" )
+					//.inputbox
+						//label(for="easing" ) easing
+						//select(id="easing")
+						//	option linear
+						//	option swing
+						//	option rough
+						//	option(selected=true) slow motion
+						//	option stepped
+					//.inputbox
+					//	button(id="restart") restart
+					//.inputbox
 				fieldset(class="stimuli")
 					legend stimuli
 					.inputbox
-						label(for="effect")
-							stimulus type
-						select(id="effect")
-							option size
-							option shake
-							option shine
-							option turn
-					.inputbox
-					.inputbox
+						label(for="changeSize")
+							stimulus type</br>
+						label(for="changeSize" ) &nbsp change size </br>
+						input.rnd(type="checkbox" id="changeSize" index="1")
+						label(for="shine" ) &nbsp shine</br>
+						input.rnd(type="checkbox" id="shine" index="1")
+						label(for="shake" ) &nbsp shake </br>
+						input.rnd(type="checkbox" id="shake" index="1")
+						label(for="turn" ) &nbsp turn </br>
+						input.rnd(type="checkbox" id="turn" index="1")
 					.inputbox
 
 		footer

@@ -1,4 +1,5 @@
 "use strict";
+const log = require('debug')('mbeeg:DSHProcessor');
 
 /**
  * @class classifier transforms input sample sequence into array of pairs (identity, probability of identification)
@@ -13,7 +14,7 @@ class DSHProcessor extends require('stream').Transform {
   
   // noinspection JSUnusedGlobalSymbols
   _transform(cycle, encoding, cb) {
-    console.log(`--DEBUG::           DSHProcessor::NextFeatureReady--`);
+    log(`           ::NextFeatureReady--`);
     cb(
       null,
       cycle.map(key =>//TODO action with epochs-pack should be passed as parameter

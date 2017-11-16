@@ -1,4 +1,5 @@
 "use strict";
+const log = require('debug')('mbeeg:Epochs');
 
 class Epochs extends require('stream').Transform {
   constructor({
@@ -16,7 +17,7 @@ class Epochs extends require('stream').Transform {
     // this.learning = learning;
     this.epochDuration = epochDuration;
     this.processingSequence = processingSequence;
-    this._stimuliCounter = 0;
+    this.stimuliCounter = 0;
     
     this.epochsFIFO = [];
     this.samplesFIFO = [];
@@ -29,7 +30,7 @@ class Epochs extends require('stream').Transform {
       
       let epoch = {};
       epoch.key = stimulus[1];
-      epoch.number = this._stimuliCounter++;
+      epoch.number = this.stimuliCounter++;
       epoch.cycle = Math.floor(epoch.number / this.cycleLength);
       epoch.duration = this.epochDuration;
       epoch.samplingRate = samples.header.samplingRate;
@@ -66,8 +67,8 @@ class Epochs extends require('stream').Transform {
         }
         if (samplesDeficit) break;
       }
-      // console.log(`---- epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}`);//  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
-      // console.log(`---- epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
+      // log(`---- epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}`);//  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
+      // log(`---- epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
     });
     
     samples.on('data', chunk => {
@@ -96,11 +97,11 @@ class Epochs extends require('stream').Transform {
             break;
         this.samplesFIFO.splice(0, s);
       }
-      // console.log(`ssss epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}`);//  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
+      // log(`ssss epochs: ${this.epochsFIFO.length}; samples: ${this.samplesFIFO.length}`);//  ${this.epochsFIFO[0].timestamp} ${this.timestamp} delta(e-s): ${this.epochsFIFO[0].timestamp - this.timestamp}`);
     });
     
     function _firstSampleOfEpoch(context, epoch, sampleTimestamp) {
-      // console.log(sampleTimestamp >= epoch.timestamp && sampleTimestamp <= epoch.timestamp + epoch.duration);
+      // log(sampleTimestamp >= epoch.timestamp && sampleTimestamp <= epoch.timestamp + epoch.duration);
       return (sampleTimestamp >= epoch.timestamp) && (sampleTimestamp <= epoch.timestamp + context.samplingStep);
     }
     
@@ -121,12 +122,13 @@ class Epochs extends require('stream').Transform {
   
   // noinspection JSUnusedGlobalSymbols
   _transform(epoch, encoding, cb) {
-    console.log(`--DEBUG::    DSVProcessor::NextEpochReady--Key=${epoch.key} Epoch number=${epoch.number}`);
+    log(`        ::NextEpochReady-- Epoch key/#/cycle - ${epoch.key}/${epoch.number}/${epoch.cycle}`);
     cb(null, epoch);
   }
   
-  setCyclesLength(newValue) {
+  reset(newValue) {
     this.cycleLength = newValue;
+    this.stimuliCounter = 0;
   }
 }
 

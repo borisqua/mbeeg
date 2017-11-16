@@ -1,6 +1,6 @@
-@import "misc";
-@import "variables";
-@import "mixins";
+@import "_misc";
+@import "_variables";
+@import "_mixins";
 
 //Fonts
 $mainFont: sans-serif;
@@ -13,6 +13,8 @@ html {
     //@include drawBorder(lightgrey);
     font: normal 100% $mainFont;
     min-height: 100%;
+    //background-color: #222222;
+    background: repeating-linear-gradient(45deg, #2b2b2b 0%, #2b2b2b 10%, #222222 0%, #222222 50%) 0 / 15px 15px;
 
     header {
       //@include drawBorder(grey);
@@ -36,6 +38,11 @@ html {
         //@include drawBorder(blue);
         //display: none;
         text-align: left;
+        input {
+          background-color: gray;
+          color: white;
+          border-color: darkgray;//#212121;
+        }
 
         .line {
           text-align: left;
@@ -73,7 +80,7 @@ html {
           max-width: $symbolBoxSize;
           min-height: $symbolBoxSize;
           max-height: $symbolBoxSize;
-          @include drawBorder(lightgrey);
+          @include drawBorder(none); //lightgrey
           text-align: center;
           vertical-align: middle;
           margin: $divMargin;

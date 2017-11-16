@@ -35,13 +35,13 @@ function createWindows() {
     height: 700,
     show: false,
     // parent: winMain,
-    // frame: false,
+    // frame: false,//production
     // resizable: false,
     url: 'gui/keyboard/index.html'
   });
-  // winKeyboard.setMenu(null);
+  // winKeyboard.setMenu(null);//production
   winKeyboard.on(`show`, () => {
-    //TODO check out if already runs and send message only if not
+    //TODO check if already runs and send message only if not
     if(!keyboardRuns){
       keyboardRuns = true;
       // ipcController.send(`start-stimuli`);
@@ -64,10 +64,11 @@ function createWindows() {
     width: 900,
     height: 400,
     // parent: winMain,
+    // frame: false,//production
     show: false,
     url: "gui/console/index.html"
   });
-  // winConsole.setMenu(null);
+  // winConsole.setMenu(null);//production
   winConsole.on(`close`, (e) => {
     if (!forceCloseApp) {
       e.preventDefault();
@@ -152,5 +153,4 @@ ipcMain
   .on(`ipcConsole-command`, (e, arg) => {
     winKeyboard.webContents.send(`ipcConsole-command`, arg);
   });
-
 

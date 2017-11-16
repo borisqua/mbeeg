@@ -1,4 +1,5 @@
 "use strict";
+const log = require('debug')('mbeeg:EBMLReader');
 
 const
   Tools = require('../tools').Tools,
@@ -46,7 +47,8 @@ class EBMLReader extends require('stream').Transform {
       cb(null, this._ebml);//do some work after parsing
     else
       cb(null, `${JSON.stringify(this._ebml, null, 2)}\n`);
-    // console.log(JSON.stringify(this._ebml, null, 2));
+      log('Next EBML chunk has read')
+    // log(JSON.stringify(this._ebml, null, 2));
   }
   
   /**
@@ -55,7 +57,7 @@ class EBMLReader extends require('stream').Transform {
    */
   _readTag() {
     if (this._cursor >= this._buffer.length) {
-      console.log('waiting for more data...');
+      log('Maibe there is an error... waiting for more data...');
       this._cursor = this._prevCursor;
       return false;
       
@@ -125,8 +127,8 @@ class EBMLReader extends require('stream').Transform {
       type = ebmlDictionary[id].type;
       size = parseInt(elementSize.hexString, 16);
       ebml[`${name}`] = {type: type, size: size};
-      // console.log(ebml);
-      // console.log(`C:${this._cursor} ### ${'\t'.repeat(this._level)}${id} ${name} : ${type.toUpperCase()} Size: == 0x${elementSize.hexString} == ${size}`);
+      // log(ebml);
+      // log(`C:${this._cursor} ### ${'\t'.repeat(this._level)}${id} ${name} : ${type.toUpperCase()} Size: == 0x${elementSize.hexString} == ${size}`);
       
       switch (type) {
         // case `INT`://(in accordance to EBML specification the name should be INT = *8BYTE)
@@ -140,7 +142,7 @@ class EBMLReader extends require('stream').Transform {
           let content = this._readData(size, type);
           ebml[`${name}`].value = content.value;
           ebml[`${name}`].buffer = content.buffer;
-          // console.log(ebml);
+          // log(ebml);
           break;
         default://type `master` or 'container' in other words
           let tagSpan = this._cursor + size;
@@ -159,11 +161,11 @@ class EBMLReader extends require('stream').Transform {
           this._level--;
       }
       
-      //   console.log(`C:${this._cursor} ### ${'\t'.repeat(this._level + 2)} Data: ${ebml[`${name}`].content.value}<=>${JSON.stringify(ebml[`${name}`].content.buffer, null/*, 2*/)}`);//C:${this._cursor} ###
+      //   log(`C:${this._cursor} ### ${'\t'.repeat(this._level + 2)} Data: ${ebml[`${name}`].content.value}<=>${JSON.stringify(ebml[`${name}`].content.buffer, null/*, 2*/)}`);//C:${this._cursor} ###
       return {name: name, content: ebml[`${name}`]};
     }
     catch (err) {
-      console.log(`Can't find id ${id} error: ${err}`);
+      log(`Can't find id ${id} error: ${err}`);
       throw err;//`${err.message}`;
     }
   }

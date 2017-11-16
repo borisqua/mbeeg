@@ -1,4 +1,5 @@
 "use strict";
+const log = require('debug')('mbeeg:Decisions');
 
 class Decisions extends require('stream').Transform {
   constructor({
@@ -26,14 +27,15 @@ class Decisions extends require('stream').Transform {
     let verdicts = require('mbeeg').Tools.copyObject(chunk);
     for (let verdict of verdicts)
       if (++this.overallCounter >= this.start) {
+        log(`                ::inner overall counter is ${this.overallCounter}`);
         this.result = verdict;
         // noinspection JSUnusedAssignment
         this.winnersQueue.push(this.result.reduce((ac, v, i, ar) =>
           ar[ac] === undefined || ar[ac] < v ? ac = i : ac, 0));//idx of max
-        console.log(`--DEBUG::               DecisionMaker::winners queue [${this.winnersQueue}]`);
+        log(`                ::winners queue [${this.winnersQueue}]`);
         if (this.winnersQueue[this.winnersQueue.length - 1] === this.winnersQueue[this.winnersQueue.length - 2]) {
           if (++this.winnersSeriesLength >= this.decisionThreshold) {
-            console.log(`--DEBUG::               DecisionMaker::NextDecisionReady-- winner id = ${this.winnersQueue[this.winnersQueue.length - 1]}`);
+            log(`                ::NextDecisionReady - winner id = ${this.winnersQueue[this.winnersQueue.length - 1]}`);
             cb(null, this.winnersQueue[this.winnersQueue.length - 1]);
             this._reset();
             return;
@@ -42,13 +44,14 @@ class Decisions extends require('stream').Transform {
           this.winnersSeriesLength = 1;
         }
         if (this.overallCounter - this.start + 1 >= this.queueMaxLength) {
-          console.log(`--DEBUG::               DecisionMaker::DecisionFailed-- winner id = -1`);
+          log(`                ::DecisionFailed - winner id = -1`);
+          // this.emit('decision', )
           cb(null, -1);
           this._reset();
           return;
         }
-      }
-    console.log(`--DEBUG::               DecisionMaker::Skip--`);
+      } else
+        log(`                ::Start cycle is not reached yet, no winner, go to next cycle --`);
     cb();
   }
 }

@@ -1,4 +1,5 @@
 "use strict";
+const log = require('debug')('mbeeg:DSVProcessor');
 
 class DSVProcessor extends require('stream').Transform {
   constructor({
@@ -13,7 +14,7 @@ class DSVProcessor extends require('stream').Transform {
   // noinspection JSUnusedGlobalSymbols
   _transform(chunk, encoding, cb) {
     let epoch = require('mbeeg').Tools.copyObject(chunk);
-    console.log(`--DEBUG::      DSVProcessor::Epoch-${this.action.name}--Key=${epoch.key} Epoch number=${epoch.number}`);
+    log(`      ::Epoch-${this.action.name}-- key/#/cycle - ${epoch.key}/${epoch.number}/${epoch.cycle}`);
     for (let i = 0, channelsNumber = epoch.channels.length; i < channelsNumber; i++) {
       this.actionParameters.timeseries = epoch.channels[i];
       this.actionParameters.samplingrate = epoch.samplingRate;

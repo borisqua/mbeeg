@@ -4,9 +4,14 @@ const
 
 $(() => {
   let
-    index, value,
+    config = Tools.loadConfiguration(`config.json`)
+    , index, value,
     elementSpeedValue,
     elementSpeedSlider;
+  
+  function init(){
+  
+  }
   
   $(".ui-slider").on(`input`, (e) => {
     index = $(e.target).attr("index");
@@ -16,7 +21,7 @@ $(() => {
     elementSpeedValue.val(value);
     ipcRenderer.send(`ipcConsole-command`, {command: `change`, index: index, value: value});
     e.stopPropagation();
-    });
+  });
   
   $(".value").on(`input`, (e) => {
     index = $(e.target).attr("index");
