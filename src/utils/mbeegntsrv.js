@@ -132,7 +132,7 @@ const
   })
   , epochSeries = new EpochSeries({
     stimuliIdArray: config.stimulation.sequence.stimuli
-    // , depth: config.decision.methods.majority.cycles
+    , depth: config.decision.methods.majority.cycles
     , incremental: config.signal.dsp.horizontal.methods.absIntegral.incremental
   })
   , features = new DSHProcessor()
