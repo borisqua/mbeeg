@@ -25,7 +25,9 @@ class EpochSeries extends require('stream').Transform {//TODO split into two cla
     super({objectMode: true});
     this.stimuliIdArray = stimuliIdArray.slice();
     this.cycleLength = stimuliIdArray.length;
-    this.cycle = -1; //in epochSeries internal epochs cycles counter
+    this.epoch = -1; //in epochSeries internal epochs counter
+    this.cycle = -1; //in epochSeries internal cycles counter
+    this.cycleInWork = -1; //last incoming epoch (-1 means that no one of epochs hash't comming yet)
     this.depthLimit = depthLimit;//max possible depth limit
     this.stimuliFlows = []; //array[key_id][channel][samples][sample] of sample-vectors indexed by stimuli ids. Vectors arranged by channels. Vectors are here to reduce noise by signal averaging
     this.next = next; //initial state of samples in series for the next iterration
@@ -40,11 +42,27 @@ class EpochSeries extends require('stream').Transform {//TODO split into two cla
   
   // noinspection JSUnusedGlobalSymbols
   _transform(epoch, encoding, cb) {
-    this.cycle++;
-    log(`           ::epoch key/#/cycle - ${epoch.key}/${epoch.number}/${epoch.cycle}; series depth (cycles) - ${this.cycle}`);
-    log(`           :: id counts in single cycle - [${this.idCountsArray}]`);
+    if (this.cycleInWork !== epoch.cycle){//TODO
+      log(`           :: -- junk epoch detected --`);
+      log(`           :: epoch with wrong cycle number ${epoch.cycle}, but current cycle is ${this.cycleInWork} so throw it away`);
+      this.reset(this.stimuliIdArray);
+      this.cycleInWork = epoch.cycle;
+    }
+    
+    this.epoch++;
+    this.cycle = Math.floor(this.epoch / this.cycleLength);
+    
+    log(`           ::epochSeries depth limit - [${this.depthLimit}];`);
+    log(`           ::id counts in single cycle - [${this.idCountsArray}]; epoch key/#/cycle - ${epoch.key}/${epoch.number}/${epoch.cycle}; series depth (epoch/cycles) - ${this.epoch}/${this.cycle}`);
+    if (this.cycle + 1 > this.depthLimit) {
+      this.reset(this.stimuliIdArray);
+      this.epoch++;
+      this.cycle = Math.floor(this.epoch / this.cycleLength);
+      log(`           :: reset due to reaching depth limit --`);
+      log(`           ::id counts in single cycle - [${this.idCountsArray}]; epoch key/#/cycle - ${epoch.key}/${epoch.number}/${epoch.cycle}; series depth (epoch/cycles) - ${this.epoch}/${this.cycle}`);
+    }
     if (this.stimuliIdArray.every(s => s !== epoch.key)) {//current epoch.key probably from previous stimuli-set and it isn't considering now
-      log(`           :: key ${epoch.key} not in keys array ${this.stimuliIdArray} = ${this.stimuliIdArray.every(s => s !== epoch.key)} so throw it away`);
+      log(`           :: -- junk epoch detected -- epoch key ${epoch.key} not in keys array ${this.stimuliIdArray} = ${this.stimuliIdArray.every(s => s !== epoch.key)} so throw it away`);
       cb();
       return;
     }
@@ -63,31 +81,23 @@ class EpochSeries extends require('stream').Transform {//TODO split into two cla
     }
     
     //check if series cycle complete
-    // for (let i of this.stimuliIdArray) {//check if stimuliFlows is not full yet
-    log(`           ::Check if stimuliFlows full or not. Current stimuliId ${i}`);
+    log(`           ::Check if stimuliFlows full or not. Current stimuliId ${epoch.key}`);
     // log(JSON.stringify(this.stimuliFlows, null, 0));
-    // if (this.stimuliFlows[i] === undefined || this.stimuliFlows[i].every(ch => ch.every(s => s.length !== this.cycle * this.idCountsArray[i]))) {
-    if (this.cycle % this.cycleLength) {//current cycle not complete yet
-      log(`           :: -- stimuliFlows not full yet --`); // stimuliId ${i} undefined - ${this.stimuliFlows[i] === undefined}`);
+    if ((this.epoch + 1) % this.cycleLength) {//current cycle not complete yet
+      log(`           :: -- stimuliFlows not full yet --`);
       cb();
       return;
     }
-    // }
-    // log(JSON.stringify(this.stimuliFlows, null, 2));
     cb(null, this.stimuliFlows);
     this.stimuliFlows.forEach(key =>
       key.forEach(channel =>
         channel.forEach(samples =>
           this.next(samples))));
     log(`           :: -- Next epochSeries ready --`);
-    if (this.cycle === this.depthLimit) {
-      this.reset(this.stimuliIdArray);
-      log(`           :: epochSeries reset due to reaching depth limit --`);
-    }
   }
   
   reset(stimuliIdArray) {
-    this.cycle = -1;
+    this.epoch = -1;
     this.stimuliIdArray = stimuliIdArray.slice();
     this.stimuliFlows = [];
     this.idCountsArray = stimuliIdArray.reduce((acc, v) => {//counts repetitions of id in stimuliIdArray

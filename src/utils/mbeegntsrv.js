@@ -73,9 +73,9 @@ const
     , start: config.classification.methods.absIntegral.start
     , window: config.classification.methods.absIntegral.window
   })
-  , featuresV = new FeatureVerticalLogger({
-    stimuliIdArray: config.stimulation.sequence.stimuli
-  })
+  // , featuresV = new FeatureVerticalLogger({
+  //   stimuliIdArray: config.stimulation.sequence.stimuli
+  // })
   , openVibeClient = new Net.Socket() //create TCP client for openViBE eeg data server
   , tcp2ebmlFeeder = (context, tcpchunk) => {
     if (context.tcpbuffer === undefined) {
@@ -132,7 +132,7 @@ const
   })
   , epochSeries = new EpochSeries({
     stimuliIdArray: config.stimulation.sequence.stimuli
-    , depth: config.decision.methods.majority.cycles
+    , depthLimit: config.decision.methods.majority.cycles
     , incremental: config.signal.dsp.horizontal.methods.absIntegral.incremental
   })
   , features = new DSHProcessor()
@@ -197,7 +197,7 @@ const
                   epochSeries.reset(stimuliIdArray);
                   featuresH.setStimuliIdArray(stimuliIdArray);
                   featuresWindowedH.setStimuliIdArray(stimuliIdArray);
-                  featuresV.setStimuliIdArray(stimuliIdArray);
+                  // featuresV.setStimuliIdArray(stimuliIdArray);
                   running = true;
                   ntStimuli.resume();
                   break;
@@ -299,6 +299,9 @@ const
           //classifier.pipe to csv and then to file
           classifier.pipe(ntVerdictStringifier).pipe(socket);
           classifier.pipe(decisions).pipe(ntDecisionStringifier).pipe(socket);
+          decisions.on(`data`, decision => {
+            epochSeries.reset(stimuliIdArray);
+          });
           
         } else {
           

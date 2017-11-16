@@ -30,7 +30,6 @@ class Classifier extends require('stream').Transform {
       for (let key = 0; key < classification[channel].length; key++)
         if (classification[channel][key] === undefined)
           classification[channel][key] = 0;
-  
       log(`             ::postprocessed values classification ${classification}`);
       cb(null, classification);//TODO consider if each channel participate in decision making concurency
     }
