@@ -42,10 +42,18 @@ class EpochSeries extends require('stream').Transform {//TODO split into two cla
   
   // noinspection JSUnusedGlobalSymbols
   _transform(epoch, encoding, cb) {
-    if (this.cycleInWork !== epoch.cycle){//TODO
+    //check requirements for incoming epochs sequence:
+    //epoch.key must be equal to one of stimuliIdArray elements
+    if (this.stimuliIdArray.every(s => s !== epoch.key)) {//current epoch.key probably from previous stimuli-set and it isn't considering now
+      log(`           :: -- junk epoch detected -- epoch key ${epoch.key} not in keys array ${this.stimuliIdArray} = ${this.stimuliIdArray.every(s => s !== epoch.key)} so throw it away`);
+      cb();//if so then skip this epoch
+      return;
+    }
+    //and they must have the same cycle number until their quantity have reached specified cycle length
+    if (this.cycleInWork !== epoch.cycle && (this.epoch + 1) % this.cycleLength){//cycle has changed but cycleLength doesn't reached
       log(`           :: -- junk epoch detected --`);
       log(`           :: epoch with wrong cycle number ${epoch.cycle}, but current cycle is ${this.cycleInWork} so throw it away`);
-      this.reset(this.stimuliIdArray);
+      this.reset(this.stimuliIdArray);//if so then flush results assossiated with those wrong epochs and start new series cycle with new epoch
       this.cycleInWork = epoch.cycle;
     }
     
@@ -60,11 +68,6 @@ class EpochSeries extends require('stream').Transform {//TODO split into two cla
       this.cycle = Math.floor(this.epoch / this.cycleLength);
       log(`           :: reset due to reaching depth limit --`);
       log(`           ::id counts in single cycle - [${this.idCountsArray}]; epoch key/#/cycle - ${epoch.key}/${epoch.number}/${epoch.cycle}; series depth (epoch/cycles) - ${this.epoch}/${this.cycle}`);
-    }
-    if (this.stimuliIdArray.every(s => s !== epoch.key)) {//current epoch.key probably from previous stimuli-set and it isn't considering now
-      log(`           :: -- junk epoch detected -- epoch key ${epoch.key} not in keys array ${this.stimuliIdArray} = ${this.stimuliIdArray.every(s => s !== epoch.key)} so throw it away`);
-      cb();
-      return;
     }
     
     //fill series with epoch data
@@ -83,13 +86,13 @@ class EpochSeries extends require('stream').Transform {//TODO split into two cla
     //check if series cycle complete
     log(`           ::Check if stimuliFlows full or not. Current stimuliId ${epoch.key}`);
     // log(JSON.stringify(this.stimuliFlows, null, 0));
-    if ((this.epoch + 1) % this.cycleLength) {//current cycle not complete yet
+    if ((this.epoch + 1) % this.cycleLength) {//if current cycle not complete yet
       log(`           :: -- stimuliFlows not full yet --`);
-      cb();
+      cb();//then skip on this itteration without writing to readable part of stream
       return;
     }
-    cb(null, this.stimuliFlows);
-    this.stimuliFlows.forEach(key =>
+    cb(null, this.stimuliFlows);//else write result (stimuliFlows) into readable part of stream
+    this.stimuliFlows.forEach(key =>//and apply procedure (next) on samples to modify or prepare them to the next series cycle
       key.forEach(channel =>
         channel.forEach(samples =>
           this.next(samples))));
