@@ -3,6 +3,7 @@
 const
   Net = require('net')
   , log = require('debug')('utils:mbeegntsrv')
+  , err = require('debug')
   , fs = require('fs')
   , fileStimuli = fs.createWriteStream(`./logs/00stim.csv`)
   , fileSamples = fs.createWriteStream(`./logs/01samp.csv`)
@@ -31,7 +32,7 @@ const
   , {
     EBMLReader, OVReader, Sampler,
     Epochs, DSVProcessor, EpochSeries, DSHProcessor, Classifier, Decisions, Tools,
-    EpochsHorizontalLogger, /*EpochsVerticalLogger, */FeatureHorizontalLogger, FeatureVerticalLogger,
+    EpochsHorizontalLogger, /*EpochsVerticalLogger, */FeatureHorizontalLogger, /*FeatureVerticalLogger,*/
     Stringifier, NTVerdictStringifier
   } = require('mbeeg')
   , stimuler = new Sampler()
@@ -190,7 +191,7 @@ const
                 case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings"://SCENE SETTINGS
                   stimuliIdArray = message.objects;
                   if (!lastEpoch)
-                    lastEpoch = config.signal.cycles * stimuliIdArray.length - 1;
+                    lastEpoch = config.signal.cycles ? config.signal.cycles * stimuliIdArray.length - 1 : 0;
                   log(`::NT scene settings:: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings`);
                   log(`::NT scene settings:: stimuli idarray: ${JSON.stringify(stimuliIdArray)}`);
                   epochs.reset(stimuliIdArray.length);
@@ -299,7 +300,7 @@ const
           //classifier.pipe to csv and then to file
           classifier.pipe(ntVerdictStringifier).pipe(socket);
           classifier.pipe(decisions).pipe(ntDecisionStringifier).pipe(socket);
-          decisions.on(`data`, decision => {
+          decisions.on(`data`, () => {
             epochSeries.reset(stimuliIdArray);
           });
           
@@ -322,7 +323,9 @@ const
 // let ovConnAttemptCounter = 1;
 openVibeClient
   .on(`close`, () => {
-    console.log(`OpenViBE connection closed.`);
+    // console.log(`OpenViBE connection closed.`);
+    console.log(`Error: can't connect ${config.signal.host}:${config.signal.port} ECONNCLOSED`);
+    process.exit(1);
     // console.log(`OpenViBE connection closed. Trying to reconnect ...`);
     // while (true) {
     //   setInterval(() => {
@@ -330,11 +333,11 @@ openVibeClient
     //   }, 5000);
     //   ovConnAttemptCounter++;
     // }
-  })
+  // })
 // .on(`error`, error => {
 //   console.log(`No response from OpenViBE acquisition server.
 // Connection attempt ${ovConnAttemptCounter} failed.`)
-// })
+})
 ;
 mbEEGServer.on(`close`, () => console.log(`mbEEG sever verdict service closed.`));
 

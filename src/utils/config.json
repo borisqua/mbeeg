@@ -71,7 +71,7 @@
         ]
       }
     },
-    "cycles": 25
+    "cycles": 10
   },
   "classification": {
     "method": "absIntegral",
