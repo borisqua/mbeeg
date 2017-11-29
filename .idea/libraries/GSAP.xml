@@ -2,7 +2,6 @@
   <library name="GSAP" type="javaScript">
     <CLASSES>
       <root url="file://$PROJECT_DIR$/js/lib" />
-      <root url="file://$PROJECT_DIR$/js/lib" />
     </CLASSES>
     <DOCUMENTATION>
       <root url="https://api.jquery.com/" />

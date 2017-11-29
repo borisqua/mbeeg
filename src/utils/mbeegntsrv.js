@@ -3,7 +3,6 @@
 const
   Net = require('net')
   , log = require('debug')('utils:mbeegntsrv')
-  , err = require('debug')
   , fs = require('fs')
   , fileStimuli = fs.createWriteStream(`./logs/00stim.csv`)
   , fileSamples = fs.createWriteStream(`./logs/01samp.csv`)
@@ -37,7 +36,7 @@ const
   } = require('mbeeg')
   , stimuler = new Sampler()
   , sampler = new Sampler()
-  , config = Tools.loadConfiguration(`config.json`)
+  , config = Tools.loadConfiguration(`../../config.json`)
   , ntDecisionStringifier = new Stringifier({
     chunkBegin: `{"class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellConceived", "cellId": `
     , chunkEnd: `, "timestamp": ${new Date().getTime()}}\r\n`
@@ -78,7 +77,7 @@ const
   //   stimuliIdArray: config.stimulation.sequence.stimuli
   // })
   , openVibeClient = new Net.Socket() //create TCP client for openViBE eeg data server
-  , tcp2ebmlFeeder = (context, tcpchunk) => {
+  , tcp2ebmlFeeder = (context, tcpchunk) => {//todo move this to helpers (Tools) into mbeeg lib
     if (context.tcpbuffer === undefined) {
       context.tcpbuffer = Buffer.alloc(0);
       context.tcpcursor = 0;
@@ -134,7 +133,7 @@ const
   , epochSeries = new EpochSeries({
     stimuliIdArray: config.stimulation.sequence.stimuli
     , depthLimit: config.decision.methods.majority.cycles
-    , incremental: config.signal.dsp.horizontal.methods.absIntegral.incremental
+    // , incremental: config.signal.dsp.horizontal.methods.absIntegral.incremental
   })
   , features = new DSHProcessor()
   , classifier = new Classifier({
@@ -146,7 +145,7 @@ const
     method: Tools.absIntegral
     , methodParameters: config.classification.methods.absIntegral
   })
-  , verdictsAbs = new Sampler()//TODO unify sampling and other logging preparations in mbeeg.Tools helpers library
+  , verdictsAbs = new Sampler()//todo unify sampling and other logging preparations in mbeeg.Tools helpers library
   , verdictsNorm = new Sampler()
   , decisions = new Decisions(config.decision.methods.majority)
 ;
@@ -162,18 +161,18 @@ let
 const
   mbEEGServer = Net.createServer(socket => {
       console.log(`client ${socket.remoteAddress}:${socket.remotePort} connected`);
-      
+      //todo handling client connections and disconnections
       socket
         .on(`end`, () => {
-          // ntStimuli.unpipe();
+          ntStimuli.unpipe();
           console.log('end: client disconnected');
         })
         .on(`close`, () => {
-          // ntStimuli.unpipe();
+          ntStimuli.unpipe();
           console.log('close: client disconnected');
         })
         .on(`error`, () => {
-          // ntStimuli.unpipe();
+          ntStimuli.unpipe();
           console.log('error: client disconnected');
         })
         .on('data', chunk => {//to unpipe delete listener

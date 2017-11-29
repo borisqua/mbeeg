@@ -9,14 +9,14 @@ const log = require('debug')('mbeeg:EpochSeries');
  *  TODO - adjacent fixed segments [0,1,2],[3,4,5],[6,7,8],....
  *  - adjacent incremental segments [0],[0,1],[0,1,2],[3],[3,4],[3,4,5],[6],[6,7],...
  */
-class EpochSeries extends require('stream').Transform {//TODO split into two classes reformation and featurization
+class EpochSeries extends require('stream').Transform {//todo split into two classes reformation and featurization
   /**
    *
    * @param {Function} nextSeriesIsReady - should return true if series complete otherwise returns false
    * @param stimuliIdArray
    */
   constructor({
-                //packingRule ()=>{}//TODO series packing method should be passed as parameter
+                //packingRule ()=>{}//todo series packing method should be passed as parameter
                 stimuliIdArray = [],
                 depthLimit = 0, //if 0 then there is no depth restriction
                 // speed = 1, //determines when to push into readable
@@ -44,7 +44,7 @@ class EpochSeries extends require('stream').Transform {//TODO split into two cla
   // noinspection JSUnusedGlobalSymbols
   _transform(epoch, encoding, cb) {
     //1. check requirements for incoming epochs sequence:
-    //1.1 epoch.key must be equal to one of stimuliIdArray elements
+    //1.1 epoch.key must be equal to one of stimuliIdArray elements (UML checking next epoch: e in stims)
     if (this.stimuliIdArray.every(s => s !== epoch.key)) {//current epoch.key probably from previous stimuli-set and it isn't considering now
       log(`           :: -- junk epoch detected -- epoch key ${epoch.key} not in keys array [${this.stimuliIdArray}] so throw it away`);
       cb();//if so then skip this epoch
@@ -52,6 +52,7 @@ class EpochSeries extends require('stream').Transform {//TODO split into two cla
       return;
     }
     //1.2 and incoming epochs must have the same cycle number until their quantity have reached specified cycle length (equal to stimuliIdArray length)
+    //UML checking next epoch: (ec == lec || esc == 0) <=> !(ec == lec && esc != 0)
     if (this.lastEpochCycle !== epoch.cycle && this.epochInSeriesCycle) {//cycle has changed but cycleLength doesn't reached
       log(`           :: -- uncompleted series detected --`);
       log(`           :: incoming epoch with cycle number ${epoch.cycle}, but current cycle is ${this.lastEpochCycle} and it is incomplete so flush wrong cycle and start new one`);

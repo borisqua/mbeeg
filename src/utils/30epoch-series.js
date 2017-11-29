@@ -3,7 +3,7 @@
 const
   Net = require('net')
   // , cli = require('commander')
-  , {EBMLReader, OVReader, Stimuli, Epochs, DSVProcessor, EpochSeries, Tools} = require('mbeeg')
+  , {EBMLReader, OVReader, Stimuli, Epochs, DSVProcessor, EpochSeries, Tools, Stringifier} = require('mbeeg')
   , config = Tools.loadConfiguration(`config.json`)
   , openVibeClient = new Net.Socket() //3. Create TCP client for openViBE eeg data server
   , tcp2ebmlFeeder = (context, tcpchunk) => {
@@ -62,9 +62,13 @@ const
   })
   , epochSeries = new EpochSeries({
     stimuliIdArray: config.stimulation.sequence.stimuli
-    , depth: 4//config.signal.dsp.horizontal.depth //0 means full depth
-    , incremental: config.signal.dsp.horizontal.incremental //true means moving calculation in to depth as specified
+    , depthLimit: config.decision.methods.majority.cycles
+    // , incremental: config.signal.dsp.horizontal.methods.absIntegral.incremental
+    // stimuliIdArray: config.stimulation.sequence.stimuli
+    // , depth: 4//config.signal.dsp.horizontal.depth //0 means full depth
+    // , incremental: config.signal.dsp.horizontal.incremental //true means moving calculation in to depth as specified
   })
+  , stringifier = new Stringifier()
 ;
 
 // cli.version('0.0.1')
@@ -79,4 +83,4 @@ const
 //   process.exit(0);
 // }
 
-epochs.pipe(butterworth4).pipe(detrend).pipe(epochSeries);
+epochs.pipe(butterworth4).pipe(detrend).pipe(epochSeries).pipe(stringifier).pipe(process.stdout);

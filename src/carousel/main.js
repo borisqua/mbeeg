@@ -1,11 +1,16 @@
 "use strict";
 const
-  {app, BrowserWindow, Menu, ipcMain, globalShortcut} = require('electron')
+  fs = require('fs')
+  , {app, BrowserWindow, Menu, ipcMain, globalShortcut} = require('electron')
+  , {Tools} = require('mbeeg')
   , template = require('./menu')
+  // , config = Tools.loadConfiguration(`config.json`)
   // , ipcController = require('child_process').fork(`${appRoot}/src/core/controller/index.js`)
 ;
 
-let winMain, winKeyboard, winConsole //winDebuggerLog;// Keep a global reference of the windows objects, if you don't, the window will be closed automatically when the JavaScript object is garbage collected.
+let
+  config = Tools.loadConfiguration(`config.json`)
+  , winMain, winKeyboard, winConsole //winDebuggerLog;// Keep a global reference of the windows objects, if you don't, the window will be closed automatically when the JavaScript object is garbage collected.
   , menuTemplate = Menu.buildFromTemplate(template)
   , forceCloseApp = false
   , keyboardRuns = false
@@ -22,6 +27,7 @@ function createWindows() {
     url: "./index.html"
   });
   winMain.on(`close`, () => {
+    fs.writeFile(`config.json`, JSON.stringify(config, null, 2), err => { if (err) throw err; });
     forceCloseApp = true;
     app.quit();
   });
@@ -41,8 +47,8 @@ function createWindows() {
   });
   // winKeyboard.setMenu(null);//production
   winKeyboard.on(`show`, () => {
-    //TODO check if already runs and send message only if not
-    if(!keyboardRuns){
+    //todo check if already runs and send message only if not
+    if (!keyboardRuns) {
       keyboardRuns = true;
       // ipcController.send(`start-stimuli`);
       // ipcController.send(`start-classification`);
@@ -62,7 +68,7 @@ function createWindows() {
   
   winConsole = window({
     width: 900,
-    height: 400,
+    height: 500,
     // parent: winMain,
     // frame: false,//production
     show: false,
@@ -112,7 +118,7 @@ app.on('ready', () => {
   });
   globalShortcut.register(`CommandOrControl+Shift+K`, () => {
     // if (!winKeyboard.isVisible())
-      winKeyboard.show();
+    winKeyboard.show();
   });
   globalShortcut.register(`CommandOrControl+Shift+C`, () => {
     winConsole.show();
@@ -137,13 +143,13 @@ app.on('activate', () => {
 });
 
 ipcMain
-  .on(`ipcRenderer-message`, (e, arg) => {//asynchronous-message
+  .on(`ipcMain-message`, (e, arg) => {//asynchronous-message
     e.sender.send(`ipcMain-reply`, arg);//asynchronous-reply
     switch (arg) {
       case 'keyboard-launch':
         // winKeyboard.setFullScreen(!winKeyboard.isFullScreen());
         // if (!winKeyboard.isVisible())
-          winKeyboard.show();
+        winKeyboard.show();
         break;
       case 'console-launch':
         winConsole.show();
@@ -151,6 +157,8 @@ ipcMain
     }
   })
   .on(`ipcConsole-command`, (e, arg) => {
+    config = Tools.copyObject(arg);
+    winMain.webContents.send(`ipcConsole-command`, arg);
     winKeyboard.webContents.send(`ipcConsole-command`, arg);
   });
 

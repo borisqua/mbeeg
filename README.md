@@ -23,7 +23,7 @@ stimuli dataflow from some stimuli source by abstract interface
 2. mbEEG
 2. Utilities
 
-## TODO
+## todo
 
 ### Core
 #### DSVProcessor

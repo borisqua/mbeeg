@@ -265,12 +265,12 @@ class Tools {
       buffer: valueBuffer,
       hexString: this.bigEndian(valueBuffer)
     }
-    //TODO Alternative ways to calculate length should be tested and assessed
+    //todo Alternative ways to calculate length should be tested and assessed
     // const value = parseInt(this.bigEndian(offset, bytes, buffer), 16); //value in descriptor
     // return Math.ceil(Math.log2(-(1 + ~(1 << bytes * 8)) / value)); //length of vInt
     // One more way to calculate length is using javascript Math.clz32(first4bytes)
     // let length2 = 8 * (bytes - 1) + Math.clz32(buffer[firstByte]) - 23;
-    //TODO there is much much faster approach to get vInt length, it is the precalculated vector with 256 elements (i.e. 2^8 elements)
+    //todo there is much much faster approach to get vInt length, it is the precalculated vector with 256 elements (i.e. 2^8 elements)
     // that contains vectors with length equal to number of bytes of length descriptor
     // each element of last vector keeps precalculated length of vInt for that specific length of vInt length descriptor
     // then vInt could be expressed like something like this: {let bytes=0; while(!buffer[bytes++]); return table256[buffer[bytes]][bytes];}
@@ -492,7 +492,7 @@ class EpochsVerticalLogger extends Transform {
   }
 }
 
-class FeatureHorizontalLogger extends Transform {//TODO eliminate start, window and other Bulanov's demands for windowed features
+class FeatureHorizontalLogger extends Transform {//todo eliminate start, window and other Bulanov's demands for windowed features
   constructor({
                 stimuliIdArray
                 , start = 0

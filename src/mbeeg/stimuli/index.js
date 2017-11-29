@@ -13,7 +13,7 @@ class Stimuli extends require('stream').Readable {
                     return Math.random() - 0.5;
                   })
                 },
-                nextTarget = (arr, previousTarget, learningCycle) => {//TODO learning mode
+                nextTarget = (arr, previousTarget, learningCycle) => {//todo learning mode
                   if (++previousTarget > arr.length - 1) {
                     // previousTarget = 0;
                     // learningCycle = 0;
@@ -65,7 +65,7 @@ class Stimuli extends require('stream').Readable {
         new Date().getTime()
         , this.stimuliIdArray[this.currentStimulus]
         , this.learning && this.currentStimulus === this.currentTargetStimulus ? 1 : 0 //target field = in learning mode - true if target key, false if not, and null in online mode
-        , this.stimulusCycle//TODO consider problems with cycles counting from stimuli/samples to classification/decision levels
+        , this.stimulusCycle//todo consider problems with cycles counting from stimuli/samples to classification/decision levels
       ];
   
       this.push(this.stimulus);

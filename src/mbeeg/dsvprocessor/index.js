@@ -18,7 +18,7 @@ class DSVProcessor extends require('stream').Transform {
     for (let i = 0, channelsNumber = epoch.channels.length; i < channelsNumber; i++) {
       this.actionParameters.timeseries = epoch.channels[i];
       this.actionParameters.samplingrate = epoch.samplingRate;
-      epoch.channels[i] = this.action(this.actionParameters);//TODO consider adding try catch
+      epoch.channels[i] = this.action(this.actionParameters);//todo consider adding try catch
       epoch.state = this.action.name;
     }
     cb(null, epoch);//For output into objectType pipe

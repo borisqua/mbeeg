@@ -15,9 +15,9 @@ const
     chunksDelimiter: `\r\n`
     // , chunkEnd: `}`
   })
-  , ntStringifier = new NTStimuliStringifier({//TODO clarify NT stringifiers - make stringify library
+  , ntStringifier = new NTStimuliStringifier({//todo clarify NT stringifiers - make stringify library
     chunkBegin: ``
-    , chunkEnd: `\r\n` //TODO clean up all that \r\n issues in stringifiers and jsons
+    , chunkEnd: `\r\n` //todo clean up all that \r\n issues in stringifiers and jsons
     , chunksDelimiter: `,`
     , indentationSpace: 0
     // , stringifyAll: true

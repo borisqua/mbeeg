@@ -1,5 +1,5 @@
 doctype html
-html
+html.light
 	head
 		title Console
 		meta(http-equiv="content-type", content="text/html; charset=UTF-8")
@@ -10,82 +10,71 @@ html
 	body
 		header
 		main
-			label(for="controller")
-				CONTROLS
-				//-#timestamp
-			form.controller(id="controller")
-				fieldset(class="sliders" )
-					legend speed parameters
-					.inputbox
-						label(for="randomSpeed0" ) scale
-						label(for="randomSpeed0" ) random
-						label(for="randomSpeed0" ) reverse
-						//label(for="randomSpeed0" ) easing
-						//label(for="randomSpeed0" ) bezier
-					.inputbox
-						label.centered(for="speedSlider0" ) row 1
-						input.centered.ui-slider(type="range" min="0" max="1" step="0.01" value="0" id="speedSlider0" index="0")
-						input#speedValue0.value(value="08" index="0")
-						label(for="randomSpeed0" ) &nbsp;
-						input.rnd(type="checkbox" id="randomSpeed0" index="0")
-						label(for="reverseMovement0" ) &nbsp;
-						input.reverse(type="checkbox" id="reverseMovement0" index="0")
-						label(for="reverseMovement0" ) &nbsp;
-						//input(type="checkbox" id="bezier" )
-						//select(id="easing")
-						//	option linear
-						//	option swing
-						//	option rough
-						//	option(selected=true) slow motion
-						//	option stepped
-					.inputbox
-						label.centered(for="speedSlider1" ) row 2
-						input.centered.ui-slider(type="range" min="0" max="1" step="0.01" value="0" id="speedSlider1" index="1")
-						input#speedValue1.value(value="0" index="1")
-						label(for="randomSpeed1" ) &nbsp;
-						input.rnd(type="checkbox" id="randomSpeed1" index="1")
-						label(for="reverseMovement1" ) &nbsp;
-						input.reverse(type="checkbox" id="reverseMovement1" index="1")
-						label(for="reverseMovement1" ) &nbsp;
-					.inputbox
-						label.centered(for="speedSlider2" ) row 3
-						input.centered.ui-slider(type="range" min="0" max="1" step="0.01" value="0" id="speedSlider2" index="2")
-						input#speedValue2.value(value="0"  index="2")
-						label(for="randomSpeed2" ) &nbsp;
-						input.rnd(type="checkbox" id="randomSpeed2" index="2")
-						label(for="reverseMovement2" ) &nbsp;
-						input.reverse(type="checkbox" id="reverseMovement2" index="2")
-						label(for="reverseMovement2" ) &nbsp;
-				//fieldset(class="effects")
-					//legend effects
-					//.inputbox
-						//label(for="bezier" ) add bezier path
-						//input(type="checkbox" id="bezier" )
-					//.inputbox
-						//label(for="easing" ) easing
-						//select(id="easing")
-						//	option linear
-						//	option swing
-						//	option rough
-						//	option(selected=true) slow motion
-						//	option stepped
-					//.inputbox
-					//	button(id="restart") restart
-					//.inputbox
-				fieldset(class="stimuli")
-					legend stimuli
-					.inputbox
-						label(for="changeSize")
-							stimulus type</br>
-						label(for="changeSize" ) &nbsp change size </br>
-						input.rnd(type="checkbox" id="changeSize" index="1")
-						label(for="shine" ) &nbsp shine</br>
-						input.rnd(type="checkbox" id="shine" index="1")
-						label(for="shake" ) &nbsp shake </br>
-						input.rnd(type="checkbox" id="shake" index="1")
-						label(for="turn" ) &nbsp turn </br>
-						input.rnd(type="checkbox" id="turn" index="1")
-					.inputbox
+			form.settings#settings
+				fieldset
+					legend look & feel
+					.horizontal-flex
+						fieldset.inputbox.vertical-flex
+							legend color scheme
+							.inputbox.vertical-flex.color-scheme
+								br
+								.horizontal-flex
+									input#dark.inputbox(type='radio' name='color-scheme' value='dark' checked='')
+									label(for="dark") &nbsp dark
+								.horizontal-flex
+									input#light.inputbox(type='radio' name='color-scheme' value='light')
+									label(for="light") &nbsp light
+								br
+						fieldset
+							legend stimulation
+							.inputbox.horizontal-flex
+								fieldset
+									legend appearance
+									br
+									.inputbox.vertical-flex.stimuli-appearance
+										label(for="color") &nbsp change color
+										input#color(type="checkbox")
+										label(for="size") &nbsp change size
+										input#size(type="checkbox")
+										label(for="shine") &nbsp shine
+										input#shine(type="checkbox")
+									.inputbox.vertical-flex
+										label(for="animation") &nbsp animation
+										select#animation
+											option(value="none") none
+											option(value="shake") shake
+											option(value="turn") turn
+											option(value="capsize") capsize
+								fieldset.inputbox.vertical-flex
+									legend timings
+									.inputbox.vertical-flex.stimuli-timings
+										label(for="duration") stimulus duration, ms:
+										.horizontal-flex
+											input#durationSlider.slider(type="range" min=0 max=500 step=1 value=100)
+											| &nbsp;
+											input#duration.value
+											br
+										br
+										label(for="pause") pause after stimulus, ms:
+										.horizontal-flex
+											input#pauseSlider.slider(type="range" min=0 max=500 step=1 value=200)
+											| &nbsp;
+											input#pause.value
+											br
+				br
+				fieldset#motion.vertical-flex
+					legend motion parameters
+					.inputbox.horizontal-flex
+						.scale
+							label speed scale
+						.motion
+							label random
+						.motion
+							label reverse
+						.easing
+							label easing
+						.bezier
+							label bezier
 
 		footer
 			footer

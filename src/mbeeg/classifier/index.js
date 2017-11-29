@@ -10,7 +10,7 @@ class Classifier extends require('stream').Transform {
     super({objectMode: true});
     this.method = method;
     this.methodParameters = methodParameters;
-    this.postprocessing = postprocessing;//TODO eliminate this and use pipe to DSVProcessor instead
+    this.postprocessing = postprocessing;//todo eliminate this and use pipe to DSVProcessor instead
   }
   
   // noinspection JSUnusedGlobalSymbols
@@ -31,7 +31,7 @@ class Classifier extends require('stream').Transform {
         if (classification[channel][key] === undefined)
           classification[channel][key] = 0;
       log(`             ::postprocessed values classification ${classification}`);
-      cb(null, classification);//TODO consider if each channel participate in decision making concurency
+      cb(null, classification);//todo consider if each channel participate in decision making concurency
     }
   }
 }
