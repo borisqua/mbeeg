@@ -144,11 +144,9 @@ app.on('activate', () => {
 
 ipcMain
   .on(`ipcMain-message`, (e, arg) => {//asynchronous-message
-    e.sender.send(`ipcMain-reply`, arg);//asynchronous-reply
     switch (arg) {
       case 'keyboard-launch':
         // winKeyboard.setFullScreen(!winKeyboard.isFullScreen());
-        // if (!winKeyboard.isVisible())
         winKeyboard.show();
         break;
       case 'console-launch':

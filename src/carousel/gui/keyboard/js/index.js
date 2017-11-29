@@ -6,11 +6,12 @@
 // ODO - изменение параметров: цвет фона черный/белый
 // ODO - стимуляция - увеличение размера и/или подсветка в случайном порядке без повторов в одном цикле
 // TODO - изменение параметров: длительность стимула и паузы
+//todo - after change stimuli duration or pause reset needs to restart keyboard
 // TODO - обработка события decision объекта mbeeg
 
 const
   {Tools, Stimuli} = require('mbeeg')
-  , {ipcRenderer, remote} = require('electron')
+  , {ipcRenderer} = require('electron')
   , {TweenMax, TweenLite/*, Power2, TimelineLite*/} = require('gsap')
   , {switchSchema, stimulusOn, stimulusOff} = require('carousel-helpers')
 ;
@@ -19,23 +20,25 @@ $(() => {
   let
     config = Tools.loadConfiguration(`config.json`)
     , viewport = $("#viewport")
-    , length, velocity, boxDelay,
-    timeLines
-  ;
-  const
-    stimuli = new Stimuli({
+    , length, velocity, boxDelay
+    , timeLines
+    , stimuli = new Stimuli({
       stimuliIdArray: config.stimulation.sequence.stimuli,
       signalDuration: config.stimulation.duration,
       pauseDuration: config.stimulation.pause
     })
   ;
+  
+  let prevStimTStamp = 0;//debug
+  
   stimuli.on('data', stimulus => {
     let key = $(`.key[index="${stimulus[1]}"]`);
     stimulusOn(key, config);
     setTimeout(() => {
       stimulusOff(key, config);
     }, config.stimulation.duration);
-    console.log(stimulus);
+    console.log(`stimulus ${stimulus}; delta ${stimulus[0] - prevStimTStamp}`);
+    prevStimTStamp = stimulus[0];
   });
   
   function init() {
@@ -162,15 +165,21 @@ $(() => {
     .on(`ipcConsole-command`, (e, arg) => {
       config = Tools.copyObject(arg);
       switchSchema(config);
+      stimuli.reset({
+        stimuliIdArray: config.stimulation.sequence.stimuli,
+        signalDuration: config.stimulation.duration,
+        pauseDuration: config.stimulation.pause
+      });
+      
       for (let i = 0; i < config.keyboard.schools.length; i++) {
         
         timeLines[i].timeScale(+config.keyboard.schools[i].motion.speedScale);
         timeLines[i].resume();
         
-        if (config.keyboard.schools[i].motion.reverse)
-          timeLines[i].reverse();
-        else
-          timeLines[i].play();
+        // if (config.keyboard.schools[i].motion.reverse && !timeLines[i].reversed)
+        //   timeLines[i].reverse();
+        // else
+        //   timeLines[i].play();
         
       }
       // case `restart`:

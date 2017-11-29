@@ -2,43 +2,43 @@
 
 function stimulusOn(element, config) {
   if (config.appearance.stimulation.color) {
-    element.addClass(`keybox-${config.appearance.colorScheme}-color`)
+    element.addClass(`keybox-${config.appearance.colorScheme.selected}-color`)
   }
   if (config.appearance.stimulation.size) {
-    element.addClass(`keybox-${config.appearance.colorScheme}-size`)
+    element.addClass(`keybox-${config.appearance.colorScheme.selected}-size`)
   }
   if (config.appearance.stimulation.shine) {
-    element.addClass(`keybox-${config.appearance.colorScheme}-shine`)
+    element.addClass(`keybox-${config.appearance.colorScheme.selected}-shine`)
   }
-  if (config.appearance.animation === "shake") {
-    element.addClass(`keybox-${config.appearance.colorScheme}-shake`)
+  if (config.appearance.stimulation.animation.selected === "shake") {
+    element.addClass(`keybox-${config.appearance.colorScheme.selected}-shake`)
   }
-  if (config.appearance.animation === "turn") {
-    element.addClass(`keybox-${config.appearance.colorScheme}-turn`)
+  if (config.appearance.stimulation.animation.selected === "turn") {
+    element.addClass(`keybox-${config.appearance.colorScheme.selected}-turn`)
   }
-  if (config.appearance.animation === "capsize") {
-    element.addClass(`keybox-${config.appearance.colorScheme}-capsize`)
+  if (config.appearance.stimulation.animation.selected === "capsize") {
+    element.addClass(`keybox-${config.appearance.colorScheme.selected}-capsize`)
   }
 }
 function stimulusOff(element, config) {
-  if (config.appearance.stimulation.color) {
-    element.removeClass(`keybox-${config.appearance.colorScheme}-color`)
-  }
-  if (config.appearance.stimulation.size) {
-    element.removeClass(`keybox-${config.appearance.colorScheme}-size`)
-  }
-  if (config.appearance.stimulation.shine) {
-    element.removeClass(`keybox-${config.appearance.colorScheme}-shine`)
-  }
-  if (config.appearance.animation === "shake") {
-    element.removeClass(`keybox-${config.appearance.colorScheme}-shake`)
-  }
-  if (config.appearance.animation === "turn") {
-    element.removeClass(`keybox-${config.appearance.colorScheme}-turn`)
-  }
-  if (config.appearance.animation === "capsize") {
-    element.removeClass(`keybox-${config.appearance.colorScheme}-capsize`)
-  }
+  // if (config.appearance.stimulation.color) {
+    element.removeClass(`keybox-${config.appearance.colorScheme.selected}-color`)
+  // }
+  // if (config.appearance.stimulation.size) {
+    element.removeClass(`keybox-${config.appearance.colorScheme.selected}-size`)
+  // }
+  // if (config.appearance.stimulation.shine) {
+    element.removeClass(`keybox-${config.appearance.colorScheme.selected}-shine`)
+  // }
+  // if (config.appearance.animation === "shake") {
+    element.removeClass(`keybox-${config.appearance.colorScheme.selected}-shake`)
+  // }
+  // if (config.appearance.animation === "turn") {
+    element.removeClass(`keybox-${config.appearance.colorScheme.selected}-turn`)
+  // }
+  // if (config.appearance.animation === "capsize") {
+    element.removeClass(`keybox-${config.appearance.colorScheme.selected}-capsize`)
+  // }
 }
 
 function switchSchema(config) {
@@ -46,7 +46,7 @@ function switchSchema(config) {
     html = $('html')
     , keybox = $('.key')
   ;
-  switch (config.appearance.colorScheme) {
+  switch (config.appearance.colorScheme.selected) {
     case `dark`:
       html.removeClass("light");
       keybox.removeClass("keybox-light");

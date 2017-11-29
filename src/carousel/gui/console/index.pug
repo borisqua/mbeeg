@@ -15,21 +15,17 @@ html.light
 					legend look & feel
 					.horizontal-flex
 						fieldset.inputbox.vertical-flex
-							legend color scheme
+							legend appearance & behaviour
 							.inputbox.vertical-flex.color-scheme
-								br
-								.horizontal-flex
-									input#dark.inputbox(type='radio' name='color-scheme' value='dark' checked='')
-									label(for="dark") &nbsp dark
-								.horizontal-flex
-									input#light.inputbox(type='radio' name='color-scheme' value='light')
-									label(for="light") &nbsp light
-								br
+								label(for="color-scheme") &nbsp color scheme
+								select#color-scheme
+									option(value="dark") dark
+									option(value="light") light
 						fieldset
 							legend stimulation
 							.inputbox.horizontal-flex
 								fieldset
-									legend appearance
+									legend stimulus appearance
 									br
 									.inputbox.vertical-flex.stimuli-appearance
 										label(for="color") &nbsp change color

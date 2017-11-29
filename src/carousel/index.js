@@ -1,6 +1,6 @@
 "use strict";
 const
-  {ipcRenderer, remote} = require('electron')
+  {ipcRenderer} = require('electron')
   , {Tools} = require('mbeeg')
   , {switchSchema} = require('carousel-helpers')
 ;
@@ -26,20 +26,10 @@ $(() => {
     })
   ;
   ipcRenderer
-    .on(`ipcMain-reply`, (e, arg) => {//asynchronous-reply
-      let
-        answer = `Asynchronous message reply ${arg}`
-        , messageElement = $(`#message`)
-      ;
-      // if (!$(`#message`).html()) $(`#message`).html(answer);
-      // else $(`#message`).html(``);
-      !messageElement.html() && messageElement.html(answer) || messageElement.html(``);
-      // !$(`#message`).html() && $(`#message`).html(answer) || $(`#message`).html(``);
-    })
     .on(`ipcConsole-command`, (e, arg) => {
       config = Tools.copyObject(arg);
       switchSchema(config);
-    });
+    })
   ;
   
   

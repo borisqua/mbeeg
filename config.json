@@ -1,25 +1,25 @@
 {
   "appearance": {
     "colorScheme": {
-      "selected": "dark",
       "available": [
         "dark",
         "light"
-      ]
+      ],
+      "selected": "dark"
     },
     "stimulation": {
-      "color": true,
-      "shine": false,
-      "size": true,
       "animation": {
-        "selected": "capsize",
         "available": [
           "none",
           "shake",
           "turn",
           "capsize"
-        ]
-      }
+        ],
+        "selected": "none"
+      },
+      "color": true,
+      "shine": false,
+      "size": true
     }
   },
   "classification": {
@@ -117,8 +117,8 @@
         "motion": {
           "easing": "slow motion",
           "randomSpeed": false,
-          "reverse": true,
-          "speedScale": 0.2
+          "reverse": false,
+          "speedScale": 0
         }
       },
       {
@@ -127,7 +127,7 @@
           "easing": "slow motion",
           "randomSpeed": false,
           "reverse": true,
-          "speedScale": 0.73
+          "speedScale": 0
         }
       },
       {
@@ -135,8 +135,8 @@
         "motion": {
           "easing": "slow motion",
           "randomSpeed": false,
-          "reverse": true,
-          "speedScale": 1
+          "reverse": false,
+          "speedScale": 0
         }
       }
     ],
@@ -207,7 +207,7 @@
     "learning": {
       "type": "consecutive"
     },
-    "pause": 200,
+    "pause": 70,
     "port": 9350,
     "sequence": {
       "dimensions": 1,
