@@ -8,6 +8,16 @@ const
 ;
 
 /**
+ * returns value v filled with zeroes to length l
+ * @param l
+ * @param v
+ * @return {string}
+ */
+function pad(l, v) {// l - length of zero-leading string number, v - number value
+  return new Array(l).fill(0).concat(v).join('').substr(v.toString().length > l ? -v.toString().length : -l);
+}
+
+/**
  * @class Tools class contains tools & helper functions for operation with EBML subjects, such as variable-length integers
  * binary tags, endians etc., contains preprocessing functions for raw EEG data (filtering, epoching, reshaping, etc...)
  * and variety of other helper functions

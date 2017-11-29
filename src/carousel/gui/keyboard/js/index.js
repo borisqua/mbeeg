@@ -9,7 +9,6 @@
 // TODO - обработка события decision объекта mbeeg
 
 const
-  // fs = require('fs')
   {Tools, Stimuli} = require('mbeeg')
   , {ipcRenderer, remote} = require('electron')
   , {TweenMax, TweenLite/*, Power2, TimelineLite*/} = require('gsap')

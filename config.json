@@ -1,11 +1,25 @@
 {
   "appearance": {
-    "animation": "turn",
-    "colorScheme": "dark",
+    "colorScheme": {
+      "selected": "dark",
+      "available": [
+        "dark",
+        "light"
+      ]
+    },
     "stimulation": {
       "color": true,
-      "shine": true,
-      "size": true
+      "shine": false,
+      "size": true,
+      "animation": {
+        "selected": "capsize",
+        "available": [
+          "none",
+          "shake",
+          "turn",
+          "capsize"
+        ]
+      }
     }
   },
   "classification": {

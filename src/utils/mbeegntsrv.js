@@ -1,3 +1,4 @@
+//todo consider and introduce "selected/available" for choice lists in config
 "use strict";
 
 const

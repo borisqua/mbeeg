@@ -9,17 +9,16 @@ const log = require('debug')('mbeeg:EpochSeries');
  *  TODO - adjacent fixed segments [0,1,2],[3,4,5],[6,7,8],....
  *  - adjacent incremental segments [0],[0,1],[0,1,2],[3],[3,4],[3,4,5],[6],[6,7],...
  */
-class EpochSeries extends require('stream').Transform {//todo split into two classes reformation and featurization
+class EpochSeries extends require('stream').Transform {
   /**
    *
    * @param {Function} nextSeriesIsReady - should return true if series complete otherwise returns false
    * @param stimuliIdArray
    */
   constructor({
-                //packingRule ()=>{}//todo series packing method should be passed as parameter
                 stimuliIdArray = [],
                 depthLimit = 0, //if 0 then there is no depth restriction
-                // speed = 1, //determines when to push into readable
+                // speed = 1, //determines when to push into readable (default is each first cycle)
                 next = series => series  //recursive calculation of initial condition of samples in epoch series for the next step
               }) {
     super({objectMode: true});
@@ -95,6 +94,7 @@ class EpochSeries extends require('stream').Transform {//todo split into two cla
     log(`           ::epochSeries depthLimit - [${this.depthLimit}]; current cycleLength = ${this.cycleLength}; current series depth (in epochs/in cycles) - ${this.epochInSeries}/${this.cyclesInSeries}`);
     log(`           ::epoch key/#/cycle - ${epoch.key}/${epoch.number}/${epoch.cycle}; `);
     if (this.depthLimit && this.cyclesInSeries > this.depthLimit) { // if depthLimit == 0 => unlimited (or limited only by outer control)
+      //incoming epoch number in series doesn't exceed assigned depthLimit
       this.reset();
       log(`           :: reset due to reaching depth limit --`);
       log(`           ::epochSeries depthLimit - [${this.depthLimit}]; current cycleLength = ${this.cycleLength}; current series depth (in epochs/in cycles) - ${this.epochInSeries}/${this.cyclesInSeries}`);

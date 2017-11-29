@@ -2,36 +2,42 @@
 
 function stimulusOn(element, config) {
   if (config.appearance.stimulation.color) {
-    element.addClass("keybox-dark-hover-color")
+    element.addClass(`keybox-${config.appearance.colorScheme}-color`)
   }
   if (config.appearance.stimulation.size) {
-    element.addClass("keybox-dark-hover-size")
+    element.addClass(`keybox-${config.appearance.colorScheme}-size`)
   }
   if (config.appearance.stimulation.shine) {
-    element.addClass("keybox-dark-hover-shine")
+    element.addClass(`keybox-${config.appearance.colorScheme}-shine`)
   }
-  if (config.appearance.stimulation.shake) {
-    element.addClass("keybox-dark-hover-shake")
+  if (config.appearance.animation === "shake") {
+    element.addClass(`keybox-${config.appearance.colorScheme}-shake`)
   }
-  if (config.appearance.stimulation.turn) {
-    element.addClass("keybox-dark-hover-turn")
+  if (config.appearance.animation === "turn") {
+    element.addClass(`keybox-${config.appearance.colorScheme}-turn`)
+  }
+  if (config.appearance.animation === "capsize") {
+    element.addClass(`keybox-${config.appearance.colorScheme}-capsize`)
   }
 }
 function stimulusOff(element, config) {
   if (config.appearance.stimulation.color) {
-    element.removeClass("keybox-dark-hover-color")
+    element.removeClass(`keybox-${config.appearance.colorScheme}-color`)
   }
   if (config.appearance.stimulation.size) {
-    element.removeClass("keybox-dark-hover-size")
+    element.removeClass(`keybox-${config.appearance.colorScheme}-size`)
   }
   if (config.appearance.stimulation.shine) {
-    element.removeClass("keybox-dark-hover-shine")
+    element.removeClass(`keybox-${config.appearance.colorScheme}-shine`)
   }
-  if (config.appearance.stimulation.shake) {
-    element.removeClass("keybox-dark-hover-shake")
+  if (config.appearance.animation === "shake") {
+    element.removeClass(`keybox-${config.appearance.colorScheme}-shake`)
   }
-  if (config.appearance.stimulation.turn) {
-    element.removeClass("keybox-dark-hover-turn")
+  if (config.appearance.animation === "turn") {
+    element.removeClass(`keybox-${config.appearance.colorScheme}-turn`)
+  }
+  if (config.appearance.animation === "capsize") {
+    element.removeClass(`keybox-${config.appearance.colorScheme}-capsize`)
   }
 }
 
@@ -42,22 +48,20 @@ function switchSchema(config) {
   ;
   switch (config.appearance.colorScheme) {
     case `dark`:
-      html.addClass("dark");
-      keybox.addClass("keybox-dark");
       html.removeClass("light");
       keybox.removeClass("keybox-light");
-      keybox.removeClass("keybox-light-hover");
+      html.addClass("dark");
+      keybox.addClass("keybox-dark");
       keybox.hover(
         function () {stimulusOn($(this), config)},
         function () {stimulusOff($(this), config)}
       );
       break;
     case `light`:
-      html.addClass("light");
-      keybox.addClass("keybox-light");
       html.removeClass("dark");
       keybox.removeClass("keybox-dark");
-      keybox.removeClass("keybox-dark-hover");
+      html.addClass("light");
+      keybox.addClass("keybox-light");
       keybox.hover(
         function () {stimulusOn($(this), config)},
         function () {stimulusOff($(this), config)}
@@ -67,6 +71,7 @@ function switchSchema(config) {
   
 }
 
+// noinspection JSUnusedGlobalSymbols
 module.exports = {
   switchSchema: switchSchema,
   stimulusOn: stimulusOn,
