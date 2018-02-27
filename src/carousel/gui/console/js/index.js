@@ -1,207 +1,126 @@
 "use strict";
-//todo hover behavious doesn't update animations
+
 const
-  {ipcRenderer} = require('electron')
-  , fs = require('fs')
-  , {Tools} = require('mbeeg')
-  , {switchSchema} = require('carousel-helpers')
+  {remote, ipcRenderer} = require('electron')
+  // , fs = require('fs')
+  // , {Tools} = require('mbeeg')
+  , {Console} = require('carousel')
 ;
 
 $(() => {
   let
-    config = Tools.loadConfiguration(`config.json`)
-    , index
-    , value
-    , colorScheme = $('#color-scheme')
-    , stimulusColor = $('#color')
-    , stimulusSize = $('#size')
-    , stimulusShine = $('#shine')
-    , stimulusAnimation = $('#animation')
-    , elementSpeedValue
-    , elementSpeedSlider
-    , elementDurationValue = $('#duration')
-    , elementDurationSlider = $('#durationSlider')
-    , elementPauseValue = $('#pause')
-    , elementPauseSlider = $('#pauseSlider')
-    // , motionReverse = $(".reverse")
-    // , motionRandom = $(".rnd")
-    , motionControls = $('#motion')
+    config = remote.getGlobal('config')
+    , console = new Console({
+      consoleProperties: config.carousel.console
+      , keyboardProperties: config.carousel.keyboard
+      , mbeegProperties: config.mbeeg
+      , colorScheme: config.carousel.appearance.colorScheme.selected
+    })
   ;
   
-  function init() {
-    
-    /**
-     * private function, initializes and add listener to each element of given jQuery collection
-     * @param jquery - jQuery collection by selector to work with
-     * @param property - property of html element to set and store in config file
-     * @param valueFromConfig - value from configuration file to initialize settings console form fields
-     * @param toConfig - callback function to store changes into configuration data file
-     */
-    function addChangeListener(jquery, property, valueFromConfig, toConfig) {
-      jquery[0][property] = valueFromConfig;
-      jquery
-        .on('change', e => {
-          toConfig(e.target[property]);
-          switchSchema(config);
-          fs.writeFile(`config.json`, JSON.stringify(config, null, 2), err => { if (err) throw err; });
-          ipcRenderer.send(`ipcConsole-command`, config);
-        });
-    }
-    
-    addChangeListener(colorScheme, 'value', config.appearance.colorScheme.selected,
-      v => config.appearance.colorScheme.selected = v);
-    addChangeListener(stimulusColor, 'checked', config.appearance.stimulation.color,
-      v => config.appearance.stimulation.color = v);
-    addChangeListener(stimulusSize, 'checked', config.appearance.stimulation.size,
-      v => config.appearance.stimulation.size = v);
-    addChangeListener(stimulusShine, 'checked', config.appearance.stimulation.shine,
-      v => config.appearance.stimulation.shine = v);
-    addChangeListener(stimulusAnimation, 'value', config.appearance.stimulation.animation.selected,
-      v => config.appearance.stimulation.animation.selected = v);
-    
-    elementDurationValue.val(+config.stimulation.duration);
-    elementDurationSlider.val(+config.stimulation.duration);
-    elementPauseValue.val(+config.stimulation.pause);
-    elementPauseSlider.val(+config.stimulation.pause);
-    
-    $(".value")
-      .on(`input`, e => {
-        index = $(e.target).attr("index");
-        if (index) { //speed scale of school
-          elementSpeedValue = $("#speedValue" + index);
-          elementSpeedSlider = $("#speedSlider" + index);
-          value = +elementSpeedValue.val();
-          elementSpeedSlider.val(value);
-          config.keyboard.schools[index].motion.speedScale = value;
-          switchSchema(config);
-          fs.writeFile(`config.json`, JSON.stringify(config, null, 2), err => { if (err) throw err; });
-          ipcRenderer.send(`ipcConsole-command`, config);
-        } else if ($(e.target).attr("id") === "duration") {
-          value = +elementDurationValue.val();
-          elementDurationSlider.val(value);
-          config.stimulation.duration = value;
-          switchSchema(config);
-          fs.writeFile(`config.json`, JSON.stringify(config, null, 2), err => { if (err) throw err; });
-          ipcRenderer.send(`ipcConsole-command`, config);
-        } else if ($(e.target).attr("id") === "pause") {
-          value = +elementPauseValue.val();
-          elementPauseSlider.val(value);
-          config.stimulation.pause = value;
-          switchSchema(config);
-          fs.writeFile(`config.json`, JSON.stringify(config, null, 2), err => { if (err) throw err; });
-          ipcRenderer.send(`ipcConsole-command`, config);
-        }
-        e.stopPropagation();
-      })
-    ;
-    
-    $(".slider")
-      .on(`input`, e => {
-        index = $(e.target).attr("index");
-        if (index) { //speed scale of school
-          elementSpeedValue = $("#speedValue" + index);
-          elementSpeedSlider = $("#speedSlider" + index);
-          value = +elementSpeedSlider.val();
-          elementSpeedValue.val(value);
-          config.keyboard.schools[index].motion.speedScale = value;
-          switchSchema(config);
-          fs.writeFile(`config.json`, JSON.stringify(config, null, 2), err => { if (err) throw err; });
-          ipcRenderer.send(`ipcConsole-command`, config);
-        } else if ($(e.target).attr("id") === "durationSlider") {
-          value = +elementDurationSlider.val();
-          elementDurationValue.val(value);
-          config.stimulation.duration = value;
-          switchSchema(config);
-          fs.writeFile(`config.json`, JSON.stringify(config, null, 2), err => { if (err) throw err; });
-          ipcRenderer.send(`ipcConsole-command`, config);
-        } else if ($(e.target).attr("id") === "pauseSlider") {
-          value = +elementPauseSlider.val();
-          elementPauseValue.val(value);
-          config.stimulation.pause = value;
-          switchSchema(config);
-          fs.writeFile(`config.json`, JSON.stringify(config, null, 2), err => { if (err) throw err; });
-          ipcRenderer.send(`ipcConsole-command`, config);
-        }
-        e.stopPropagation();
-      })
-    ;
-    
-    $(".rnd")
-    // .on('change', e => {
-      .on('click', e => {
-        e.preventDefault();
-        // index = $(e.target).attr("index");
-        // config.keyboard.schools[index].motion.randomSpeed = e.target.checked;
-        // ipcRenderer.send(`ipcConsole-command`, config);
-        alert('UNDER CONSTRUCTION!!! \nOption not available yet...');
-      })
-    ;
-    
-    $(".reverse")
-    // .on('change', e => {
-      .on('click', e => {
-        e.preventDefault();
-        // index = $(e.target).attr("index");
-        // config.keyboard.schools[index].motion.reverse = e.target.checked;
-        // ipcRenderer.send(`ipcConsole-command`, config);
-        alert('UNDER CONSTRUCTION!!! \nOption not available yet...');
-      })
-    ;
-    
-    $("#restart")//todo consider restart necessity
-      .on('click', e => {
-        ipcRenderer.send(`ipcConsole-command`, 'restart-keyboard');
-        e.preventDefault();
-      })
-    ;
-    
-  }
+  console.on('keyboardChange', keyboard => { Object.assign(config.carousel.keyboard, keyboard); });
+  console.on('consoleChange', console => {Object.assign(config.carousel.console, console); });
+  console.on('mbeegChange', mbeeg => { Object.assign(config.mbeeg, mbeeg); });
   
-  function getMotionControlGroup(index) {
-    return $(`
-          <div class="inputbox">
-						<label class = "centered" for="speedValue${index}"> school ${index} </label>
-						<input class="centered slider" type="range" min="0" max="1" step="0.01" value="${config.keyboard.schools[index].motion.speedScale}" id="speedSlider${index}" index="${index}">
-						<input id="speedValue${index}" class="value" value="${config.keyboard.schools[index].motion.speedScale}" index="${index}"/>
-						<label for="randomSpeed${index}"> &nbsp;</label>
-						<input class="rnd" type="checkbox" id="randomSpeed${index}" index="${index}"/>
-						<label for="reverseMovement${index}"> &nbsp;</label>
-						<input class="reverse" type="checkbox" id="reverseMovement${index}" index="${index}"/>
-						<label for="easing${index}"> &nbsp;</label>
-            <select id="easing${index}">
-            	<option>linear</option>
-            	<option>swing</option>
-            	<option>rough</option>
-            	<option selected="true">slow motion</option>
-            	<option>stepped</option>
-            </select>
-						<label for="bezier${index}"> &nbsp;</label>
-            <button id="bezier${index}">add bezier path</button>
-          </div>
-    `);
-    //fieldset(class="effects")
-    //legend effects
-    //.inputbox
-    //label(for="bezier" ) add bezier path
-    //input(type="checkbox" id="bezier" )
-    //.inputbox
-    //label(for="easing" ) easing
-    //select(id="easing")
-    //	option linear
-    //	option swing
-    //	option rough
-    //	option(selected=true) slow motion
-    //	option stepped
-    //.inputbox
-    //	button(id="restart") restart
-    //.inputbox
-  }
+  console.addEventHandling('colorSchemeChange', 'change', $('#color-scheme'), 'value', config.carousel.appearance.colorScheme.selected,
+    v => {
+      config.carousel.appearance.colorScheme.selected = v;
+      console.reloadScheme(v);
+    });
   
-  for (let i = 0; i < config.keyboard.schools.length; i++) {
-    motionControls.append(getMotionControlGroup(i));
-  }
+  console.addEventHandling('keyboardStimulationChange', 'change', $('#color'), 'checked', config.carousel.keyboard.stimulation.color,
+    v => {
+      config.carousel.keyboard.stimulation.color = v;
+    });
   
-  init();
-  switchSchema(config);
+  console.addEventHandling('keyboardStimulationChange', 'change', $('#size'), 'checked', config.carousel.keyboard.stimulation.size,
+    v => {
+      config.carousel.keyboard.stimulation.size = v;
+    });
+  
+  console.addEventHandling('keyboardStimulationChange', 'change', $('#shine'), 'checked', config.carousel.keyboard.stimulation.shine,
+    v => {
+      config.carousel.keyboard.stimulation.shine = v;
+    });
+  
+  console.addEventHandling('keyboardStimulationChange', 'change', $('#animation'), 'value', config.carousel.keyboard.stimulation.animation.selected,
+    v => config.carousel.keyboard.stimulation.animation.selected = v);
+  
+  console.addEventHandling('stimuliChange', 'input', $('.duration'), 'value', config.mbeeg.stimulation.duration,
+    v => config.mbeeg.stimulation.duration = +v);
+  
+  console.addEventHandling('stimuliChange', 'input', $('.pause'), 'value', config.mbeeg.stimulation.pause,
+    v => config.mbeeg.stimulation.pause = +v);
+  
+  console.addEventHandling('keyboxBordersChange', 'change', $('#keyboxBorder'), 'checked', config.carousel.keyboard.keybox.showBorder,
+    v => config.carousel.keyboard.keybox.showBorder = v);
+  
+  console.addEventHandling('keyboxSizeChange', 'input', $('.keyboxHeight'), 'value', +config.carousel.keyboard.keybox.height,
+    v => config.carousel.keyboard.keybox.height = +v);//todo>> font size change depending on keybox size
+  
+  console.addEventHandling('keyboxSizeChange', 'input', $('.keyboxWidth'), 'value', +config.carousel.keyboard.keybox.width,
+    v => config.carousel.keyboard.keybox.width = +v);
+  
+  console.addEventHandling('keyboardRestart', 'input', $('.viewportColumns'), 'value', +config.carousel.keyboard.viewport.columns,
+    v => {
+      config.carousel.keyboard.viewport.columns = +v;
+      console.updateKeyboardViewportProperties('columns', v);//todo>> add eventEmitter to console class
+      console.updateMotionControlGroup();
+    });
+  
+  console.addEventHandling('keyboardRestart', 'input', $('.viewportRows'), 'value', +config.carousel.keyboard.viewport.rows,
+    v => {
+      config.carousel.keyboard.viewport.rows = +v;
+      console.updateKeyboardViewportProperties('rows', v);
+      console.updateMotionControlGroup();
+    });
+  
+  console.addEventHandling('', 'input', $('#alphabet'), 'value', config.carousel.keyboard.alphabet,
+    v => {
+      config.carousel.keyboard.alphabet = v;
+      console.updateArrays(v);
+    });
+  
+  //buttons
+  console.addEventHandling('initialState', 'click', $('#initial-button'), "", "",
+    () => {
+      for (let i = 0; i < config.carousel.keyboard.schools.length; i++) {
+        config.carousel.keyboard.schools[i].motion.speedScale = 0;
+        $(`.speed${i}`).each((i, element) => element['value'] = 0);
+      }
+      // ipcRenderer.send(`ipcConsole-command`, config);
+    });
+  
+  console.addEventHandling('autofit', 'click', $('#autofit-button'), "", "",
+    () => { });
+  
+  console.addEventHandling('keyboardRestart', 'click', $('#restart-button'), "", "",
+    () => { });
+  
+  $(".rnd")
+  // .on('change', e => {
+    .on('click', e => {
+      e.preventDefault();
+      // index = $(e.target).attr("index");
+      // config.carousel.keyboard.schools[index].motion.randomSpeed = e.target.checked;
+      // ipcRenderer.send(`ipcConsole-command`, config);
+      alert('UNDER CONSTRUCTION!!! \nOption not available yet...');
+    })
+  ;
+  
+  $(".reverse")
+  // .on('change', e => {
+    .on('click', e => {
+      e.preventDefault();
+      // index = $(e.target).attr("index");
+      // config.carousel.keyboard.schools[index].motion.reverse = e.target.checked;
+      // ipcRenderer.send(`ipcConsole-command`, config);
+      alert('UNDER CONSTRUCTION!!! \nOption not available yet...');
+    })
+  ;
+  
+  // ipcRenderer.on('ipcKeyboard-command', (e, arg) => {
+  //   config = Tools.copyObject(arg);
+  // });
   
 });

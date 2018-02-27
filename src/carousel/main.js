@@ -1,74 +1,150 @@
 "use strict";
 const
-  fs = require('fs')
+  {EBMLReader, OVReader, Epochs, DSVProcessor, EpochSeries, DSHProcessor, Tools, Stringifier, Classifier, Decisions} = require('mbeeg')
+  , stringifier = new Stringifier({chunkEnd: `\r\n`})
   , {app, BrowserWindow, Menu, ipcMain, globalShortcut} = require('electron')
-  , {Tools} = require('mbeeg')
   , template = require('./menu')
-  // , config = Tools.loadConfiguration(`config.json`)
-  // , ipcController = require('child_process').fork(`${appRoot}/src/core/controller/index.js`)
+  , window = require('./window')
 ;
-
 let
-  config = Tools.loadConfiguration(`config.json`)
-  , winMain, winKeyboard, winConsole //winDebuggerLog;// Keep a global reference of the windows objects, if you don't, the window will be closed automatically when the JavaScript object is garbage collected.
+  winMain, winKeyboard, winConsole //winDebuggerLog;// Keep a global reference of the windows objects, if you don't, the window will be closed automatically when the JavaScript object is garbage collected.
   , menuTemplate = Menu.buildFromTemplate(template)
   , forceCloseApp = false
   , keyboardRuns = false
+  , keyboardHidden = true
+  // , openVibe = require('child_process').execFile
+  // ,executablePath = "C:\\Program Files (x86)\\openvibe\\openvibe-acquisition-server.cmd"
+;
+
+global.config = Tools.loadConfiguration(`config.json`);
+
+const
+  Net = require('net')
+  , fs = require('fs')
+  , openVibeClient = new Net.Socket() //3. Create TCP client for openViBE eeg data server
+  , tcp2ebmlFeeder = (context, tcpchunk) => {//todo rewrite this with closure (instead of context parameter use privateContext closure variable)
+    if (context.tcpbuffer === undefined) {
+      context.tcpbuffer = Buffer.alloc(0);
+      context.tcpcursor = 0;
+    }
+    context.tcpbuffer = Buffer.concat([context.tcpbuffer, tcpchunk]);
+    let bufferTailLength = context.tcpbuffer.length - context.tcpcursor;
+    while (bufferTailLength) {
+      if (!context.expectedEBMLChunkSize && bufferTailLength >= 8) {
+        context.expectedEBMLChunkSize = context.tcpbuffer.readUIntLE(context.tcpcursor, 8);//first Uint64LE contains length of ebml data sent by openViBE
+        context.tcpcursor += 8;
+        bufferTailLength -= 8;
+      }
+      else if (!context.expectedEBMLChunkSize)
+        break;
+      if (bufferTailLength >= context.expectedEBMLChunkSize) {
+        context.ebmlChunk = Buffer.from(context.tcpbuffer.slice(context.tcpcursor, context.tcpcursor + context.expectedEBMLChunkSize));
+        context.tcpcursor += context.expectedEBMLChunkSize;
+        bufferTailLength -= context.expectedEBMLChunkSize;
+        context.expectedEBMLChunkSize = 0;
+      } else
+        break;
+      context.write(context.ebmlChunk);
+    }
+    if (!bufferTailLength) {
+      context.tcpbuffer = Buffer.alloc(0);
+      context.tcpcursor = 0;
+    }
+  }
+  , openVibeJSON = new EBMLReader({
+    ebmlSource: openVibeClient.connect(config.mbeeg.signal.port, config.mbeeg.signal.host, () => {})
+    , ebmlCallback: tcp2ebmlFeeder
+  })
+  , samples = new OVReader()
+  , stimuli = new require('stream').PassThrough({objectMode: true})
+  , epochs = new Epochs({
+    stimuli: stimuli
+    , samples: openVibeJSON.pipe(samples)
+    , cycleLength: config.mbeeg.stimulation.sequence.stimuli.length
+    , channels: config.mbeeg.signal.channels
+    , epochDuration: config.mbeeg.signal.epoch.duration
+  })
+  , butterworth4 = new DSVProcessor({
+    method: Tools.butterworth4Bulanov
+    , parameters: config.mbeeg.signal.dsp.vertical.methods.butterworth4Bulanov
+  })
+  , detrend = new DSVProcessor({
+    method: Tools.detrend
+    , parameters: config.mbeeg.signal.dsp.vertical.methods.detrendNormalized
+  })
+  , epochSeries = new EpochSeries({
+    stimuliIdArray: config.mbeeg.stimulation.sequence.stimuli
+    , depthLimit: config.mbeeg.decision.methods.majority.maxCycles
+  })
+  , features = new DSHProcessor({
+    method: samples => samples.reduce((a, b) => a + b) / samples.length
+  })
+  , classifier = new Classifier({
+    method: Tools.absIntegral
+    , parameters: config.mbeeg.classification.methods.absIntegral
+    , postprocessing: Tools.normalizeVectorBySum
+  })
+  , decisions = new Decisions({
+    method: Tools.majorityDecision
+    , parameters: config.mbeeg.decision.methods.majority
+  })
 ;
 
 function createWindows() {
-  const window = require('./window');
   // Menu.setApplicationMenu(menu);
   
   winMain = window({
     width: 800,
     height: 600,
     show: false,
-    url: "./index.html"
-  });
-  winMain.on(`close`, () => {
-    fs.writeFile(`config.json`, JSON.stringify(config, null, 2), err => { if (err) throw err; });
-    forceCloseApp = true;
-    app.quit();
+    url: "gui/main/index.html"
   });
   winMain.setMenu(menuTemplate);
-  winMain.on('ready-to-show', () => {
-    winMain.show();
-  });
-  
+  winMain
+    .on(`close`, () => {
+      fs.writeFile(`config.json`, JSON.stringify(config, null, 2), err => { if (err) throw err; });
+      forceCloseApp = true;
+      keyboardRuns = false;
+      app.quit();
+    })
+    .on('ready-to-show', () => {
+      winMain.show();
+    })
+  ;
+  // winMain.toggleDevTools();
   winKeyboard = window({
-    width: 1700,
-    height: 700,
+    width: config.carousel.keyboard.keybox.width * config.carousel.keyboard.viewport.columns + 50,
+    height: config.carousel.keyboard.keybox.height * config.carousel.keyboard.viewport.rows + 250,
     show: false,
-    // parent: winMain,
-    // frame: false,//production
-    // resizable: false,
     url: 'gui/keyboard/index.html'
   });
+  // winKeyboard.toggleDevTools();
+  winKeyboard.hide();
+  keyboardHidden = true;
   // winKeyboard.setMenu(null);//production
-  winKeyboard.on(`show`, () => {
-    //todo check if already runs and send message only if not
-    if (!keyboardRuns) {
+  winKeyboard
+    .on(`show`, () => {
+      keyboardHidden = false;
       keyboardRuns = true;
-      // ipcController.send(`start-stimuli`);
-      // ipcController.send(`start-classification`);
-    }
-  });
-  
-  winKeyboard.on(`close`, e => {
-    if (!forceCloseApp) {
-      e.preventDefault();
-      winKeyboard.hide();
-      keyboardRuns = false;
-      // ipcController.send(`stop-stimuli`);
-      // ipcController.send(`stop-classification`);
-      winMain.focus();
-    }
-  });
+      stimuli.resume();
+      
+    })
+    .on(`close`, e => {
+      if (!forceCloseApp) {
+        e.preventDefault();
+        keyboardHidden = true;
+        winKeyboard.hide();
+        stimuli.pause();
+        epochs.reset(config.mbeeg.stimulation.sequence.stimuli.length);
+        epochSeries.reset(config.mbeeg.stimulation.sequence.stimuli);
+        winMain.focus();
+      }
+    })
+  ;
   
   winConsole = window({
-    width: 900,
-    height: 500,
+    // width: 900,
+    // height: 950 + config.carousel.keyboard.viewport.rows * 32,
     // parent: winMain,
     // frame: false,//production
     show: false,
@@ -79,12 +155,21 @@ function createWindows() {
     if (!forceCloseApp) {
       e.preventDefault();
       winConsole.hide();
-      //controller.saveConfiguration()
-      winMain.focus();
+      if (keyboardHidden)
+        winMain.focus();
+      else
+        winKeyboard.focus();
     }
   });
-  
 }
+
+//openViBE acquisition server is required so run it first
+// openVibe(executablePath, function(err, data) {
+//     if(err){
+//        console.error(err);
+//        return;
+//     }
+// });
 
 // noinspection JSUnusedLocalSymbols
 const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
@@ -93,70 +178,84 @@ const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) 
     winMain.focus();
   }
 });
-if (isSecondInstance) {
-  app.quit();
-}
+if (isSecondInstance) { app.quit(); }
 
-app.on('ready', () => {
-  //createAppInfrastructure();
-  // ipcController.on(`message`,
-  //   msg => {
-  //     switch (msg) {
-  //       case "verdict":
-  //         break;
-  //       case "ipc-controller-listen":
-  //         console.log(msg);
-  //         break;
-  //       default:
-  //         console.log(msg);
-  //     }
-  //   });
-  createWindows();
-  
-  globalShortcut.register(`CommandOrControl+W`, () => {
-    BrowserWindow.getFocusedWindow().close();
-  });
-  globalShortcut.register(`CommandOrControl+Shift+K`, () => {
-    // if (!winKeyboard.isVisible())
-    winKeyboard.show();
-  });
-  globalShortcut.register(`CommandOrControl+Shift+C`, () => {
-    winConsole.show();
-    //controller.readConfiguration()
-  });
-});
+app
+  .on('will-quit', () => globalShortcut.unregisterAll())
+  .on('activate', () => {//for macOS system event
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (winMain === null) {
+      epochs
+        .pipe(butterworth4)
+        .pipe(detrend)
+        .pipe(epochSeries)
+        .pipe(features)
+        .pipe(classifier)
+        .pipe(decisions)
+        .pipe(stringifier)
+        .pipe(process.stdout);
+      createWindows();
+    }
+  })
+  .on('window-all-closed', () => {
+    // On macOS it is common for applications and their menu bar
+    // to stay active until the user quits explicitly with Cmd + Q
+    if (process.platform !== 'darwin') { app.quit() }
+  })
+  .on('ready', () => {
+    stimuli.pause();
+    epochs
+      .pipe(butterworth4)
+      .pipe(detrend)
+      .pipe(epochSeries)
+      .pipe(features)
+      .pipe(classifier)
+      .pipe(decisions)
+      .pipe(stringifier)
+      .pipe(process.stdout)
+    ;
+    createWindows();
+    
+    globalShortcut.register(`CommandOrControl+W`, () => {
+      BrowserWindow.getFocusedWindow().close();
+    });
+    globalShortcut.register(`CommandOrControl+Shift+K`, () => {
+      winKeyboard.show();
+    });
+    globalShortcut.register(`CommandOrControl+Shift+C`, () => {
+      winConsole.show();
+    })
+    
+  })
+;
 
-app.on('window-all-closed', () => {
-  // On macOS it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
-});
-
-app.on('will-quit', () => globalShortcut.unregisterAll());
-
-app.on('activate', () => {
-  // On macOS it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (winMain === null) createWindows();
+decisions.on('data', decision => {
+  winKeyboard.webContents.send(`ipcApp-decision`, decision);
 });
 
 ipcMain
   .on(`ipcMain-message`, (e, arg) => {//asynchronous-message
     switch (arg) {
-      case 'keyboard-launch':
+      case 'keyboardLaunch':
         // winKeyboard.setFullScreen(!winKeyboard.isFullScreen());
         winKeyboard.show();
         break;
-      case 'console-launch':
+      case 'consoleLaunch':
         winConsole.show();
         break;
     }
   })
-  .on(`ipcConsole-command`, (e, arg) => {
-    config = Tools.copyObject(arg);
-    winMain.webContents.send(`ipcConsole-command`, arg);
-    winKeyboard.webContents.send(`ipcConsole-command`, arg);
+  .on(`ipcKeyboard-stimulus`, (e, stimulus) => {
+    if (!keyboardHidden)
+      stimuli.write(stimulus);
+  })
+  .on(`ipcKeyboard-change`, (e, arg) => {
+    epochs.reset(config.mbeeg.stimulation.sequence.stimuli.length);
+    epochSeries.reset(config.mbeeg.stimulation.sequence.stimuli);
+  })
+  .on(`ipcConsole-command`, (e, command) => {
+    winMain.webContents.send(`ipcConsole-command`, command);
+    winKeyboard.webContents.send(`ipcConsole-command`, command);
   });
 

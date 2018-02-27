@@ -1,0 +1,124 @@
+.light {
+  background: repeating-linear-gradient(45deg, #ffffff 0%, #e8e8e8 10%, #e9e9e9 0%, #e6e6e6 50%) 0 / 15px 15px;
+  //background: #f0f0f0;
+  //background: white;
+}
+
+.dark {
+  background: repeating-linear-gradient(45deg, #2b2b2b 0%, #2b2b2b 10%, #222222 0%, #222222 50%) 0 / 15px 15px;
+  //background: #2b2b2b;
+  //background: black;
+}
+
+.keybox-dark {
+  color: #FF1177;
+}
+
+.keybox-light {
+  color: #6d6d6d;
+}
+
+//STIMULI EFFECTS
+@keyframes shake {
+  from {
+    transform: translate(15px, 15px);
+  }
+  to {
+    transform: translate(-15px, -15px);
+  }
+}
+
+@keyframes turn {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(90deg);
+  }
+}
+
+.faded-dark-keys {
+  color: #3a3a3a !important;
+}
+
+.faded-light-keys {
+  color: #d3d3d3 !important;
+}
+
+.selected-dark-key {
+  color: #fff !important;
+  text-shadow: 0 0 15px #fff, 0 0 1em #ff07d3; //FF1177,ff75f3;
+  font-size: 19vmin !important;
+}
+
+.selected-light-key {
+  color: #000 !important;
+  text-shadow: 0 0 15px #6C6C6C, 0 0 1em #FFF; //FF1177,ff75f3
+  font-size: 19vmin !important;
+}
+
+.keybox-dark-color {
+  color: #FFF;
+}
+
+.keybox-light-color {
+  color: #000;
+}
+
+.keybox-dark-size {
+  background-size: 100%;
+  font-size: 17vmin !important;
+}
+
+.keybox-light-size {
+  background-size: 100%;
+  font-size: 17vmin !important;
+}
+
+.keybox-dark-shine {
+  text-shadow: 0 0 15px #fff, 0 0 1em #ff07d3; //FF1177,ff75f3;
+}
+
+.keybox-light-shine {
+  //color: #000;
+  text-shadow: 0 0 15px #6C6C6C, 0 0 1em #FFF; //FF1177,ff75f3
+}
+
+.keybox-dark-shake {
+  //transform-origin: center center;
+  animation-name: shake;
+  animation-duration: 0.01s;
+  animation-iteration-count: infinite;
+}
+
+.keybox-light-shake {
+  //transform-origin: center center;
+  animation-name: shake;
+  animation-duration: 0.01s;
+  animation-iteration-count: infinite;
+}
+
+.keybox-dark-turn {
+  animation-name: turn;
+  animation-duration: 0.1s;
+  animation-iteration-count: 1;
+}
+
+.keybox-light-turn {
+  animation-name: turn;
+  animation-duration: 0.1s;
+  animation-iteration-count: 1;
+}
+
+.keybox-dark-capsize {
+  transform: rotate(180deg);
+}
+
+.keybox-light-capsize {
+  transform: rotate(90deg);
+}
+
+.keybox-bordered {
+  border: 1px solid #525252 !important;
+}
+

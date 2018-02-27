@@ -1,3 +1,4 @@
+//todo develop interaction protocol instead of used here (javaclass identifiers inside json)
 //todo consider and introduce "selected/available" for choice lists in config
 "use strict";
 
@@ -37,7 +38,8 @@ const
   } = require('mbeeg')
   , stimuler = new Sampler()
   , sampler = new Sampler()
-  , config = Tools.loadConfiguration(`../../config.json`)
+  , config = Tools.loadConfiguration(`./config.json`)
+  // , config = Tools.loadConfiguration(`../../config.json`)
   , ntDecisionStringifier = new Stringifier({
     chunkBegin: `{"class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellConceived", "cellId": `
     , chunkEnd: `, "timestamp": ${new Date().getTime()}}\r\n`
@@ -67,15 +69,15 @@ const
   // , epochsDetrendedV = new EpochsVerticalLogger()
   // , epochsDetrendedNormalizedV = new EpochsVerticalLogger()
   , featuresH = new FeatureHorizontalLogger({
-    stimuliIdArray: config.stimulation.sequence.stimuli
+    stimuliIdArray: config.mbeeg.stimulation.sequence.stimuli
   })
   , featuresWindowedH = new FeatureHorizontalLogger({
-    stimuliIdArray: config.stimulation.sequence.stimuli
-    , start: config.classification.methods.absIntegral.start
-    , window: config.classification.methods.absIntegral.window
+    stimuliIdArray: config.mbeeg.stimulation.sequence.stimuli
+    , start: config.mbeeg.classification.methods.absIntegral.start
+    , window: config.mbeeg.classification.methods.absIntegral.window
   })
   // , featuresV = new FeatureVerticalLogger({
-  //   stimuliIdArray: config.stimulation.sequence.stimuli
+  //   stimuliIdArray: config.mbeeg.stimulation.sequence.stimuli
   // })
   , openVibeClient = new Net.Socket() //create TCP client for openViBE eeg data server
   , tcp2ebmlFeeder = (context, tcpchunk) => {//todo move this to helpers (Tools) into mbeeg lib
@@ -108,47 +110,54 @@ const
     }
   }
   , openVibeJSON = new EBMLReader({
-    ebmlSource: openVibeClient.connect(config.signal.port, config.signal.host, () => {})
+    ebmlSource: openVibeClient.connect(config.mbeeg.signal.port, config.mbeeg.signal.host, () => {})
     , ebmlCallback: tcp2ebmlFeeder
   })
   , samples = new OVReader()
   , epochs = new Epochs({//epochizator
     stimuli: ntStimuli
     , samples: openVibeJSON.pipe(samples)
-    , cycleLength: config.stimulation.sequence.stimuli.length
-    , channels: config.signal.channels
-    , epochDuration: config.signal.epoch.duration
+    , cycleLength: config.mbeeg.stimulation.sequence.stimuli.length
+    , channels: config.mbeeg.signal.channels
+    , epochDuration: config.mbeeg.signal.epoch.duration
   })
   , butterworth4 = new DSVProcessor({
-    action: Tools.butterworth4Bulanov
-    , actionParameters: config.signal.dsp.vertical.methods.butterworth4Bulanov
+    method: Tools.butterworth4Bulanov
+    , parameters: config.mbeeg.signal.dsp.vertical.methods.butterworth4Bulanov
   })
   , detrend = new DSVProcessor({
-    action: Tools.detrend
-    , actionParameters: config.signal.dsp.vertical.methods.detrend
+    method: Tools.detrend
+    , parameters: config.mbeeg.signal.dsp.vertical.methods.detrend
   })
   , detrendNormalized = new DSVProcessor({
-    action: Tools.detrend
-    , actionParameters: config.signal.dsp.vertical.methods.detrendNormalized
+    method: Tools.detrend
+    , parameters: config.mbeeg.signal.dsp.vertical.methods.detrendNormalized
   })
   , epochSeries = new EpochSeries({
-    stimuliIdArray: config.stimulation.sequence.stimuli
-    , depthLimit: config.decision.methods.majority.cycles
-    // , incremental: config.signal.dsp.horizontal.methods.absIntegral.incremental
+    stimuliIdArray: config.mbeeg.stimulation.sequence.stimuli
+    , depthLimit: config.mbeeg.decision.methods.majority.maxCycles
   })
-  , features = new DSHProcessor()
+  , features = new DSHProcessor({
+    method: samples => samples.reduce((a, b) => a + b) / samples.length
+  })
   , classifier = new Classifier({
     method: Tools.absIntegral
-    , methodParameters: config.classification.methods.absIntegral
+    , parameters: config.mbeeg.classification.methods.absIntegral
     , postprocessing: Tools.normalizeVectorBySum
   })
   , classifierAbs = new Classifier({
     method: Tools.absIntegral
-    , methodParameters: config.classification.methods.absIntegral
+    , parameters: config.mbeeg.classification.methods.absIntegral
+    , postprocessing: Tools.normalizeVectorBySum
   })
   , verdictsAbs = new Sampler()//todo unify sampling and other logging preparations in mbeeg.Tools helpers library
   , verdictsNorm = new Sampler()
-  , decisions = new Decisions(config.decision.methods.majority)
+  , decisions = new Decisions({
+    // method: Tools.nInARowDecision
+    // , parameters: config.mbeeg.decision.methods.nInARow
+    method: Tools.majorityDecision
+    , parameters: config.mbeeg.decision.methods.majority
+  })
 ;
 
 let
@@ -191,7 +200,7 @@ const
                 case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings"://SCENE SETTINGS
                   stimuliIdArray = message.objects;
                   if (!lastEpoch)
-                    lastEpoch = config.signal.cycles ? config.signal.cycles * stimuliIdArray.length - 1 : 0;
+                    lastEpoch = config.mbeeg.signal.cycles ? config.mbeeg.signal.cycles * stimuliIdArray.length - 1 : 0;
                   log(`::NT scene settings:: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings`);
                   log(`::NT scene settings:: stimuli idarray: ${JSON.stringify(stimuliIdArray)}`);
                   epochs.reset(stimuliIdArray.length);
@@ -200,12 +209,10 @@ const
                   featuresWindowedH.setStimuliIdArray(stimuliIdArray);
                   // featuresV.setStimuliIdArray(stimuliIdArray);
                   running = true;
-                  ntStimuli.resume();
                   break;
                 case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop":
                   log(`::NT stops stimulation`);
                   running = false;
-                  ntStimuli.pause();
                   console.log(`Stimuli flow has stopped...`);
                   break;
                 case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellFlashing":
@@ -217,7 +224,7 @@ const
                     if (lastEpoch) {
                       log(`  ::NT has sent next stimulus [${[stimulus]}] key/#/cycle ${stimulus[1]}/${stimulusNumber}/${Math.floor(stimulusNumber / stimuliIdArray.length)}; last epoch/cycle set to ${lastEpoch}/${Math.floor(lastEpoch / stimuliIdArray.length)}`);
                       if (stimulusNumber > lastEpoch) {
-                        log(`  ::Exit due to reaching cycles limit set by config.signal.cycles`);
+                        log(`  ::Exit due to reaching cycles limit set by config.mbeeg.signal.cycles`);
                         fileStimuli.end();
                         fileSamples.end();
                         fileEpochsRawH.end();
@@ -247,7 +254,7 @@ const
       mbEEGServer.getConnections((err, count) => {
         console.log(`Connections count is ${count}`);
         if (count === 1) {
-          if (config.signal.cycles) {//log samples, epochs and features into files
+          if (config.mbeeg.signal.cycles) {//log samples, epochs and features into files
             ntStimuli
               .pipe(stimuler)
               .pipe(fileStimuli);
@@ -313,8 +320,8 @@ const
       })
       ;
     }
-  ).listen({port: config.service.port, host: config.service.host, exclusive: true}, () => {
-    console.log(`\r\n ... mbEEG TCP server started at ${config.service.host}:${config.service.port} ...\n
+  ).listen({port: config.tcpserver.port, host: config.tcpserver.host, exclusive: true}, () => {
+    console.log(`\r\n ... mbEEG TCP server started at ${config.tcpserver.host}:${config.tcpserver.port} ...\n
     \r - to change server configuration use file config.json in the same directory as mbeegntsrv.exe
     \r - to get help run with -h or --help option
     \r\n\r\n`)
@@ -324,20 +331,20 @@ const
 openVibeClient
   .on(`close`, () => {
     // console.log(`OpenViBE connection closed.`);
-    console.log(`Error: can't connect ${config.signal.host}:${config.signal.port} ECONNCLOSED`);
+    console.log(`Error: can't connect ${config.mbeeg.signal.host}:${config.mbeeg.signal.port} ECONNCLOSED`);
     process.exit(1);
     // console.log(`OpenViBE connection closed. Trying to reconnect ...`);
     // while (true) {
     //   setInterval(() => {
-    //     openVibeClient.connect(config.signal.port, config.signal.host, () => {})
+    //     openVibeClient.connect(config.mbeeg.signal.port, config.mbeeg.signal.host, () => {})
     //   }, 5000);
     //   ovConnAttemptCounter++;
     // }
-  // })
+    // })
 // .on(`error`, error => {
 //   console.log(`No response from OpenViBE acquisition server.
 // Connection attempt ${ovConnAttemptCounter} failed.`)
-})
+  })
 ;
 mbEEGServer.on(`close`, () => console.log(`mbEEG sever verdict service closed.`));
 

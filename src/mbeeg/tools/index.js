@@ -1,11 +1,67 @@
 "use strict";
+//todo>> to redistribute helpers by classes for which they are intended
+//todo>> to separate tools/helpers library from mbeeg to distinct one
+
 const
   {Transform} = require('stream')
   , fs = require('fs')
   // , fili = require('fili')
   // , json2csv = require('json2csv')
   , log = require('debug')('mbeeg:Tools')
+  , stat = {
+    max: array => Math.max.apply(null, array),
+    min: array => Math.min.apply(null, array),
+    range: array => stat.max(array) - stat.min(array),
+    midrange: array => stat.range(array) / 2,
+    sum: array => array.reduce((a, b) => a + b, 0),
+    mean: array => stat.sum(array) / array.length,
+    median: array => {
+      array.sort(function (a, b) { return a - b; });
+      let mid = array.length / 2;
+      return mid % 1 ? array[mid - 0.5] : (array[mid - 1] + array[mid]) / 2;
+    },
+    modes: array => {
+      if (!array.length) return [];
+      let modeMap = {},
+        maxCount = 0,
+        modes = [];
+      
+      array.forEach(val => {
+        if (!modeMap[val]) modeMap[val] = 1;
+        else modeMap[val]++;
+        
+        if (modeMap[val] > maxCount) {
+          modes = [val];
+          maxCount = modeMap[val];
+        }
+        else if (modeMap[val] === maxCount) {
+          modes.push(val);
+        }
+      });
+      return {modes: modes, frequency: maxCount, weight: maxCount / array.length};
+    },
+    variance: array => {
+      let mean = stat.mean(array);
+      return stat.mean(array.map(num => Math.pow(num - mean, 2)));
+    },
+    standardDeviation: array => Math.sqrt(stat.variance(array)),
+    meanAbsoluteDeviation: array => {
+      let mean = stat.mean(array);
+      return stat.mean(array.map(num => Math.abs(num - mean)));
+    },
+    zScores: array => {
+      let mean = stat.mean(array);
+      let standardDeviation = stat.standardDeviation(array);
+      return array.map(num => (num - mean) / standardDeviation);
+    }
+  }
 ;
+
+function randomWithoutConjunctions(arr) {
+  let last = arr[arr.length - 1];
+  arr.sort(() => Math.random() - 0.5);
+  return arr[0] === last ? arr.push(arr.shift()) : arr;
+}
 
 /**
  * returns value v filled with zeroes to length l
@@ -25,12 +81,153 @@ function pad(l, v) {// l - length of zero-leading string number, v - number valu
  * @see EBML, variable-length integers, UTF, Endianness, DSP, EEG
  */
 class Tools {
+
+// static SGDDecision({verdict, start = 2, cycles = 10, threshold = 5, startweights = 1, startgradient = 0}) {
+//   if (reset) {
+//     let
+//       weights = new Array(verdict.length).fill(startweights)
+//       , gradients = new Array(verdict.length).fill(startgradient)
+//     ;
+//   }
+//   this.weights = this.weights.map((e, i) => e * this.grad[i]);
+//   this.result = verdict.map((e, i) => e * this.weights[i]);
+//   this.grad = verdict;
+// }
   
+  /**
+   *
+   * @param verdictsQueue
+   * @param winnersQueues
+   * @param start
+   * @param maxCycles
+   * @param threshold
+   * @return {{ready: boolean, status: string, winner: null}}
+   */
+  static majorityDecision({
+                            verdictsQueue
+                            , start
+                            , minCycles
+                            , maxCycles
+                            , threshold
+                          }) {
+    let
+      result = {
+        ready: false,
+        status: "decision-making process hasn't reached starting cycle yet",//for debug purposes
+        winners: [],//one per channel
+      }
+      , verdictsQueueLength = verdictsQueue.length
+      , channelsNumber = verdictsQueue[0].length//at least on verdict should be presented (under index 0)
+      , winnersQueues = new Array(channelsNumber).fill([])//todo change "if(someArray===undefined)" to "someArr=[..]" everywhere
+      // , accumulatedWeights = new Array(channelsNumber).fill([])
+      , winnersModes = new Array(channelsNumber).fill([])//todo change partly filled arrays to objects
+    ;
+    
+    for (let verdictsSetIndex = 0; verdictsSetIndex < verdictsQueueLength; verdictsSetIndex++) {
+      for (let channel = 0; channel < channelsNumber; channel++) {
+        if (verdictsSetIndex >= start - 1) {
+          result.status = `Channel ${channel}, inner overall counter is ${verdictsSetIndex}; `;
+          let
+            verdict = verdictsQueue[verdictsSetIndex][channel]
+            , winner = verdict.reduce((ac, v, i, ar) => //idx of max
+              ar[ac] === undefined || ar[ac] < v ? i : ac, 0)
+          ;
+          winnersQueues[channel].push(winner);
+          result.status = `${result.status} winners queues ${JSON.stringify(winnersQueues)}; `;
+          winnersModes[channel] = stat.modes(winnersQueues[channel])
+        }
+      }
+    }
+    
+    for (let channel = 0; channel < channelsNumber; channel++)
+      if (verdictsQueueLength >= minCycles && verdictsQueueLength <= maxCycles) {
+        if (winnersModes[channel].weight >= threshold) {
+          result.winners.push(winnersModes[channel].modes[winnersModes[channel].modes.length - 1]);
+        }
+        else if (verdictsQueueLength === maxCycles) {
+          result.winners.push(-1);
+        }
+        result.status = `${result.status} NextDecisionReady - winners = ${JSON.stringify(result.winners)}`;
+      }
+    
+    if (result.winners.length === channelsNumber)
+      result.ready = true;
+    
+    return result;
+  }
+  
+  /**
+   *
+   * @param verdictsQueue
+   * @param winnersQueues
+   * @param start
+   * @param maxCycles
+   * @param threshold
+   * @return {{ready: boolean, status: string, winner: null}}
+   */
+  static nInARowDecision({
+                           verdictsQueue
+                           , start = 3
+                           , maxCycles = 10
+                           , threshold = 5
+                         }) {
+    let
+      result = {
+        ready: false,
+        status: "decision-making process hasn't reached starting cycle yet",
+        winners: [],
+      }
+      , verdictsQueueLength = verdictsQueue.length
+      , channelsNumber = verdictsQueue[0].length
+      , winnersQueues = new Array(channelsNumber).fill([])//todo change if(someArray===undefined) someArr=[..] everywhere
+      , winnersSeriesLengths = new Array(channelsNumber).fill(1)
+    ;
+    if (verdictsQueueLength > maxCycles) {
+      result = {
+        ready: true,
+        status: "decision-making failed, maxCycles xceeded. Winners id = -1",
+        winners: new Array(channelsNumber).fill(-1)
+      };
+    } else {
+      for (let verdictsSetIndex = 0; verdictsSetIndex < verdictsQueueLength; verdictsSetIndex++) {
+        for (let channel = 0; channel < channelsNumber; channel++) {
+          if (verdictsSetIndex >= start - 1) {
+            result.status = `Channel ${channel}, inner overall counter is ${verdictsSetIndex}; `;
+            let
+              verdict = verdictsQueue[verdictsSetIndex][channel]
+              , winner = verdict.reduce((ac, v, i, ar) => //idx of max
+                ar[ac] === undefined || ar[ac] < v ? i : ac, 0)
+            ;
+            winnersQueues[channel].push(winner);
+            result.status = `${result.status} winners queues ${JSON.stringify(winnersQueues)}; `;
+            if (winnersQueues[channel][winnersQueues[channel].length - 1]
+              === winnersQueues[channel][winnersQueues[channel].length - 2]) {
+              if (++winnersSeriesLengths[channel] >= threshold) {
+                result.winners.push(winnersQueues[channel][winnersQueues[channel].length - 1]);
+                result.status = `${result.status} NextDecisionReady - winners = ${JSON.stringify(result.winners)}`;
+                result.ready = true;
+              }
+            } else {
+              winnersSeriesLengths.fill(1);
+            }
+          }
+        }
+      }
+    }
+    
+    return result;
+  }
+  
+  /**
+   * returns - copy of sourceObject
+   * @param sourceObject
+   * @return {*} - copy of sourceObject
+   */
   static copyObject(sourceObject) {
     let copy;
     
     // Handle the 3 simple types, and null or undefined
-    if (null == sourceObject || "object" != typeof sourceObject) return sourceObject;
+    if (null == sourceObject || "object" !== typeof sourceObject) return sourceObject;
     // Handle Date
     if (sourceObject instanceof Date) {
       copy = new Date();
@@ -102,7 +299,7 @@ class Tools {
    */
   static idxOfMax(arr) {
     // noinspection JSUnusedAssignment
-    return arr.reduce((ac, v, i, ar) => ar[ac] < v ? ac = i : ac, 0);
+    return arr.reduce((ac, v, i, ar) => ar[ac] < v ? i : ac, 0);
   }
   
   /**
@@ -138,6 +335,15 @@ class Tools {
   static normalizeVectorBySum(vector) {
     let sum = vector.reduce((a, b) => a + b);
     return vector.map(v => v / sum);//normalization
+  }
+  
+  /**
+   * @function "function" returns vector with same dimenstion as input vector with all elements set ot zero except biggest one wich is set into one
+   * @param {Array} vector - input vector
+   */
+  static chooseBiggest(vector) {
+    let max = vector.reduce((a, b) => a > b ? a : b);
+    return vector.map(v => v === max ? 1 : 0);
   }
   
   /**
@@ -275,12 +481,12 @@ class Tools {
       buffer: valueBuffer,
       hexString: this.bigEndian(valueBuffer)
     }
-    //todo Alternative ways to calculate length should be tested and assessed
+    //todo the alternative ways to calculate length should be considered
     // const value = parseInt(this.bigEndian(offset, bytes, buffer), 16); //value in descriptor
     // return Math.ceil(Math.log2(-(1 + ~(1 << bytes * 8)) / value)); //length of vInt
     // One more way to calculate length is using javascript Math.clz32(first4bytes)
     // let length2 = 8 * (bytes - 1) + Math.clz32(buffer[firstByte]) - 23;
-    //todo there is much much faster approach to get vInt length, it is the precalculated vector with 256 elements (i.e. 2^8 elements)
+    //todo there is much much faster approach to get vInt length, this is the precalculated vector with 256 elements (i.e. 2^8 elements)
     // that contains vectors with length equal to number of bytes of length descriptor
     // each element of last vector keeps precalculated length of vInt for that specific length of vInt length descriptor
     // then vInt could be expressed like something like this: {let bytes=0; while(!buffer[bytes++]); return table256[buffer[bytes]][bytes];}
@@ -502,7 +708,7 @@ class EpochsVerticalLogger extends Transform {
   }
 }
 
-class FeatureHorizontalLogger extends Transform {//todo eliminate start, window and other Bulanov's demands for windowed features
+class FeatureHorizontalLogger extends Transform {
   constructor({
                 stimuliIdArray
                 , start = 0

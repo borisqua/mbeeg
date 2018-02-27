@@ -1,16 +1,9 @@
-@import "variables";
-@import "mixins";
-@import "csshake";
-
 //HTML TAGS
-html, body {
-  margin: 0;
+* {
   padding: 0;
-  //background-color: #222222;
-  //background: repeating-linear-gradient(45deg, #2b2b2b 0%, #2b2b2b 10%, #222222 0%, #222222 50%) 0 / 15px 15px;
-}
-
-div {
+  margin: 5px;
+  border: 0;
+  outline: 0;
 }
 
 form {
@@ -18,24 +11,37 @@ form {
 }
 
 input[type="radio"], input[type="checkbox"], input[type="range"] {
-  margin: 5px;
+  //margin: 5px;
 }
+
 input[type="text"], input[type="number"] {
   //@include centered;
   min-width: 60px;
-  border: 1px solid lightgray;
+  //border: 1px solid lightgray;
+  text-align: right;
+}
+
+textarea {
+  font-family: serif;
+  //border: solid 1px #787878 !important; //lightgrey
 }
 
 label {
   font-size: 10pt;
   color: gray;
-  margin: 5px;
+  //margin: 5px;
 }
-.stimuli-appearance label{
+
+.right {
+  text-align: right;
+}
+
+.label-after-field {
   margin: 0 5px -17px 20px;
 }
-.color-scheme label{
-  margin: 2px 5px 0;
+
+.color-scheme label {
+  //margin: 2px 5px 0;
 }
 
 legend {
@@ -51,13 +57,28 @@ button {
   color: grey;
   vertical-align: middle;
   text-align: center;
-  @include drawBorder(darkgrey);
-  margin: 5px;
+  border: 1px solid darkgray;
+  //margin: 5px;
+}
+
+button:hover {
+  background-color: #a6a7a2;
+  cursor: pointer;
+}
+
+button:active {
+  background-color: white;
+}
+
+.footer-button {
+  height: 35px;
+  width: 120px;
+  font-size: 12pt;
+  color: #616161;
 }
 
 fieldset {
-  text-align: right;
-  @include drawBorder(#525252); //lightgrey
+  border: 1px solid #5e5e5e;
   //display: grid;
   //grid-template-columns: repeat(4, 1fr);
   //grid-gap: 10px;
@@ -65,94 +86,18 @@ fieldset {
 }
 
 //COMMON CLASSES
-.light {
-  background: repeating-linear-gradient(45deg, #ffffff 0%, #e8e8e8 10%, #e9e9e9 0%, #e6e6e6 50%) 0 / 15px 15px;
-}
-
-.dark {
-  background: repeating-linear-gradient(45deg, #2b2b2b 0%, #2b2b2b 10%, #222222 0%, #222222 50%) 0 / 15px 15px;
-}
-
-.keybox-dark{
-  //color: #ab058d;
-  color: #FF1177;
-}
-
-.keybox-light{
-  color: #6d6d6d;
-}
-
-//STIMULI EFFECTS
-@keyframes shake {
-  from { transform: translate(15px, 15px); }
-  to { transform: translate(-15px, -15px); }
-}
-@keyframes turn {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(90deg); }
-}
-.keybox-dark-color {
-  color: #FFF;
-}
-.keybox-light-color {
-  color: #000;
-}
-.keybox-dark-size {
-  background-size: 100%;
-  font-size: 700% !important;
-}
-.keybox-light-size {
-  background-size: 100%;
-  font-size: 700% !important;
-}
-.keybox-dark-shine {
-  color: #FFF;
-  text-shadow: 0 0 15px #fff, 0 0 1em #ff07d3; //FF1177,ff75f3;
-}
-.keybox-light-shine {
-  color: #000;
-  text-shadow: 0 0 15px #6C6C6C, 0 0 1em #FFF; //FF1177,ff75f3
-}
-.keybox-dark-shake {
-  //transform-origin: center center;
-  animation-name: shake;
-  animation-duration: 0.01s;
-  animation-iteration-count: infinite;
-}
-.keybox-light-shake {
-  //transform-origin: center center;
-  animation-name: shake;
-  animation-duration: 0.01s;
-  animation-iteration-count: infinite;
-}
-.keybox-dark-turn {
-  //transform: rotate(90deg);
-  animation-name: turn;
-  animation-duration: 0.1s;
-  animation-iteration-count: 1;
-}
-.keybox-light-turn {
-  //transform: rotate(90deg);
-  animation-name: turn;
-  animation-duration: 0.1s;
-  animation-iteration-count: 1;
-}
-.keybox-dark-capsize {
-  transform: rotate(180deg);
-}
-.keybox-light-capsize {
-  transform: rotate(90deg);
-}
-
 .value {
   width: 30px;
+}
+
+.long-string {
+  width: 100%;
 }
 
 .inputbox {
   text-align: left;
   font-size: 10pt;
   color: gray;
-  //@include drawBorder(#525252); //lightgrey
 }
 
 .centered {
@@ -161,12 +106,18 @@ fieldset {
   position: relative;
 }
 
+.right {
+  vertical-align: middle;
+  text-align: right;
+  position: relative;
+}
+
 .big {
   font-size: 24px;
   width: 300px;
   height: 30px;
   padding: 10px;
-  margin: 10px;
+  //margin: 10px;
 }
 
 .vertical-flex {
@@ -179,6 +130,13 @@ fieldset {
   display: flex;
   flex-direction: row;
   align-items: stretch;
+}
+
+.horizontal-flex-centered {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  align-content: space-around;
 }
 
 .grid {
@@ -195,26 +153,33 @@ fieldset {
 
 .scale {
   width: 235px;
-  margin-bottom: 5px;
+  //margin-bottom: 5px;
   text-align: center;
 }
 
 .motion {
   width: 55px;
-  margin-bottom: 5px;
+  //margin-bottom: 5px;
   //text-align: center;
 }
 
 .easing {
   width: 130px;
-  margin-bottom: 5px;
+  //margin-bottom: 5px;
   text-align: center;
 }
 
 .bezier {
   text-align: center;
   width: 120px;
-  margin-bottom: 5px;
+  //margin-bottom: 5px;
 }
 
+form.settings {
+  display: flex;
+  flex-direction: column;
+  min-width: 850px;
+  //flex: auto;
+  //clear: both;
+}
 //by ID

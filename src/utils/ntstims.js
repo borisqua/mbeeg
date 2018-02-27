@@ -3,10 +3,11 @@
 const
   {Stimuli, Stringifier, NTStimuliStringifier, Tools} = require('mbeeg')
   , config = Tools.loadConfiguration(`config.json`)
+  // , config = Tools.loadConfiguration(`../../config.json`)
   , stimuli = new Stimuli({
-    cycles: config.stimulation.sequence.stimuli,
-    signalDuration: config.stimulation.duration,
-    pauseDuration: config.stimulation.pause
+    duration: config.mbeeg.stimulation.duration
+    , pause: config.mbeeg.stimulation.pause
+    , stimuliIdArray: config.mbeeg.stimulation.sequence.stimuli
   })
   , colors = require('colors')
   , Net = require('net')
@@ -17,7 +18,7 @@ const
   })
   , ntStringifier = new NTStimuliStringifier({//todo clarify NT stringifiers - make stringify library
     chunkBegin: ``
-    , chunkEnd: `\r\n` //todo clean up all that \r\n issues in stringifiers and jsons
+    , chunkEnd: `\r\n`
     , chunksDelimiter: `,`
     , indentationSpace: 0
     // , stringifyAll: true
@@ -42,7 +43,7 @@ let
 ;
 
 const
-  mbeeg = Net.createConnection(config.service.port, config.service.host, () => {
+  mbeeg = Net.createConnection(config.tcpserver.port, config.tcpserver.host, () => {
     console.log(colors.green(
       `\r\n ... mock neuro-trainer started ...
         \rto change server configuration use file config.json in the same directory as stims.exe and restart server.\r\n
@@ -59,23 +60,31 @@ const
     replSrv = repl.start({prompt: '> '});
     
     let
-      start = (cycles, signalDuration, pauseDuration) => {
-        stimuli.resume();
-        cycles = JSON.parse(cycles);
-        console.log(cycles);
+      start = (stimuliIdArray, duration = config.mbeeg.stimulation.duration, pause = config.mbeeg.stimulation.pause) => {
+        console.log(`duration = ${duration}, pause=${pause}`);
+        stimuli.bound();
+        stimuliIdArray = JSON.parse(stimuliIdArray);
+        console.log(stimuliIdArray);
         message.class = "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings";
-        message.objects = cycles;
+        message.objects = stimuliIdArray;
         stimuli.reset({
-          stimuliIdArray: cycles,
-          signalDuration: signalDuration,
-          pauseDuration: pauseDuration
+          stimuliIdArray: stimuliIdArray,
+          duration: duration,
+          pause: pause
         });
         if (!mbeeg.write(`${JSON.stringify(message)}\r\n`))
           console.log(`Error: scene settings message sending failed.`);
         else {
-          console.log(`started with ${cycles} sequence...`);
+          console.log(`started with ${stimuliIdArray} sequence...`);
           if (!running) {
-            stimuli.pipe(ntStringifier).pipe(mbeeg);//process.stdout);
+            stimuli
+              .on('error', error => {throw ` error in stimuli stream - ${error}`;})//todo .on('error',..) to every pipe chain
+              .pipe(ntStringifier)
+              .on('error', error => {throw ` error in ntStringifier - ${error}`;})
+              // .pipe(process.stdout)
+              .pipe(mbeeg)
+              .on('error', error => {throw ` error in mbeegntsrv - ${error}`;})
+            ;
             running = true;
           }
         }
@@ -83,7 +92,7 @@ const
       },
       
       stop = () => {
-        stimuli.pause();
+        stimuli.unbound();
         message = {};
         message.class = "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop";
         if (mbeeg.write(`${JSON.stringify(message)}\r\n`)) console.log(`stopped. server in pending mode...`);
@@ -100,8 +109,10 @@ const
       help: `Stop stimulation`,
       action: stop
     });
-  });
+  })
+;
 
-// mbeeg.on('data', chunk => {
-//   console.log(chunk.toString());
-// });
+mbeeg
+  .on('error', error => {throw error;})
+  // .on('data', chunk => { console.log(chunk.toString()); })
+;

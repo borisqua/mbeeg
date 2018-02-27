@@ -1,9 +1,0 @@
-Real EEG from gTec Nautilus
-
-Channels:				FZ, CZ
-Sampling rate:			250 Hz
-Record duration:		10 sec (2500 samples)
-
-Source EEG file:		P300_20170627_152501.csv
-						(first 2500 rows)
-

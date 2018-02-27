@@ -1,66 +1,109 @@
 doctype html
-html.light
+html.light(manifest="manifest.appcache")
 	head
-		title Console
 		meta(http-equiv="content-type", content="text/html; charset=UTF-8")
-		script window.$ = window.jQuery = window.jquery = require('jquery');
-		script(src="js/index.js" type="text/javascript")
+		title Console
 		//link(rel="stylesheet" type="text/css" href="css/styles.css" media="all" )
 		link(rel="stylesheet" type="text/css" href="../../style/styles.css" media="all" )
+		script window.$ = window.jQuery = window.jquery = require('jquery');
+		script(src="js/index.js" type="text/javascript")
 	body
 		header
 		main
-			form.settings#settings
+			form.settings#console
 				fieldset
 					legend look & feel
-					.horizontal-flex
-						fieldset.inputbox.vertical-flex
-							legend appearance & behaviour
-							.inputbox.vertical-flex.color-scheme
-								label(for="color-scheme") &nbsp color scheme
-								select#color-scheme
-									option(value="dark") dark
-									option(value="light") light
+					.vertical-flex
 						fieldset
-							legend stimulation
-							.inputbox.horizontal-flex
-								fieldset
-									legend stimulus appearance
-									br
-									.inputbox.vertical-flex.stimuli-appearance
-										label(for="color") &nbsp change color
-										input#color(type="checkbox")
-										label(for="size") &nbsp change size
-										input#size(type="checkbox")
-										label(for="shine") &nbsp shine
-										input#shine(type="checkbox")
-									.inputbox.vertical-flex
-										label(for="animation") &nbsp animation
-										select#animation
-											option(value="none") none
-											option(value="shake") shake
-											option(value="turn") turn
-											option(value="capsize") capsize
-								fieldset.inputbox.vertical-flex
-									legend timings
-									.inputbox.vertical-flex.stimuli-timings
-										label(for="duration") stimulus duration, ms:
-										.horizontal-flex
-											input#durationSlider.slider(type="range" min=0 max=500 step=1 value=100)
-											| &nbsp;
-											input#duration.value
-											br
+							label &nbsp color scheme &nbsp
+							select#color-scheme
+								option(value="dark") dark
+								option(value="light") light
+						.horizontal-flex
+							fieldset
+								legend stimulation
+								.horizontal-flex
+									fieldset
+										legend stimulus
 										br
-										label(for="pause") pause after stimulus, ms:
-										.horizontal-flex
-											input#pauseSlider.slider(type="range" min=0 max=500 step=1 value=200)
-											| &nbsp;
-											input#pause.value
+										br
+										.vertical-flex
+											label.label-after-field &nbsp change color
+											input#color(type="checkbox")
+											label.label-after-field &nbsp change size
+											input#size(type="checkbox")
+											label.label-after-field &nbsp shine
+											input#shine(type="checkbox")
+										.vertical-flex
+											label &nbsp animation
+											select#animation
+												option(value="none") none
+												option(value="shake") shake
+												option(value="turn") turn
+												option(value="capsize") capsize
+									fieldset.vertical-flex
+										legend timings
+										.vertical-flex
 											br
+											br
+											label stimulus duration, ms:
+											.horizontal-flex
+												input#durationSlider.duration.slider(type="range" min=0 max=500 step=1 value=100)
+												| &nbsp;
+												input#durationValue.duration.value
+												br
+											br
+											label pause after stimulus, ms:
+											.horizontal-flex
+												input#pauseSlider.pause.slider(type="range" min=0 max=500 step=1 value=200)
+												| &nbsp;
+												input#pauseValue.pause.value
+												br
+							fieldset
+								legend viewport parameters
+								.vertical-flex
+									.horizontal-flex
+										fieldset.vertical-flex
+											legend keybox
+											label.label-after-field &nbsp show border
+											input#keyboxBorder(type="checkbox")
+											br
+											label &nbsp; height, px:
+											.horizontal-flex
+												input#keyboxHeightSlider.keyboxHeight.slider(type="range" min=50 max=200 step=1 value=150)
+												| &nbsp;
+												input#keyboxHeightValue.keyboxHeight.value
+												br
+											br
+											label &nbsp; width, px:
+											.horizontal-flex
+												input#keyboxWidhSlider.keyboxWidth.slider(type="range" min=50 max=200 step=1 value=150)
+												| &nbsp;
+												input#keyboxWidthValue.keyboxWidth.value
+										br
+										fieldset.vertical-flex
+											legend viewport
+											br
+											br
+											label &nbsp; columns:
+											.horizontal-flex
+												input#viewportColumnsSlider.viewportColumns.slider(type="range" min=1 max=20 step=1 value=3)
+												| &nbsp;
+												input#viewportColumnsValue.viewportColumns.value
+											br
+											label &nbsp; rows:
+											.horizontal-flex
+												input#viewportRowsSlider.viewportRows.slider(type="range" min=1 max=10 step=1 value=3)
+												| &nbsp;
+												input#viewportRowsValue.viewportRows.value
+									fieldset.horizontal-flex
+										legend alphabet
+										input#alphabet.long-string
+
 				br
 				fieldset#motion.vertical-flex
 					legend motion parameters
-					.inputbox.horizontal-flex
+					.horizontal-flex
 						.scale
 							label speed scale
 						.motion
@@ -71,6 +114,14 @@ html.light
 							label easing
 						.bezier
 							label bezier
+					.horizontal-flex
+						label joint movement of speed controls
+						input#speed-scales-locker(type="checkbox")
+				br
+				#buttons.centered
+					.horizontal-flex-centered
+						button#initial-button.footer-button Initial state
+						button#autofit-button.footer-button Autofit
+						button#restart-button.footer-button Restart
 
 		footer
-			footer

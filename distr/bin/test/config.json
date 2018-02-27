@@ -1,0 +1,247 @@
+{
+  "appearance": {
+    "colorScheme": {
+      "available": [
+        "dark",
+        "light"
+      ],
+      "selected": "dark"
+    },
+    "stimulation": {
+      "animation": {
+        "available": [
+          "none",
+          "shake",
+          "turn",
+          "capsize"
+        ],
+        "selected": "shake"
+      },
+      "color": true,
+      "shine": true,
+      "size": true
+    }
+  },
+  "classification": {
+    "method": "absIntegral",
+    "methods": {
+      "absIntegral": {
+        "start": 200,
+        "window": 300
+      },
+      "postprocessing": {
+        "methods": {
+          "normalizeVectorBySum": {
+            "vector": []
+          }
+        }
+      }
+    }
+  },
+  "decision": {
+    "method": "majority",
+    "methods": {
+      "SGD": {
+        "cycles": 10,
+        "start": 0,
+        "startgradients": 0,
+        "startweights": 1,
+        "threshold": 5
+      },
+      "majority": {
+        "minCycles": 10,
+        "maxCycles": 10,
+        "start": 1,
+        "threshold": 1
+      },
+      "nInARow": {
+        "maxCycles": 12,
+        "start": 3,
+        "threshold": 3
+      }
+    }
+  },
+  "keyboard": {
+    "bezier": false,
+    "duration": 10,
+    "easing": {
+      "_calcEnd": false,
+      "_p": 0.2,
+      "_p1": 0.04999999999999999,
+      "_p2": 0.9,
+      "_p3": 0.95
+    },
+    "keybox": {
+      "height": 160,
+      "width": 160
+    },
+    "keys": [
+      {
+        "column": 10,
+        "id": 0,
+        "left": -160,
+        "row": 0,
+        "school": 0,
+        "stimulus": 0,
+        "symbol": "А",
+        "top": 0
+      },
+      {
+        "column": 11,
+        "id": 4,
+        "left": -160,
+        "row": 0,
+        "school": 0,
+        "stimulus": 0,
+        "symbol": "Д",
+        "top": 0
+      },
+      {
+        "column": 9,
+        "id": 1,
+        "left": -160,
+        "row": 0,
+        "school": 1,
+        "stimulus": 1,
+        "symbol": "Б",
+        "top": 160
+      },
+      {
+        "column": 8,
+        "id": 2,
+        "left": -160,
+        "row": 0,
+        "school": 1,
+        "stimulus": 2,
+        "symbol": "В",
+        "top": 160
+      },
+      {
+        "column": 7,
+        "id": 3,
+        "left": -160,
+        "row": 0,
+        "school": 2,
+        "stimulus": 3,
+        "symbol": "Г",
+        "top": 320
+      }
+    ],
+    "schools": [
+      {
+        "id": 0,
+        "motion": {
+          "easing": "slow motion",
+          "randomSpeed": false,
+          "reverse": false,
+          "speedScale": 0
+        }
+      },
+      {
+        "id": 1,
+        "motion": {
+          "easing": "slow motion",
+          "randomSpeed": false,
+          "reverse": true,
+          "speedScale": 0
+        }
+      },
+      {
+        "id": 2,
+        "motion": {
+          "easing": "slow motion",
+          "randomSpeed": false,
+          "reverse": false,
+          "speedScale": 0
+        }
+      }
+    ],
+    "viewport": {
+      "columns": 11,
+      "height": 600,
+      "rows": 3,
+      "width": 1304.576
+    }
+  },
+  "service": {
+    "host": "localhost",
+    "port": 9300,
+    "protocol": "IPC || TCP",
+    "provider": "mbEEG"
+  },
+  "signal": {
+    "channels": [
+      7
+    ],
+    "cycles": 0,
+    "dsp": {
+      "horizontal": {
+        "methods": {
+          "absIntegral": {
+            "depth": 0,
+            "incremental": true,
+            "moving": false
+          }
+        },
+        "steps": [
+          "absIntegral"
+        ]
+      },
+      "vertical": {
+        "methods": {
+          "butterworth4Bulanov": {
+            "cutoff": 8,
+            "name": "butterworth4Bulanov",
+            "samplingrate": 256
+          },
+          "detrend": {
+            "normalized": false,
+            "samplingrate": 128
+          },
+          "detrendNormalized": {
+            "normalized": true,
+            "samplingrate": 256
+          }
+        },
+        "steps": [
+          "butterworth4Bulanov",
+          "detrend"
+        ]
+      }
+    },
+    "epoch": {
+      "duration": 1000
+    },
+    "host": "localhost",
+    "port": 1024,
+    "protocol": "TCP",
+    "provider": "openViBE"
+  },
+  "stimulation": {
+    "duration": 200,
+    "learning": {
+      "type": "consecutive"
+    },
+    "pause": 100,
+    "port": 9350,
+    "sequence": {
+      "dimensions": 1,
+      "repetition": false,
+      "stimuli": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "method": "random",
+      "methods": {
+        "random": {},
+        "randomWithGap": {
+          "gap": 1
+        },
+        "chessboard": {}
+      }
+    }
+  }
+}
