@@ -1,12 +1,12 @@
 "use strict";
 const
   {ipcRenderer} = require('electron')
-  , {Tools} = require('mbeeg')
   , {TweenMax, TimelineMax} = require('gsap')
-  , Content = require('../content')
+  , {Tools} = require('mbeeg')
+  , Window = require('../window')
 ;
 
-class Keyboard extends Content {
+class Keyboard extends Window {
   constructor({
                 keyboard,
                 colorScheme,
@@ -17,45 +17,66 @@ class Keyboard extends Content {
     
     this.keyboard = Tools.copyObject(keyboard);
     this.stimulation = Tools.copyObject(parametersOfStimulation);
-    this.colorScheme = colorScheme;
+    this.colorScheme = Tools.copyObject(colorScheme);
     
     this.stimuli = stimuli;
     
-    //DOM elements
+    //DOM elements //todo?? check if there isn't unused properties in this. context
+    this.html = $('html');
     this.viewport = $("#keyboard");
+    this.formMonitor = $('form#monitor');
     this.output = $('.line');
     this.window = $(window);
+    this.windowVerticalFramesWidth = window.outerWidth - window.innerWidth;
+    this.windowHorizontalFramesWidth = window.outerHeight - window.innerHeight;
+    this.windowOuterWidth = window.outerWidth;
     this.monitor = $(`#monitor`);
-    this.body = $(document.body);
+    this.styleSheets = document.styleSheets;
     
-    this._windowCaption = 90;
     //debug
     // this.prevStimTStamp = 0;
     
     // ----- EVENT HANDLERS -----
     
-    this.timeout = {};
     this.window
       .on('resize', () => {
-        clearTimeout(this.timeout);
-        let
-          viewportWidth = this.window.outerWidth(true)
-            - 2 * (+this.output.css("margin").match(/\d+/)[0] + +this.output.css("border-width").match(/\d+/)[0])
-          ,
-          viewportHeight = this.window.outerHeight(true) - +this.viewport.css("margin-top").match(/\d+/)[0]
-            - this.monitor.outerHeight(true) - this._windowCaption
-        ;
-        //todo>> refactor window resizing
-        console.log(`width delta ${this.viewportWidth - viewportWidth}; height delta ${this.viewportHeight - viewportHeight}`);
-        this.keyboard.viewport.width = viewportWidth;
-        this.keyboard.viewport.height = viewportHeight;
+        Tools.runDebounced(
+          () => {//unbounced actions
+            let
+              deltaWidth = window.outerWidth - this.windowOuterWidth
+              , deltaHeight = window.outerHeight - this.windowOuterHeight
+            ;
+            this.viewportWidth = this.viewportWidth + deltaWidth;
+            this.viewportHeight = this.viewportHeight + deltaHeight;
+            
+            if (this.viewportWidth < this.minViewportWidth) {
+              deltaWidth = this.minViewportWidth - this.viewportWidth;
+              this.viewportWidth = this.minViewportWidth;
+            } else {
+              deltaWidth = 0;
+            }
+            
+            if (this.viewportHeight < this.minViewportHeight) {
+              deltaHeight = this.minViewportHeight - this.viewportHeight;
+              this.viewportHeight = this.minViewportHeight;
+            } else {
+              deltaHeight = 0;
+            }
+            
+            this.windowOuterWidth = window.outerWidth + deltaWidth;
+            this.windowOuterHeight = window.outerHeight + deltaHeight;
+            
+            this.keyboard.viewport.width = this.viewportWidth;
+            this.keyboard.viewport.height = this.viewportHeight;
+            this
+              .init(this.keyboard)
+              ._redrawContent()
+            ;
+            
+            this.emit('keyboardLayoutChange', this.keyboard);
+            
+          }, 200);
         
-        this.timeout = setTimeout(() => {//unbounced actions
-          // ipcRenderer.send(`ipcKeyboard-change`, `change`);//stimuli reset => epochs reset => epoch series reset => save keyboard configuration changes
-          //todo>> this.emit('change', this.keyboard);
-          this.init(this.keyboard)._redraw();
-          // Content.reloadSchema(this.appearance);
-        }, 200)
       });
     
     //show stimulus animation on stimuli data received event
@@ -67,46 +88,67 @@ class Keyboard extends Content {
     });
     
     // ----- START KEYBOARD -----
-    this
-      .init(this.keyboard)
-      ._redraw()
-      ._resetStimuli()
-      ._fitWindowSizeToViewport();
+    this.run(this.keyboard);
   }
   
   // ----- PRIVATE METHODS -----
   
+  // noinspection JSMethodCanBeStatic
   /**
    * switch on if specified all kinds of stimulation (e.g. keybox-${colorScheme}-color, ..-size, ..-shine, ..-shake, etc.)
-   * @param keybox - keybox element for which the stimulus visualisation will be switched on
+   * @param keybox - keybox element collection for which the stimulus visualisation will be switched on
    * @private
    */
   _stimulusOn(keybox) {
-    if (this.keyboard.stimulation.color) {
-      keybox.addClass(`keybox-${this.colorScheme}-color`);
-    }
-    if (this.keyboard.stimulation.size) {
-      keybox.addClass(`keybox-${this.colorScheme}-size`);
-    }
-    if (this.keyboard.stimulation.shine) {
-      keybox.addClass(`keybox-${this.colorScheme}-shine`);
-    }
+    keybox.addClass(`stimulated
+      ${this.colorScheme.available[this.colorScheme.selected].usingPics ? (' stimulated-background' + +keybox.attr('index')) : ''}`);
     
     if (this.keyboard.stimulation.animation.selected !== "none") {
-      keybox.addClass(`keybox-${this.colorScheme}-${this.keyboard.stimulation.animation.selected}`);
+      keybox.addClass(this.keyboard.stimulation.animation.selected);
     }
   };
   
+  /**
+   * add norman-backgroundIndex for each keybox with index when colorScheme with pics loaded "on the fly"
+   * @private
+   */
+  _addNormalBackgroundClassToKeyboxesWithPics(){
+    for(let i = 0; i< this.keyboard.keys.length; i++){
+      $(`.keybox[index="${i}"]`).addClass(`normal-background${i}`)
+    }
+    return this;
+  }
+  
+  /**
+   * remove all classes but not keybox|bordered|normal|faded|selected
+   * @private
+   */
+  _removeStimulusClasses(jquery) {
+    let regexp = new RegExp('(?!(\\b(keybox|bordered|normal|faded|selected|background\\d*)(-background\\d*)?\\b))\\b(\\w+(-\\w*)|\\w+)\\b', 'g');
+    jquery.removeClass(function (index, className) {
+      return (className.match(regexp) || []).join(' ');
+    });
+  }
+  
+  /**
+   * remove all classes but not keybox|bordered|normal|faded|selected
+   * @private
+   */
+  _removeFadedClasses(jquery) {
+    let regexp = new RegExp('faded(-\\w+)*', 'g');
+    jquery.removeClass(function (index, className) {
+      return (className.match(regexp) || []).join(' ');
+    });
+  }
+  
+  // noinspection JSMethodCanBeStatic
   /**
    * switch off all kinds of stimulation (e.g. keybox-${colorScheme}-color, ..-size, ..-shine, ..-shake, etc.)
    * @param keybox - keybox element for which the stimulus visualisation will be switched off
    * @private
    */
   _stimulusOff(keybox) {
-    let regexp = new RegExp(`\\bkeybox-${this.colorScheme}-\\S+`, 'g');
-    keybox.removeClass(function (index, className) {
-      return (className.match(regexp) || []).join(' ');
-    });
+    this._removeStimulusClasses(keybox);
   };
   
   /**
@@ -117,7 +159,7 @@ class Keyboard extends Content {
   _stimulate(stimulus) {
     if (!stimulus[0])//no timestamp (timestamp value === 0)
       return;
-    let key = $(`.key[index="${stimulus[1]}"]`);
+    let key = $(`.keybox[index="${stimulus[1]}"]`);
     ipcRenderer.send(`ipcKeyboard-stimulus`, stimulus);
     this._stimulusOn(key);
     setTimeout(() => { this._stimulusOff(key); }, this.stimulation.duration);
@@ -131,13 +173,19 @@ class Keyboard extends Content {
    * @private
    */
   _unboundStimuli() {
-    let keys = $('.key');
+    let keys = $('.keybox');
     this.stimuli.removeAllListeners();
     this.stimuli.unbound();
-    keys.addClass(`faded-${this.colorScheme}-keys`);
+    this._removeStimulusClasses(keys);
+    keys.addClass('faded');
+    if (this.colorScheme.available[this.colorScheme.selected].usingPics) {
+      for (let i = 0; i < keys.length; i++) {
+        keys[i].className += ` faded-background${keys[i].getAttribute('index')}`;
+      }
+    }
     setTimeout(() => {
+      this._removeFadedClasses(keys);
       this.stimuli.bound();
-      keys.removeClass(`faded-${this.colorScheme}-keys`);
       this.stimuli.on('data', stimulus => this._stimulate(stimulus));
     }, this.pauseAfterDecision);
   };
@@ -151,7 +199,7 @@ class Keyboard extends Content {
   _putSymbol(keyIndex) {
     let
       inputField = document.getElementById("inputField"),
-      key = $(`.key[index="${keyIndex}"]`)
+      key = $(`.keybox[index="${keyIndex}"]`)
     ;
     if (keyIndex === -1) {
       inputField.value = inputField.value + '*';
@@ -159,39 +207,56 @@ class Keyboard extends Content {
       inputField.value = inputField.value + this.keyboard.keys[keyIndex].symbol;
     }
     this._unboundStimuli();
-    key.addClass(`selected-${this.colorScheme}-key`);
+    this._removeFadedClasses(key);
+    key.addClass(`selected ${this.colorScheme.available[this.colorScheme.selected].usingPics ? 'selected-background' + keyIndex : ''}`);
     setTimeout(() => {
-      key.removeClass(`selected-${this.colorScheme}-key`);
+      key.removeClass(`selected selected-background${keyIndex}`);
     }, this.pauseAfterDecision);
     inputField.focus();
     inputField.scrollTop = inputField.scrollHeight;
   };
   
+  // noinspection JSValidateJSDoc
   /**
    * place new tweenbox to the initial position in viewport and returns reference to tween associated with tweenbox
    * @param keyIndex - key index in Keys array
-   * @return {TweenMax}
+   * @return {Definition.TweenMax}
    * @private
    */
   _getKeybox(keyIndex) {//create div & tween for it (keyIndex - key index in Keys array)
-    let keybox = $(`<div class="key" index="${keyIndex}">${this.keyboard.keys[keyIndex].symbol}</div>`);
-    keybox.css({
-      width: this.keyboard.keybox.width//todo>> keybox size change to relative values `15vmin`
-      , height: this.keyboard.keybox.height //`15vmin`
-      // , margin: this.keyboard.keybox.margin
-      , border: this.keyboard.keybox.showBorder ? `${this.keyboard.keybox.borderWidth}px solid #525252` : 'none'
-      // fontSize: Math.min(this.keyboard.keybox.width, this.keyboard.keybox.height)
-    });
+    let keybox = $(`<div class="keybox" index="${keyIndex}">${this.keyboard.keys[keyIndex].symbol}</div>`);
+    keybox
+      .css({
+        width: this.keyboard.keybox.width,
+        height: this.keyboard.keybox.height
+      })
+      .addClass(`normal ${this.colorScheme.available[this.colorScheme.selected].usingPics ? 'normal-background' + keyIndex : ''}`)
+    ;
     
     this.viewport.append(keybox);
     
-    TweenMax.set(keybox, {
-      left: this.startKeyboxPosition,
-      top: this.keyboard.keys[keyIndex].row * this.verticalKeyboxDelta + 0.5 * (this.verticalKeyboxDelta - this.keyboard.keybox.height)
-    });
+    let
+      startVars = {
+        top: this.keyboard.keys[keyIndex].row * this.verticalKeyboxDelta
+        + 0.5 * (this.verticalKeyboxDelta - this.keyboard.keybox.height)
+        - this.keyboard.keybox.margin
+        - (this.keyboard.keybox.showBorder ? this.keyboard.keybox.borderWidth : 0),
+        left: this.keyboard.schools[this.keyboard.keys[keyIndex].school].motion.reverse ?
+          this.rightmostKeyboxPosition : this.leftmostKeyboxPosition
+      }
+      , runVars = {
+        left: this.keyboard.schools[this.keyboard.keys[keyIndex].school].motion.reverse ?
+          this.leftmostKeyboxPosition : this.rightmostKeyboxPosition,
+        ease: SlowMo.ease.config(0.9, 0.2, false),
+        // ease: "linear",
+        repeat: -1
+      }
+    ;
+    
+    TweenMax.set(keybox, startVars);
     
     Draggable.create(keybox, {
-      type: "x,y",
+      type: "left,top",
       onPress: () => {
         for (let i = 0; i < this.keyboard.schools.length; i++) {
           this.timelines[i].kill();
@@ -199,15 +264,7 @@ class Keyboard extends Content {
       }
     });
     
-    // noinspection JSValidateTypes
-    return new TweenMax(keybox
-      , this.keyboard.motion.tweenDuration
-      , {
-        left: this.endKeyboxPosition,
-        ease: SlowMo.ease.config(0.9, 0.2, false),
-        // ease: "linear",
-        repeat: -1
-      });
+    return new TweenMax(keybox, this.keyboard.animation.tweenDuration, runVars);
   };
   
   /**
@@ -223,28 +280,106 @@ class Keyboard extends Content {
         let
           column = this.keyboard.keys[i].column
           , row = this.keyboard.keys[i].row
-          ,
-          index = row * this.keyboard.viewport.columns + this.keyboard.viewport.columns - column - 1 //last column in each row moves first
+          , index = row * this.keyboard.viewport.columns
+          + this.keyboard.viewport.columns - column - 1 //last column in each row moves first
         ;
         timeline.add(this._getKeybox(index), column * this.horizontalKeyboxPeriod);
       }
     }
+    this.keyboxes = $(".keybox");
     timeline.addLabel(`initialPosition${schoolIndex}`, this.initialTimePosition);
     return timeline;
   };
   
   /**
    *
-   * @param colorScheme
    * @private
    */
-  _reloadScheme(colorScheme) {
-    this.colorScheme = colorScheme;
-    let keyboxes = $(".key");
-    keyboxes.removeClass(function (index, className) {
-      return (className.match(/\bkeybox-\S+/g) || []).join(' ');
-    });
-    keyboxes.addClass(`keybox-${colorScheme}`);
+  _reloadSchemeStyles() {//todo>> when loading, this method is called twice. draw UML diagram for clarifying keyboard loading process
+    let
+      usingFonts = this.colorScheme.available[this.colorScheme.selected].usingFonts,
+      usingPics = this.colorScheme.available[this.colorScheme.selected].usingPics
+    ;
+    for (let i = this.styleSheets[1].cssRules.length - 1; i > -1; i--) {
+      this.styleSheets[1].deleteRule(i);
+    }
+    
+    this.styleSheets[1].insertRule(`
+    .stimulated {
+      color: ${this.keyboard.stimulation.color ?
+      this.colorScheme.available[this.colorScheme.selected]['stimulated']['color'] :
+      this.colorScheme.available[this.colorScheme.selected]['normal']['color']} !important;
+      font-size: ${usingFonts * this.fontScaleFactor * (this.keyboard.stimulation.size ?
+      this.colorScheme.available[this.colorScheme.selected]['stimulated']['size'] :
+      this.colorScheme.available[this.colorScheme.selected]['normal']['size'])}px !important;
+      font-weight: ${this.keyboard.stimulation.weight ?
+      this.colorScheme.available[this.colorScheme.selected]['stimulated']['fontWeight'] :
+      this.colorScheme.available[this.colorScheme.selected]['normal']['fontWeight']} !important;
+      text-shadow: ${this.keyboard.stimulation.shine ?
+      this.colorScheme.available[this.colorScheme.selected]['stimulated']['textShadow'] :
+      this.colorScheme.available[this.colorScheme.selected]['normal']['textShadow']} !important;
+    }`, 0);
+    
+    this.styleSheets[1].insertRule(`
+    .selected {
+      color: ${this.colorScheme.available[this.colorScheme.selected]['selected']['color']} !important;
+      font-size: ${usingFonts * this.fontScaleFactor * this.colorScheme.available[this.colorScheme.selected]['selected']['size']}px !important;
+      font-weight: ${this.colorScheme.available[this.colorScheme.selected]['selected']['fontWeight']} !important;
+      text-shadow: ${this.colorScheme.available[this.colorScheme.selected]['selected']['textShadow']} !important;
+    }`, 1);
+    
+    this.styleSheets[1].insertRule(`
+    .faded {
+      color: ${this.colorScheme.available[this.colorScheme.selected]['faded']['color']} !important;
+      font-size: ${usingFonts * this.fontScaleFactor * this.colorScheme.available[this.colorScheme.selected]['faded']['size']}px !important;
+      font-weight: ${this.colorScheme.available[this.colorScheme.selected]['faded']['fontWeight']} !important;
+      text-shadow: ${this.colorScheme.available[this.colorScheme.selected]['faded']['textShadow']} !important;
+    }`, 2);
+    
+    this.styleSheets[1].insertRule(`
+    .normal {
+      color: ${this.colorScheme.available[this.colorScheme.selected]['normal']['color']};
+      font-size: ${usingFonts * this.fontScaleFactor * this.colorScheme.available[this.colorScheme.selected]['normal']['size']}px;
+      font-weight: ${this.colorScheme.available[this.colorScheme.selected]['normal']['fontWeight']};
+      text-shadow: ${this.colorScheme.available[this.colorScheme.selected]['normal']['textShadow']};
+    }`, 3);
+    
+    if (usingPics) {
+      let
+        maxKeysLenght = this.keyboard.viewport.columns * this.keyboard.viewport.rows,
+        normalPathFilePrefix = `${this.colorScheme.available[this.colorScheme.selected]['picsFolder']}/${this.colorScheme.available[this.colorScheme.selected]['normal']['pngFilePrefix']}`,
+        stimulatedPathFilePrefix = `${this.colorScheme.available[this.colorScheme.selected]['picsFolder']}/${this.colorScheme.available[this.colorScheme.selected]['stimulated']['pngFilePrefix']}`,
+        fadedPathFilePrefix = `${this.colorScheme.available[this.colorScheme.selected]['picsFolder']}/${this.colorScheme.available[this.colorScheme.selected]['faded']['pngFilePrefix']}`,
+        selectedPathFilePrefix = `${this.colorScheme.available[this.colorScheme.selected]['picsFolder']}/${this.colorScheme.available[this.colorScheme.selected]['selected']['pngFilePrefix']}`
+      ;
+      for (let k = 0; k <= maxKeysLenght; k++) {
+        this.styleSheets[1].insertRule(`
+      .normal-background${k} {
+        background-image: url("../../${normalPathFilePrefix}${k}.png");
+        background-size: cover;
+        background-repeat: no-repeat;
+      }`, 4 * (k + 1));//4 8 12
+        this.styleSheets[1].insertRule(`
+      .stimulated-background${k} {
+        background-image: url("../../${stimulatedPathFilePrefix}${k}.png") !important;
+        background-size: cover !important;
+        background-repeat: no-repeat !important;
+      }`, 4 * (k + 1) + 1);//5 9 13
+        this.styleSheets[1].insertRule(`
+      .faded-background${k} {
+        background-image: url("../../${fadedPathFilePrefix}${k}.png") !important;
+        background-size: cover !important;
+        background-repeat: no-repeat !important;
+      }`, 4 * (k + 1) + 2);//6 10 14
+        this.styleSheets[1].insertRule(`
+      .selected-background${k} {
+        background-image: url("../../${selectedPathFilePrefix}${k}.png") !important;
+        background-size: cover !important;
+        background-repeat: no-repeat !important;
+      }`, 4 * (k + 1) + 3);//7 11 15
+      }
+    }
+    return this;
   };
   
   /**
@@ -253,7 +388,7 @@ class Keyboard extends Content {
    * @return {Keyboard} - returns 'this' to support method chaining
    * @private
    */
-  _redraw() {
+  _redrawContent() {
     //redraw & refresh content of viewport and output field
     this.viewport
       .html("")
@@ -275,10 +410,11 @@ class Keyboard extends Content {
       this.timelines.push(this._buildTimeline(i));
       this.timelines[i]
         .timeScale(this.keyboard.schools[i].motion.speedScale)
-        .seek(`initialPosition${i}`)
-      ;
+        .seek(`initialPosition${i}`);
     }
-    this._reloadScheme(this.colorScheme);
+    this._reloadSchemeStyles();
+    this.switchKeyboxBorder(this.keyboard.keybox.showBorder);
+    
     return this;
   };
   
@@ -288,10 +424,17 @@ class Keyboard extends Content {
    * @private
    */
   _fitWindowSizeToViewport() {
-    window.resizeTo(
-      this.viewportWidth + 2 * (+this.output.css("margin").match(/\d+/)[0] + +this.output.css("border-width").match(/\d+/)[0]),
-      this.viewportHeight + +this.viewport.css("margin-top").match(/\d+/)[0] + this.monitor.outerHeight(true) + this._windowCaption
-    );
+    this.windowOuterWidth = this.viewport.outerWidth(true)
+      + this.viewport.parents().length
+      * (+this.viewport.css('margin-right').match(/\d+/)[0] + +this.viewport.css('margin-left').match(/\d+/)[0] + +this.viewport.css('border-width').match(/\d+/)[0])
+      + this.windowVerticalFramesWidth
+    ;
+    this.windowOuterHeight = this.viewport.outerHeight(true) + this.formMonitor.outerHeight(true)
+      + this.viewport.parents().length
+      * (+this.viewport.css('margin-top').match(/\d+/)[0] + +this.viewport.css('margin-bottom').match(/\d+/)[0] + +this.viewport.css('border-width').match(/\d+/)[0])
+      + this.windowHorizontalFramesWidth
+    ;
+    window.resizeTo(this.windowOuterWidth, this.windowOuterHeight);
     return this;
   };
   
@@ -306,10 +449,19 @@ class Keyboard extends Content {
       duration: this.stimulation.duration,
       pause: this.stimulation.pause
     });
+    ipcRenderer.send('ipcKeyboard-command', 'stimulationChange');
     return this;
   };
   
   //GETTERS & SETTERS
+  
+  /**
+   * color scheme configuration setter
+   * @param colorScheme - object literal with color scheme properties
+   */
+  set colorSchemeConfiguration(colorScheme) {
+    this.colorScheme = Tools.copyObject(colorScheme);
+  }
   
   /**
    * input string setter
@@ -328,12 +480,11 @@ class Keyboard extends Content {
    * keyboard configuration setter
    * @param keyboardObject
    */
-  set keyboardConfiguration(keyboardObject) { this.keyboard = Tools.copyObject(keyboardObject); }
-  
-  /**
-   * @return {*} - returns current keyboard configuration
-   */
-  get keyboardConfiguration() { return this.keyboard; }
+  set keyboardConfiguration(keyboardObject) {
+    this.keyboard = Tools.copyObject(keyboardObject);
+    this.run(this.keyboard);
+    // super.reloadScheme(this.colorScheme);
+  }
   
   /**
    * stimuli configuration setter
@@ -352,7 +503,11 @@ class Keyboard extends Content {
    */
   reloadScheme(colorScheme) {
     super.reloadScheme(colorScheme);
-    this._reloadScheme(colorScheme);
+    this
+      ._reloadSchemeStyles()
+      ._addNormalBackgroundClassToKeyboxesWithPics()
+    ;
+    return this;
   }
   
   /**
@@ -361,8 +516,10 @@ class Keyboard extends Content {
    * @return {Keyboard} - returns 'this' to support method chaining
    */
   init(keyboard) {
+    this.keyboard = Tools.copyObject(keyboard);
+    // timing, geometry and position calculation
+    this.fontScaleFactor = Math.min(keyboard.keybox.width, keyboard.keybox.height);
     
-    // geometry and positions calculation
     this.minHorizontalKeyboxDelta = keyboard.keybox.width + 2 * keyboard.keybox.margin +
       (keyboard.keybox.showBorder ? keyboard.keybox.borderWidth * 2 : 0);
     this.horizontalKeyboxDelta = keyboard.viewport.width / keyboard.viewport.columns;
@@ -375,22 +532,22 @@ class Keyboard extends Content {
     this.verticalKeyboxDelta = this.verticalKeyboxDelta < this.minVerticalKeyboxDelta ?
       this.minVerticalKeyboxDelta : this.verticalKeyboxDelta;
     
-    this.minViewportWidth = this.horizontalKeyboxDelta * keyboard.viewport.columns;
+    this.minViewportWidth = this.minHorizontalKeyboxDelta * keyboard.viewport.columns;
     this.viewportWidth = keyboard.viewport.width;
     this.viewportWidth = this.viewportWidth < this.minViewportWidth ? this.minViewportWidth : this.viewportWidth;
     
-    this.minViewportHeight = this.verticalKeyboxDelta * keyboard.viewport.rows;
+    this.minViewportHeight = this.minVerticalKeyboxDelta * keyboard.viewport.rows;
     this.viewportHeight = keyboard.viewport.height;
     this.viewportHeight = this.viewportHeight < this.minViewportHeight ? this.minViewportHeight : this.viewportHeight;
     
-    this.startKeyboxPosition = keyboard.motion.shift * this.horizontalKeyboxDelta;
-    this.endKeyboxPosition = this.viewportWidth + keyboard.motion.shift * this.horizontalKeyboxDelta;
+    this.leftmostKeyboxPosition = keyboard.animation.leftShift * this.horizontalKeyboxDelta;
+    this.rightmostKeyboxPosition = this.viewportWidth + keyboard.animation.leftShift * this.horizontalKeyboxDelta;
     
-    this.horizontalKeyboxPeriod = keyboard.motion.tweenDuration / keyboard.viewport.columns;
+    this.horizontalKeyboxPeriod = keyboard.animation.tweenDuration / keyboard.viewport.columns;
     let
-      velocity = (this.endKeyboxPosition - this.startKeyboxPosition) / keyboard.motion.tweenDuration,
+      velocity = (this.rightmostKeyboxPosition - this.leftmostKeyboxPosition) / keyboard.animation.tweenDuration,
       gap = (this.horizontalKeyboxPeriod * velocity - keyboard.keybox.width) / velocity,
-      shift = this.horizontalKeyboxPeriod * keyboard.motion.shift
+      shift = this.horizontalKeyboxPeriod * keyboard.animation.leftShift
     ;
     
     this.initialTimePosition = this.horizontalKeyboxPeriod *
@@ -409,32 +566,28 @@ class Keyboard extends Content {
   run(keyboard) {
     this
       .init(keyboard)
-      ._redraw()
+      ._redrawContent()
       ._resetStimuli()
-      ._fitWindowSizeToViewport();
+      ._fitWindowSizeToViewport()
+    ;
     return this;
   }
   
   /**
    * reset keyboard properties to fit keys to the viewport and redraw keyboard content to fit viewport size
-   * @param keyboard - reference to object literal with all relevant to application data
    * @return {Keyboard} - returns 'this' to support method chaining
    */
-  autofit(keyboard) {
-    // reset tween parameters (t=S/V)
-    this.keyboard.viewport.width = ((keyboard.keybox.showBorder ? keyboard.keybox.borderWidth * 2 : 0)
-      + keyboard.keybox.width + keyboard.keybox.margin * 2) * keyboard.viewport.columns;
-    
-    this.keyboard.viewport.height = ((keyboard.keybox.showBorder ? keyboard.keybox.borderWidth * 2 : 0)
-      + keyboard.keybox.height + keyboard.keybox.margin * 2) * keyboard.viewport.rows;
-    
+  autofit() {
+    this.keyboard.viewport.width = this.minViewportWidth;
+    this.keyboard.viewport.height = this.minViewportHeight;
     this
       .init(this.keyboard)
-      ._redraw()
+      ._redrawContent()
       ._fitWindowSizeToViewport()
+      .initialState(this.keyboard.schools)
     ;
     
-    ipcRenderer.send(`ipcKeyboard-change`, `change`);//stimuli reset => epochs reset => epoch series reset => save keyboard configuration changes
+    this.emit('keyboardLayoutChange', this.keyboard);
     
     return this;
     
@@ -447,10 +600,13 @@ class Keyboard extends Content {
    */
   initialState(schools) {
     for (let i = 0; i < schools.length; i++) {
+      this.keyboard.schools[i].motion.speedScale = 0;
       this.timelines[i]
+        .timeScale(0)
         .seek(`initialPosition${i}`)
-        .timeScale(0);
+      ;
     }
+    this.emit('keyboardLayoutChange', this.keyboard);
     return this;
   }
   
@@ -461,24 +617,52 @@ class Keyboard extends Content {
    */
   motionChange(schools) {
     for (let i = 0; i < schools.length; i++) {
-      this.timelines[i].timeScale(schools[i].motion.speedScale); //speedScale - scale factor of speed value (defined by keyboard.motion.tweenDuration)
-      // if (keyboard.schools[i].motion.reverse && !this.timelines[i].reversed)
-      //   this.timeLines[i].reverse();
-      // else
-      //   this.timeLines[i].play();
+      this.keyboard.schools[i].motion.speedScale = schools[i].motion.speedScale;
+      this.keyboard.schools[i].motion.reverse = schools[i].motion.reverse;
+      this.keyboard.schools[i].motion.randomSpeed = schools[i].motion.randomSpeed;
+      this.timelines[i].timeScale(schools[i].motion.speedScale); //speedScale - scale factor of speed value (defined by keyboard.animation.tweenDuration)
+      // if (this.keyboard.schools[i].motion.reverse && !this.timelines[i].reversed()) {
+      //   this.timelines[i].reverse();
+      // } else {
+      //   this.timelines[i].play();
+      // }
     }
     return this;
   }
   
-  keyboxBorder(showBorder) {
-    let keyboxes = $(".key");
+  /**
+   * show or hide keybox border
+   * @param showBorder - true if show border of false if not
+   */
+  switchKeyboxBorder(showBorder) {
     this.keyboard.keybox.showBorder = showBorder;
     if (showBorder)
-      keyboxes.addClass("keybox-bordered");
+      this.keyboxes.addClass("bordered");
     else
-      keyboxes.removeClass("keybox-bordered");
+      this.keyboxes.removeClass("bordered");
   }
   
+  /**
+   * update keybox size with new keybox.width & keybox.height
+   * @param keybox - object literal with new keybox width & height
+   */
+  updateKeyboxSize(keybox) {
+    Tools.runDebounced(() => {//unbounced actions
+        this.keyboard.keybox.width = keybox.width;
+        this.keyboard.keybox.height = keybox.height;
+        this.keyboxes
+          .css({
+            width: keybox.width,
+            height: keybox.height
+          });
+        this
+          .init(this.keyboard)
+          ._redrawContent()
+          .autofit()
+        ;
+      }, 200
+    );
+  }
 }
 
 module.exports = Keyboard;

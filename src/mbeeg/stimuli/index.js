@@ -11,7 +11,7 @@ class Stimuli extends require('stream').Readable {
                 learningCycleDuration = 0,
                 learningArray = stimuliIdArray,
                 nextSequence = arr => arr.sort(() => Math.random() - 0.5),
-                nextTarget = (arr, previousTarget, learningCycle) => {//todo learning mode
+                nextTarget = (arr, previousTarget, learningCycle) => {//todo>> learning mode
                   if (++previousTarget > arr.length - 1) {
                     // previousTarget = 0;
                     // learningCycle = 0;
@@ -26,8 +26,8 @@ class Stimuli extends require('stream').Readable {
     super({objectMode: true});
     this.stimuliIdArray = stimuliIdArray.slice();
     this.stimulus = [];
-    this.stimulusDuration = duration;
-    this.pauseDuration = pause;
+    // this.stimulusDuration = duration;
+    // this.pauseDuration = pause;
     this.pauseBetweenCycles = pauseBetweenCycles;
     this.stimulusCycleDuration = duration + pause;
     this.stimulusCycle = -1;
@@ -53,8 +53,8 @@ class Stimuli extends require('stream').Readable {
    */
   reset({stimuliIdArray, duration, pause}) {
     this.stimuliIdArray = stimuliIdArray.slice();
-    this.stimulusDuration = duration;
-    this.pauseDuration = pause;
+    // this.stimulusDuration = duration;
+    // this.pauseDuration = pause;
     this.stimulusCycleDuration = duration + pause;
     this._reset();
   }
@@ -100,7 +100,7 @@ class Stimuli extends require('stream').Readable {
         this.bounded ? new Date().getTime() : 0
         , this.stimuliIdArray[this.currentStimulus]
         , this.learning && this.currentStimulus === this.currentTargetStimulus ? 1 : 0 //target field = in learning mode - true if target key, false if not, and null in online mode
-        , this.stimulusCycle//todo consider problems with cycles counting from stimuli/samples to classification/decision levels
+        , this.stimulusCycle//todo>> consider problems with cycles counting from stimuli/samples to classification/decision levels
       ];
       
       this.push(this.stimulus);

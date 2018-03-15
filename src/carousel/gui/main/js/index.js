@@ -2,7 +2,7 @@
 // noinspection JSUnusedLocalSymbols
 const
   {remote, ipcRenderer} = require('electron')
-  , {Content }= new require('carousel')
+  , {Window}= new require('carousel')
   , $ = require('jquery')
   , jQuery = $
 ;
@@ -10,7 +10,7 @@ let
   config = remote.getGlobal('config')
 ;
 const
-  content = new Content({colorScheme: config.carousel.appearance.colorScheme.selected})
+  windowContent = new Window({colorScheme: config.carousel.appearance.colorScheme})
 ;
 
 $(() => {
@@ -36,16 +36,12 @@ $(() => {
       // config = Tools.copyObject(arg);
       switch (command) {
         case "colorSchemeChange":
-          content.reloadScheme(config.carousel.appearance.colorScheme.selected);
+          windowContent.reloadScheme(config.carousel.appearance.colorScheme);
           break;
         default:
       }
-      // config.carousel.keyboard = Tools.copyObject(keyboard.keyboardConfiguration);
-      // config.carousel.ipc.command = null;
-      // Content.reloadSchema(config.carousel.appearance.colorScheme.selected);
     })
     .on('ipcKeyboard-command', (e, arg) => {
-      // config.carousel.keyboard = Tools.copyObject(arg.keyboardConfiguration);
     })
   ;
   

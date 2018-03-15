@@ -1,0 +1,43 @@
+{
+  "name": {
+    "usingFonts": false,
+    "usingPics": true,
+    "background": "#2b2b2b",
+    "picsFolder": "../res/kiddyfont1",
+    "normal": {
+      "color": "#C39416",
+      "pngFilePrefix": "nf",
+      "fontFamily": "sans-serif",
+      "fontWeight": "lighter",
+      "size": 0.6,
+      "textShadow": "none"
+    },
+    "stimulated": {
+      "color": "#ffffff",
+      "pngFilePrefix": "f",
+      "fontFamily": "sans-serif",
+      "fontWeight": "bold",
+      "size": 0.8,
+      "backgroundSize": "100%",
+      "textShadow": "0 0 15px #fff, 0 0 1em #ffff00"
+    },
+    "faded": {
+      "color": "#3a3a3a",
+      "pngFilePrefix": "off",
+      "fontFamily": "sans-serif",
+      "fontWeight": "lighter",
+      "size": 0.5,
+      "backgroundSize": "100%",
+      "textShadow": "none"
+    },
+    "selected": {
+      "color": "#ffffff",
+      "pngFilePrefix": "f",
+      "fontFamily": "sans-serif",
+      "fontWeight": "bolder",
+      "size": 0.9,
+      "backgroundSize": "100%",
+      "textShadow": "0 0 15px #fff, 0 0 1em #ffff00"
+    }
+  }
+}

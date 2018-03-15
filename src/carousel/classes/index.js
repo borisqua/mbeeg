@@ -3,7 +3,7 @@
 module.exports = {
   
   //Core
-  Content: require('./content'),
+  Window: require('./window'),
   Keyboard: require('./keyboard'),
   Console: require('./console'),
   Settings: require('./settings')

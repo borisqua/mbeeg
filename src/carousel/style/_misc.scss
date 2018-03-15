@@ -7,7 +7,7 @@
 }
 
 form {
-  margin-top: 20px;
+  //margin-top: 20px;
 }
 
 input[type="radio"], input[type="checkbox"], input[type="range"] {
@@ -30,6 +30,10 @@ label {
   font-size: 10pt;
   color: gray;
   //margin: 5px;
+}
+
+hr {
+  border-bottom: 1px solid #5e5e5e;
 }
 
 .right {
@@ -91,7 +95,7 @@ fieldset {
 }
 
 .long-string {
-  width: 100%;
+  width: 97%; //todo>> long-string should be aligned by center of parent element
 }
 
 .inputbox {
@@ -129,7 +133,7 @@ fieldset {
 .horizontal-flex {
   display: flex;
   flex-direction: row;
-  align-items: stretch;
+  align-items: flex-start;
 }
 
 .horizontal-flex-centered {
@@ -178,7 +182,7 @@ fieldset {
 form.settings {
   display: flex;
   flex-direction: column;
-  min-width: 850px;
+  min-width: 855px;
   //flex: auto;
   //clear: both;
 }

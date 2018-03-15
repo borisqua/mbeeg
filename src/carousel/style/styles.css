@@ -4,9 +4,6 @@
   border: 0;
   outline: 0; }
 
-form {
-  margin-top: 20px; }
-
 input[type="text"], input[type="number"] {
   min-width: 60px;
   text-align: right; }
@@ -17,6 +14,9 @@ textarea {
 label {
   font-size: 10pt;
   color: gray; }
+
+hr {
+  border-bottom: 1px solid #5e5e5e; }
 
 .right {
   text-align: right; }
@@ -58,7 +58,7 @@ fieldset {
   width: 30px; }
 
 .long-string {
-  width: 100%; }
+  width: 97%; }
 
 .inputbox {
   text-align: left;
@@ -89,7 +89,7 @@ fieldset {
 .horizontal-flex {
   display: flex;
   flex-direction: row;
-  align-items: stretch; }
+  align-items: flex-start; }
 
 .horizontal-flex-centered {
   display: flex;
@@ -121,19 +121,7 @@ fieldset {
 form.settings {
   display: flex;
   flex-direction: column;
-  min-width: 850px; }
-
-.light {
-  background: repeating-linear-gradient(45deg, #ffffff 0%, #e8e8e8 10%, #e9e9e9 0%, #e6e6e6 50%) 0/15px 15px; }
-
-.dark {
-  background: repeating-linear-gradient(45deg, #2b2b2b 0%, #2b2b2b 10%, #222222 0%, #222222 50%) 0/15px 15px; }
-
-.keybox-dark {
-  color: #FF1177; }
-
-.keybox-light {
-  color: #6d6d6d; }
+  min-width: 855px; }
 
 @keyframes shake {
   from {
@@ -145,73 +133,24 @@ form.settings {
     transform: rotate(0deg); }
   to {
     transform: rotate(90deg); } }
-.faded-dark-keys {
-  color: #3a3a3a !important; }
-
-.faded-light-keys {
-  color: #d3d3d3 !important; }
-
-.selected-dark-key {
-  color: #fff !important;
-  text-shadow: 0 0 15px #fff, 0 0 1em #ff07d3;
-  font-size: 19vmin !important; }
-
-.selected-light-key {
-  color: #000 !important;
-  text-shadow: 0 0 15px #6C6C6C, 0 0 1em #FFF;
-  font-size: 19vmin !important; }
-
-.keybox-dark-color {
-  color: #FFF; }
-
-.keybox-light-color {
-  color: #000; }
-
-.keybox-dark-size {
-  background-size: 100%;
-  font-size: 17vmin !important; }
-
-.keybox-light-size {
-  background-size: 100%;
-  font-size: 17vmin !important; }
-
-.keybox-dark-shine {
-  text-shadow: 0 0 15px #fff, 0 0 1em #ff07d3; }
-
-.keybox-light-shine {
-  text-shadow: 0 0 15px #6C6C6C, 0 0 1em #FFF; }
-
-.keybox-dark-shake {
+.shake {
   animation-name: shake;
   animation-duration: 0.01s;
   animation-iteration-count: infinite; }
 
-.keybox-light-shake {
-  animation-name: shake;
-  animation-duration: 0.01s;
-  animation-iteration-count: infinite; }
-
-.keybox-dark-turn {
+.turn {
   animation-name: turn;
   animation-duration: 0.1s;
   animation-iteration-count: 1; }
 
-.keybox-light-turn {
-  animation-name: turn;
-  animation-duration: 0.1s;
-  animation-iteration-count: 1; }
-
-.keybox-dark-capsize {
+.capsize {
   transform: rotate(180deg); }
 
-.keybox-light-capsize {
+.half-capsize {
   transform: rotate(90deg); }
 
-.keybox-bordered {
+.bordered {
   border: 1px solid #525252 !important; }
-
-html {
-  font-size: calc(10px + 10px * ((100vw - 769px) / 2048)); }
 
 html {
   text-align: left;
@@ -241,7 +180,6 @@ html {
           position: relative;
           font-family: sans-serif;
           font-size: xx-large;
-          width: 95%;
           padding: 2px;
           scroll-behavior: auto; }
       html body main #left {
@@ -252,10 +190,9 @@ html {
         position: relative;
         overflow: hidden;
         border: 1px solid #525252; }
-        html body main #keyboard .key {
+        html body main #keyboard .keybox {
           display: flex;
           position: absolute;
-          font: bold 13vmin sans-serif;
           justify-content: center;
           align-items: center;
           cursor: move; }

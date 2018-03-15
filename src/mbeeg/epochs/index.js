@@ -83,7 +83,7 @@ class Epochs extends require('stream').Transform {
       
       for (let s = 0; s < samplesChunk.length; s++) {//adding timestamp field
         samplesChunk[s].unshift(Math.round(this.timestamp += this.samplingStep));
-      }//todo think about correction of timestamp by information from each next ovStreamJSON, and more general - think about stream driven class (all properties of class come with stream)
+      }//todo>> think about correction of timestamp by information from each next ovStreamJSON, and more general - think about stream driven class (all properties of class come with stream)
       this.samplesFIFO = this.samplesFIFO.concat(samplesChunk);
       
       if (!this.epochsFIFO.length && this.samplesFIFO.length >= this.epochLengthInSamples) {//keep samplesFIFO length not greater than epoch duration

@@ -66,7 +66,7 @@ const
   })
   , epochSeries = new EpochSeries({
     stimuliIdArray: config.mbeeg.stimulation.sequence.stimuli
-    , depthLimit: config.mbeeg.decision.methods.majority.maxCycles//todo in all epochSeries declaration depthLimit must be equal to maxCyclesCount of selected Classification
+    , depthLimit: config.mbeeg.decision.methods.majority.maxCycles//odo in all epochSeries declaration depthLimit must be equal to maxCyclesCount of selected Classification
   })
   , stringifier = new Stringifier({
     // stringifyAll: true

@@ -1,14 +1,16 @@
 "use strict";
 
 const
-  Content = require('../content');
+  Window = require('../window')
+  , {Tools} = require('mbeeg')
+;
 
-class Settings extends Content {
+class Settings extends Window {
   constructor({
                 colorScheme
               }) {
     super({colorScheme});
-    this.colorScheme = colorScheme;
+    this.colorScheme = Tools.copyObject(colorScheme);
   }
   
 }

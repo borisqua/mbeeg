@@ -2,6 +2,7 @@
 //todo>> to redistribute helpers by classes for which they are intended
 //todo>> to separate tools/helpers library from mbeeg to distinct one
 
+// noinspection JSUnusedGlobalSymbols
 const
   {Transform} = require('stream')
   , fs = require('fs')
@@ -57,20 +58,17 @@ const
   }
 ;
 
+// noinspection JSUnusedLocalSymbols
+/**
+ * returns a random array where the new first element doesn't equal to previous last element
+ * so one stimulus won't appear two times in a row
+ * @param arr
+ * @return {*}
+ */
 function randomWithoutConjunctions(arr) {
   let last = arr[arr.length - 1];
   arr.sort(() => Math.random() - 0.5);
   return arr[0] === last ? arr.push(arr.shift()) : arr;
-}
-
-/**
- * returns value v filled with zeroes to length l
- * @param l
- * @param v
- * @return {string}
- */
-function pad(l, v) {// l - length of zero-leading string number, v - number value
-  return new Array(l).fill(0).concat(v).join('').substr(v.toString().length > l ? -v.toString().length : -l);
 }
 
 /**
@@ -81,6 +79,9 @@ function pad(l, v) {// l - length of zero-leading string number, v - number valu
  * @see EBML, variable-length integers, UTF, Endianness, DSP, EEG
  */
 class Tools {
+  constructor() {
+    this.timer = {};
+  }
 
 // static SGDDecision({verdict, start = 2, cycles = 10, threshold = 5, startweights = 1, startgradient = 0}) {
 //   if (reset) {
@@ -118,9 +119,9 @@ class Tools {
       }
       , verdictsQueueLength = verdictsQueue.length
       , channelsNumber = verdictsQueue[0].length//at least on verdict should be presented (under index 0)
-      , winnersQueues = new Array(channelsNumber).fill([])//todo change "if(someArray===undefined)" to "someArr=[..]" everywhere
+      , winnersQueues = new Array(channelsNumber).fill([])//todo>> change "if(someArray===undefined)" to "someArr=[..]" everywhere
       // , accumulatedWeights = new Array(channelsNumber).fill([])
-      , winnersModes = new Array(channelsNumber).fill([])//todo change partly filled arrays to objects
+      , winnersModes = new Array(channelsNumber).fill([])//todo>> change partly filled arrays to objects
     ;
     
     for (let verdictsSetIndex = 0; verdictsSetIndex < verdictsQueueLength; verdictsSetIndex++) {
@@ -179,7 +180,7 @@ class Tools {
       }
       , verdictsQueueLength = verdictsQueue.length
       , channelsNumber = verdictsQueue[0].length
-      , winnersQueues = new Array(channelsNumber).fill([])//todo change if(someArray===undefined) someArr=[..] everywhere
+      , winnersQueues = new Array(channelsNumber).fill([])//todo>> change if(someArray===undefined) someArr=[..] everywhere
       , winnersSeriesLengths = new Array(channelsNumber).fill(1)
     ;
     if (verdictsQueueLength > maxCycles) {
@@ -216,6 +217,16 @@ class Tools {
     }
     
     return result;
+  }
+  
+  /**
+   * run some function once after time out is being expired
+   * @param functionToRun
+   * @param timeout
+   */
+  static runDebounced(functionToRun, timeout) {
+    clearTimeout(this.timer);
+    this.timer = setTimeout(functionToRun, timeout);
   }
   
   /**
@@ -259,10 +270,11 @@ class Tools {
   /**
    * Returns configuration object with information obtained from configuration file
    * @param {String} path - path to configuration file
+   * @param parse - if true return object else return string
    */
-  static loadConfiguration(path) {
+  static loadConfiguration(path, parse = true) {
     let strConf = fs.readFileSync(path);
-    return JSON.parse(strConf);
+    return parse ? JSON.parse(strConf) : strConf;
   }
   
   // noinspection JSUnusedGlobalSymbols
@@ -275,6 +287,17 @@ class Tools {
     return arr.sort(() => { return Math.random() - 0.5; })
   }
   
+  // noinspection JSUnusedGlobalSymbols
+  /**
+   * returns value v filled with zeroes to length l
+   * @param l
+   * @param v
+   * @return {string}
+   */
+  static pad(l, v) {// l - length of zero-leading string number, v - number value
+    return new Array(l).fill(0).concat(v).join('').substr(v.toString().length > l ? -v.toString().length : -l);
+  }
+
   /**
    * deleteLeadZeros - deletes leading zeros from the string that represents uint64
    *
@@ -402,6 +425,7 @@ class Tools {
     return datZt.splice(1, dF2);
   }
   
+  // noinspection JSUnusedGlobalSymbols
   /**
    * custom rereferencing by subtracting common average
    * @param timeseries
@@ -481,12 +505,12 @@ class Tools {
       buffer: valueBuffer,
       hexString: this.bigEndian(valueBuffer)
     }
-    //todo the alternative ways to calculate length should be considered
+    //todo>> the alternative ways to calculate length should be considered
     // const value = parseInt(this.bigEndian(offset, bytes, buffer), 16); //value in descriptor
     // return Math.ceil(Math.log2(-(1 + ~(1 << bytes * 8)) / value)); //length of vInt
     // One more way to calculate length is using javascript Math.clz32(first4bytes)
     // let length2 = 8 * (bytes - 1) + Math.clz32(buffer[firstByte]) - 23;
-    //todo there is much much faster approach to get vInt length, this is the precalculated vector with 256 elements (i.e. 2^8 elements)
+    //todo>> there is much much faster approach to get vInt length, this is the precalculated vector with 256 elements (i.e. 2^8 elements)
     // that contains vectors with length equal to number of bytes of length descriptor
     // each element of last vector keeps precalculated length of vInt for that specific length of vInt length descriptor
     // then vInt could be expressed like something like this: {let bytes=0; while(!buffer[bytes++]); return table256[buffer[bytes]][bytes];}
@@ -505,6 +529,7 @@ class Tools {
     return `0${buffer[offset].toString(16)}`.substr(-2) + (exp === 0 ? "" : this.bigEndian(buffer, exp, offset + 1));
   }
   
+  // noinspection JSUnusedGlobalSymbols
   /**
    * littleEndian calculates value from buffer according to little-endian order of bytes
    * @param {Array} buffer stream buffer or string that contains variable-length integers of EBML stream or file
@@ -524,6 +549,7 @@ class Objectifier extends Transform {
     super({objectMode: true});
   }
   
+  // noinspection JSMethodCanBeStatic
   // noinspection JSUnusedGlobalSymbols
   _transform(chunk, encoding, cb) {
     cb(null, JSON.parse(chunk.toString()));
@@ -652,6 +678,7 @@ class Sampler extends Transform {
     super({objectMode: true});
   }
   
+  // noinspection JSUnusedGlobalSymbols
   _transform(samples, encoding, cb) {
     if (Array.isArray(samples[0])) {
       let samplesLength = samples.length;
@@ -668,6 +695,8 @@ class EpochsHorizontalLogger extends Transform {
     super({objectMode: true});
   }
   
+  // noinspection JSMethodCanBeStatic
+  // noinspection JSUnusedGlobalSymbols
   _transform(epoch, encoding, cb) {
     let row = [];
     for (let ch = 0, channelsNumber = epoch.channels.length; ch < channelsNumber; ch++) {
@@ -685,6 +714,7 @@ class EpochsVerticalLogger extends Transform {
     super({objectMode: true});
   }
   
+  // noinspection JSUnusedGlobalSymbols
   _transform(epoch, encoding, cb) {
     let
       row = []
@@ -720,6 +750,7 @@ class FeatureHorizontalLogger extends Transform {
     this.window = window;
   }
   
+  // noinspection JSUnusedGlobalSymbols
   _transform(chunk, encoding, cb) {
     let features = Tools.copyObject(chunk);
     let
@@ -760,6 +791,7 @@ class FeatureVerticalLogger extends Transform {
     this.stimuliIdArray = stimuliIdArray;
   }
   
+  // noinspection JSUnusedGlobalSymbols
   _transform(features, encoding, cb) {
     let
       row
@@ -780,6 +812,7 @@ class FeatureVerticalLogger extends Transform {
     cb();
   }
   
+  // noinspection JSUnusedGlobalSymbols
   setStimuliIdArray(newArray) {
     this.stimuliIdArray = newArray;
   }

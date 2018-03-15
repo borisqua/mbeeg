@@ -13,16 +13,18 @@ let
   , keyboardRuns = false
   , keyboardHidden = true
   // , openVibe = require('child_process').execFile
-  // ,executablePath = "C:\\Program Files (x86)\\openvibe\\openvibe-acquisition-server.cmd"
+  // , executablePath = "C:\\Program Files (x86)\\openvibe\\openvibe-acquisition-server.cmd"
 ;
 
 global.config = Tools.loadConfiguration(`config.json`);
 
+// noinspection JSUnusedLocalSymbols
 const
   Net = require('net')
   , fs = require('fs')
   , openVibeClient = new Net.Socket() //3. Create TCP client for openViBE eeg data server
   , tcp2ebmlFeeder = (context, tcpchunk) => {//todo rewrite this with closure (instead of context parameter use privateContext closure variable)
+  
     if (context.tcpbuffer === undefined) {
       context.tcpbuffer = Buffer.alloc(0);
       context.tcpcursor = 0;
@@ -88,9 +90,20 @@ const
     method: Tools.majorityDecision
     , parameters: config.mbeeg.decision.methods.majority
   })
+  , isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
+    if (winMain) {
+      if (winMain.isMinimized()) winMain.restore();
+      winMain.focus();
+    }
+  })
 ;
+if (isSecondInstance) { app.quit(); }
 
+/**
+ * create application windows and run them all in hidden mode (except winMain)
+ */
 function createWindows() {
+  
   // Menu.setApplicationMenu(menu);
   
   winMain = window({
@@ -112,14 +125,36 @@ function createWindows() {
     })
   ;
   // winMain.toggleDevTools();
+  
+  winConsole = window({
+    // width: 900,
+    // height: 950 + config.carousel.keyboard.viewport.rows * 32,
+    // parent: winMain,
+    // frame: false,//production
+    show: false,
+    url: "gui/console/index.html"
+  });
+  winConsole.on(`close`, (e) => {
+    if (!forceCloseApp) {
+      e.preventDefault();
+      winConsole.hide();
+      if (keyboardHidden)
+        winMain.focus();
+      else
+        winKeyboard.focus();
+    }
+  });
+  // winConsole.setMenu(null);//production
+  
   winKeyboard = window({
     width: config.carousel.keyboard.keybox.width * config.carousel.keyboard.viewport.columns + 50,
     height: config.carousel.keyboard.keybox.height * config.carousel.keyboard.viewport.rows + 250,
     show: false,
     url: 'gui/keyboard/index.html'
   });
+  
   // winKeyboard.toggleDevTools();
-  winKeyboard.hide();
+  
   keyboardHidden = true;
   // winKeyboard.setMenu(null);//production
   winKeyboard
@@ -142,45 +177,16 @@ function createWindows() {
     })
   ;
   
-  winConsole = window({
-    // width: 900,
-    // height: 950 + config.carousel.keyboard.viewport.rows * 32,
-    // parent: winMain,
-    // frame: false,//production
-    show: false,
-    url: "gui/console/index.html"
-  });
-  // winConsole.setMenu(null);//production
-  winConsole.on(`close`, (e) => {
-    if (!forceCloseApp) {
-      e.preventDefault();
-      winConsole.hide();
-      if (keyboardHidden)
-        winMain.focus();
-      else
-        winKeyboard.focus();
-    }
-  });
 }
 
 //openViBE acquisition server is required so run it first
-// openVibe(executablePath, function(err, data) {
-//     if(err){
-//        console.error(err);
-//        return;
-//     }
+// openVibe(executablePath, function (err, data) {
+//   if (err) {
+//     console.error(err);
+//   }
 // });
 
-// noinspection JSUnusedLocalSymbols
-const isSecondInstance = app.makeSingleInstance((commandLine, workingDirectory) => {
-  if (winMain) {
-    if (winMain.isMinimized()) winMain.restore();
-    winMain.focus();
-  }
-});
-if (isSecondInstance) { app.quit(); }
-
-app
+app //<< entry point is in the .on('ready', callback)
   .on('will-quit', () => globalShortcut.unregisterAll())
   .on('activate', () => {//for macOS system event
     // On macOS it's common to re-create a window in the app when the
@@ -203,9 +209,9 @@ app
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== 'darwin') { app.quit() }
   })
-  .on('ready', () => {
+  .on('ready', () => {//<< it is entry point here
     stimuli.pause();
-    epochs
+    epochs //<< run mbeeg decision cycle
       .pipe(butterworth4)
       .pipe(detrend)
       .pipe(epochSeries)
@@ -215,7 +221,7 @@ app
       .pipe(stringifier)
       .pipe(process.stdout)
     ;
-    createWindows();
+    createWindows(); //<< then create all application windows and show main window
     
     globalShortcut.register(`CommandOrControl+W`, () => {
       BrowserWindow.getFocusedWindow().close();
@@ -250,9 +256,17 @@ ipcMain
     if (!keyboardHidden)
       stimuli.write(stimulus);
   })
-  .on(`ipcKeyboard-change`, (e, arg) => {
-    epochs.reset(config.mbeeg.stimulation.sequence.stimuli.length);
-    epochSeries.reset(config.mbeeg.stimulation.sequence.stimuli);
+  .on(`ipcKeyboard-command`, (e, command) => {
+    switch (command){
+      case "stimulationChange":
+        epochs.reset(config.mbeeg.stimulation.sequence.stimuli.length);
+        epochSeries.reset(config.mbeeg.stimulation.sequence.stimuli);
+        break;
+      default:
+        winMain.webContents.send(`ipcKeyboard-command`, command);
+        winConsole.webContents.send(`ipcKeyboard-command`, command);
+        break;
+    }
   })
   .on(`ipcConsole-command`, (e, command) => {
     winMain.webContents.send(`ipcConsole-command`, command);

@@ -2,10 +2,10 @@
 const
   {ipcRenderer} = require('electron')
   , {Tools} = require('mbeeg')
-  , Content = require('../content')
+  , Window = require('../window')
 ;
 
-class Console extends Content {
+class Console extends Window {
   constructor({
                 consoleProperties,
                 keyboardProperties,
@@ -13,21 +13,39 @@ class Console extends Content {
                 colorScheme
               }) {
     super({colorScheme});
-  
-    this.console = Object.assign({}, consoleProperties);//todo>> change the "Tools.copyObject(" to "Object.assign({}, " in whole project"
-    this.keyboard = Object.assign({}, keyboardProperties);
-    this.mbeeg = Object.assign({}, mbeegProperties);
-    this.colorScheme = colorScheme;
+    
+    this.console = Tools.copyObject(consoleProperties);
+    this.keyboard = Tools.copyObject(keyboardProperties);
+    this.mbeeg = Tools.copyObject(mbeegProperties);
+    this.colorScheme = Tools.copyObject(colorScheme);
     
     this.alphabetField = $('input#alphabet');
-    this.motionGroup = $('#motion');
+    this.motionGroup = $('#motion').find('> #sliders');
     
-    this._updateAlphabet(this.keyboard.alphabet);
-    this.updateMotionControlGroup();
-    
+    this
+      ._fillList($("select#color-scheme"), 'option', colorScheme.available)
+      ._updateAlphabet(this.keyboard.alphabet)
+      ._updateMotionControlGroup(this.keyboard)
+    ;
   }
   
   // ----- PRIVATE METHODS -----
+  
+  // noinspection JSMethodCanBeStatic
+  /**
+   * fill element content with list of elements with tagName tags and items from source object literal
+   * @param elements - jquery with containers of list
+   * @param tagName - name of tags containing items of list
+   * @param source - object literal with names that will become items of list
+   * @private
+   */
+  _fillList(elements, tagName, source) {
+    for (let item in source) {
+      if (source.hasOwnProperty(item))
+        elements.append(`<${tagName} value="${item}">${item}</${tagName}>`);
+    }
+    return this;
+  }
   
   /**
    * reset and return an element with group of controls responsible for motion
@@ -67,9 +85,15 @@ class Console extends Content {
   _updateAlphabet(alphabet = "АБВГДЕЁЖЗИЙКЛМНОПРСТУФXЦЧШЩЪЫЬЭЮЯ") {
     this.maxLength = this.keyboard.viewport.columns * this.keyboard.viewport.rows;
     this.alphabetField.prev().html(`alphabet, max ${this.maxLength} symbols`);
+    // if (alphabet.length < this.maxLength) {
+    //   alphabet = alphabet + new Array(this.maxLength - alphabet.length).fill("_").join("");
+    // } else {
+    alphabet = alphabet.substr(0, this.maxLength);
+    // }
     this.keyboard.alphabet = alphabet;
-    this.alphabetField.val(alphabet.substr(0, this.maxLength));
+    this.alphabetField.val(alphabet);
     this.alphabetField.attr('maxlength', this.maxLength);
+    return this;
   };
   
   /**
@@ -77,125 +101,74 @@ class Console extends Content {
    * @private
    */
   _makeArrays() {
+    //todo>> update arrays preserving old settings (such as schools speedScales etc.)
+    this.keyboard.keys = [];//todo>> preserve old values to load them (full or partly) in recreated array
+    this.keyboard.schools = [];//todo>> preserve old values to load them (full or partly) in recreated array
+    // noinspection JSPrimitiveTypeWrapperUsage
+    this.mbeeg.stimulation.sequence.stimuli = [];//todo>> preserve old values to load them (full or partly) in recreated array
     
-    this.keyboard.keys.length = 0;
-    this.keyboard.schools.length = 0;
-    this.mbeeg.stimulation.sequence.stimuli.length = 0;
-    for (let j = 0; j < this.keyboard.viewport.rows; j++) {//rows
+    for (let row = 0; row < this.keyboard.viewport.rows; row++) {//rows
       this.keyboard.schools.push({
-        id: j,
+        id: row,
         motion: {
           easing: "slow motion",
-          speedScale: !!this.keyboard.schools[j] ? this.keyboard.schools[j].speedScale : 0,
+          speedScale: !!this.keyboard.schools[row] ? this.keyboard.schools[row].speedScale : 0,
           reverse: false,
           randomSpeed: false
         }
       });
+      $(`.speed${row}`).each((j, element) => element['value'] = 0);
       for (let columns = this.keyboard.viewport.columns, i = 0; i < columns; i++) {//columns
-        let id = j * columns + i;
+        let id = row * columns + i;
         this.keyboard.keys.push({
           column: i, //columns - i - 1, //i - for back alphabet order (right to left); columns-i-1 - for straight alphabet order (left to right)
-          left: this.keyboard.motion.shift * this.keyboard.keybox.width, //i * this.keyboard.keybox.width,
-          row: j,
-          school: j,
+          row: row,
+          school: row,
           stimulus: id, //
-          symbol: this.keyboard.alphabet[id] ? this.keyboard.alphabet[id] : '',
-          top: j * this.keyboard.keybox.height
+          symbol: this.keyboard.alphabet[id] ? this.keyboard.alphabet[id] : ''
+          // left: this.keyboard.animation.leftShift * this.keyboard.keybox.width, //i * this.keyboard.keybox.width,
+          // top: row * this.keyboard.keybox.height
         });
         if (!!this.keyboard.alphabet[id]) {
           this.mbeeg.stimulation.sequence.stimuli.push(id);
         }
       }
     }
-  };
-  
-  //GETTERS & SETTERS
-  
-  /**
-   * @return {*} - returns current keyboard configuration
-   */
-  get keyboardConfiguration() { return this.keyboard; }
-  
-  /**
-   * @return {*} - returns current mbeeg configuration
-   */
-  get mbeegConfiguration() { return this.mbeeg; }
-  
-  //PUBLIC METHODS
-  
-  /**
-   * reload color scheme
-   * @param colorScheme - object literal with color scheme parameters
-   */
-  reloadScheme(colorScheme = this.colorScheme) {
-    this.colorScheme = colorScheme;
-    super.reloadScheme(colorScheme)
-  }
-  
-  /**
-   * update keyboard arrays with new alphabet string
-   * @param alphabet
-   */
-  updateArrays(alphabet){
-    this.keyboard.alphabet = alphabet;
-    this._makeArrays();
-  
-    this.emit('keyboardChange', this.keyboard);
-    this.emit('mbeegChange', this.mbeeg);
-  }
-  
-  /**
-   * assign new value to the viewport property
-   * @param property - name of viewport property to update
-   * @param value - value to assign to the property
-   */
-  updateKeyboardViewportProperties(property, value) {
-    
-    this.keyboard.viewport[property] = +value;
-    this._updateAlphabet();
-    this._makeArrays();
-  
-    this.emit('keyboardChange', this.keyboard);
-    this.emit('mbeegChange', this.mbeeg);
+    return this;
   };
   
   /**
    * update & redraw motion control group
    */
-  updateMotionControlGroup() {
-    this.timeouts.forEach(t => clearTimeout(t));
-    this.timeouts = [];
-    this.motionGroup.html(`
-            <legend>motion parameters</legend>
-            <div class="horizontal-flex">
-                <div class="scale"><label>speed scale</label></div>
-                <div class="motion"><label>random</label></div>
-                <div class="motion"><label>reverse</label></div>
-                <div class="easing"><label>easing</label></div>
-                <div class="bezier"><label>bezier</label></div>
-            </div>
-            <div class="horizontal-flex"><label>joint movement of speed controls</label><input id="speed-scales-locker" type="checkbox"></div>
-        `);
+  _updateMotionControlGroup() {
     this.addEventHandling('motionChange', 'change', $('#speed-scales-locker'), 'checked', this.console.speedScalesIsLocked,
       v => this.console.speedScalesIsLocked = v);
     
+    this.motionGroup.html("");
     for (let i = 0; i < this.keyboard.schools.length; i++) {
-      this.timeouts.push({});
       this.motionGroup.append(this._getMotionControlGroup(i));
       this.addEventHandling('motionChange', 'input', $(`.speed${i}`), 'value',
         +this.keyboard.schools[i].motion.speedScale,
         v => {
-          clearTimeout(this.timeouts[i]);
-          this.keyboard.schools[i].motion.speedScale = +v;
-          this.timeouts[i]=setTimeout(()=>{
-            this.emit('keyboardChange', this.keyboard);
-          }, 200)
+          v = +v.replace(',', '.');//to enter from "numPad" will be possible
+          this.keyboard.schools[i].motion.speedScale = v;
+          this.emit('keyboardChange', this.keyboard);
+        });
+      this.addEventHandling('directionChange', 'change', $(`#reverseMovement${i}`), 'checked', this.keyboard.schools[i].motion.reverse,
+        v => {
+          this.keyboard.schools[i].motion.reverse = v;
+          this.emit('keyboardChange', this.keyboard);
+        });
+      this.addEventHandling('randomSpeedChange', 'change', $(`#randomSpeed${i}`), 'checked', this.keyboard.schools[i].motion.randomSpeed,
+        v => {
+          this.keyboard.schools[i].motion.randomSpeed = v;
+          this.emit('keyboardChange', this.keyboard);
         });
     }
-    window.resizeTo(900, 730 + this.keyboard.viewport.rows * 32);//todo>> change to resizeBy
-    // this.emit('keyboardChange', this.keyboard);
-    // this.emit('consoleChange', this.console);
+    window.resizeTo(900, 850 + this.keyboard.viewport.rows * 32);//todo>> remove hard coding and maybe change to resizeBy
   };
+  
+  //PUBLIC METHODS
   
   /**
    * public function, initializes and adds listener to each element of given jQuery collection
@@ -206,26 +179,86 @@ class Console extends Content {
    * @param {*} value - value from configuration file to initialize settings console form fields
    * @param {function} callback - callback function to store changes into configuration data file
    */
-  addEventHandling(ipcCommand, event, jQuery, property="", value="", callback=()=>{}) {
+  addEventHandling(ipcCommand, event, jQuery, property = "", value = "", callback = () => {}) {
     jQuery.unbind();
-    if (!!property) {//if property exists then it is some kind of value field else it is some action button
+    if (!!property) {//if property exists then it is value field else it is action button
       jQuery.each((i, element) => element[property] = value);
     }
-    jQuery
-      .on(event, e => {
-        if (!!property) {//data element (e.g. field)
+    if (!!property) {//data element (e.g. field)
+      jQuery
+        .on(event, e => {
           let v = e.target[property];
           jQuery.each((i, element) => element[property] = v);
           callback(v);
-        } else { //action element (e.g. button)
+          
+          process.nextTick(() => { //(async) as quick as possible but after handling internal events emitted from console
+            if (!!ipcCommand)
+              ipcRenderer.send(`ipcConsole-command`, ipcCommand);
+          });
+          
+        });
+    } else { //action element (e.g. button)
+      jQuery
+        .on(event, e => {
           e.preventDefault();
           callback();
-        }
-        
-        if (!!ipcCommand)
-          ipcRenderer.send(`ipcConsole-command`, ipcCommand);
-      });
+          
+          process.nextTick(() => { //(async) as quick as possible but after handling internal events emitted from console
+            if (!!ipcCommand)
+              ipcRenderer.send(`ipcConsole-command`, ipcCommand);
+          });
+          
+        });
+    }
   };
+  
+  //GETTERS & SETTERS
+  
+  /**
+   * reset only viewport shape & size, stimulation and movement properties of keys
+   * @param keyboardProperties
+   */
+  set keyboardLayoutConfiguration(keyboardProperties){
+    this.keyboard.stimulation = keyboardProperties.stimulation;
+    this.keyboard.keybox = keyboardProperties.keybox;
+    this.keyboard.window = keyboardProperties.window;
+    this.keyboard.viewport.height = keyboardProperties.viewport.height;
+    this.keyboard.viewport.width = keyboardProperties.viewport.width;
+  }
+  
+  /**
+   * Full reset of keyboard properties. Recalculation of core arrays and restart are required
+   * @param keyboardProperties
+   */
+  set keyboardCoreConfiguration(keyboardProperties) {
+    let
+      schoolsNumberChanged = this.keyboard.schools.length
+    ;
+    this.keyboard = Tools.copyObject(keyboardProperties);
+    
+    this._updateAlphabet(this.keyboard.alphabet);
+    this._makeArrays();
+    
+    this.emit('keyboardChange', this.keyboard);
+    this.emit('stimuliChange', this.mbeeg);
+    
+    schoolsNumberChanged = schoolsNumberChanged - this.keyboard.schools.length;
+    if (schoolsNumberChanged) {
+      this._updateMotionControlGroup();
+    }
+  }
+  
+  set alphabet(alphabet) {
+    this.keyboard.alphabet = alphabet;
+    this._makeArrays();
+    this.emit('keyboardChange', this.keyboard);
+    this.emit('stimuliChange', this.mbeeg);
+  }
+  
+  set colorSchemeConfiguration(colorScheme) {
+    this.colorScheme = Tools.copyObject(colorScheme);
+    super.reloadScheme(colorScheme)
+  }
   
 }
 

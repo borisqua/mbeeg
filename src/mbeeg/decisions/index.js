@@ -18,7 +18,7 @@ class Decisions extends require('stream').Transform {
   _reset() {
     this.parameters.verdictsQueue = [];
     // this.parameters.winnersQueues = [[]];
-    //todo winners can be in every channel so Decisions class should be modified to reflect this fact
+    //todo>> winners can be in every channel so Decisions class should be modified to reflect this fact
   }
   
   // noinspection JSUnusedGlobalSymbols
@@ -29,7 +29,7 @@ class Decisions extends require('stream').Transform {
     
     if (this.result.ready) {
       cb(null, this.result.winners[0]);//[0] because we work with only channel yet
-      log(`                ::${this.result.status}`);//todo automate indentation by tracking call levels (use global variable)
+      log(`                ::${this.result.status}`);//todo>> automate indentation by tracking call levels (use global variable)
       this._reset();
     }
     else {

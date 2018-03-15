@@ -1,7 +1,7 @@
 "use strict";
 const
-  {Tools} = require('../tools'),
-  log = require('debug')('mbeeg:Controller')
+  {Tools} = require('../tools')
+  // , log = require('debug')('mbeeg:Controller')
 ;
 
 class Controller {
@@ -35,7 +35,7 @@ class Controller {
                 },
                 epochSeriesParameters = {
                   stimuliIdArray: config.mbeeg.stimulation.sequence.stimuli
-                  , depthLimit: config.mbeeg.decision.methods.majority.maxCycles//todo settle bond between epochSeries depthLimit & decision methods maxCycles/Cycles
+                  , depthLimit: config.mbeeg.decision.methods.majority.maxCycles//todo>> settle bond between epochSeries depthLimit & decision methods maxCycles/Cycles
                 },
                 featuresParameters = {
                   method: samples => { return samples.reduce((a, b) => a + b) / samples.length; }

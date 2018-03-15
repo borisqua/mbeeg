@@ -1,24 +1,68 @@
 doctype html
-html.light(manifest="manifest.appcache")
+html(manifest="manifest.appcache")
 	head
 		meta(http-equiv="content-type", content="text/html; charset=UTF-8")
 		title Console
-		//link(rel="stylesheet" type="text/css" href="css/styles.css" media="all" )
 		link(rel="stylesheet" type="text/css" href="../../style/styles.css" media="all" )
 		script window.$ = window.jQuery = window.jquery = require('jquery');
 		script(src="js/index.js" type="text/javascript")
+		style
 	body
 		header
 		main
 			form.settings#console
 				fieldset
-					legend look & feel
 					.vertical-flex
 						fieldset
-							label &nbsp color scheme &nbsp
-							select#color-scheme
-								option(value="dark") dark
-								option(value="light") light
+							.horizontal-flex
+								div
+									label &nbsp color scheme &nbsp
+									select#color-scheme
+								//fieldset.horizontal-flex
+								//	div
+								//		legend background
+								//		br
+								//		label css string
+								//		input
+								//		.horizontal-flex
+								//			label color picker
+								//			input.colorWell(type="color")
+								//div
+								//	legend stimulation
+								//	.horizontal-flex
+								//		fieldset
+								//			legend normal
+								//			table
+								//				tr
+								//					td
+								//						label(for="normalColor") color
+								//					td
+								//						input#normalColor.colorWell(type="color")
+								//				tr
+								//					td
+								//						label(for="filePrefix") file prefix
+								//					td
+								//						input#filePrefix
+								//				tr
+								//					td
+								//						label(for="fontFamily") font prefix
+								//					td
+								//						input#fontFamily
+								//				tr
+								//					td
+								//						label(for="fontWeight") font weight
+								//					td
+								//						input#fontWeight
+								//				tr
+								//					td
+								//						label(for="fontSize") font size
+								//					td
+								//						input#fontSize
+								//				tr
+								//					td
+								//						label(for="textShadow") text shadow
+								//					td
+								//						input#textShadow
 						.horizontal-flex
 							fieldset
 								legend stimulation
@@ -32,7 +76,9 @@ html.light(manifest="manifest.appcache")
 											input#color(type="checkbox")
 											label.label-after-field &nbsp change size
 											input#size(type="checkbox")
-											label.label-after-field &nbsp shine
+											label.label-after-field &nbsp change weight
+											input#weight(type="checkbox")
+											label.label-after-field &nbsp shine/shadow
 											input#shine(type="checkbox")
 										.vertical-flex
 											label &nbsp animation
@@ -41,6 +87,7 @@ html.light(manifest="manifest.appcache")
 												option(value="shake") shake
 												option(value="turn") turn
 												option(value="capsize") capsize
+												option(value="half-capsize") half-capsize
 									fieldset.vertical-flex
 										legend timings
 										.vertical-flex
@@ -48,16 +95,16 @@ html.light(manifest="manifest.appcache")
 											br
 											label stimulus duration, ms:
 											.horizontal-flex
-												input#durationSlider.duration.slider(type="range" min=0 max=500 step=1 value=100)
+												input#stimulusDurationSlider.stimulusDuration.slider(type="range" min=50 max=500 step=5 value=100)
 												| &nbsp;
-												input#durationValue.duration.value
+												input#stimulusDurationValue.stimulusDuration.value
 												br
 											br
 											label pause after stimulus, ms:
 											.horizontal-flex
-												input#pauseSlider.pause.slider(type="range" min=0 max=500 step=1 value=200)
+												input#stimulusPauseSlider.stimulusPause.slider(type="range" min=50 max=500 step=5 value=200)
 												| &nbsp;
-												input#pauseValue.pause.value
+												input#stimulusPauseValue.stimulusPause.value
 												br
 							fieldset
 								legend viewport parameters
@@ -68,19 +115,18 @@ html.light(manifest="manifest.appcache")
 											label.label-after-field &nbsp show border
 											input#keyboxBorder(type="checkbox")
 											br
-											label &nbsp; height, px:
-											.horizontal-flex
-												input#keyboxHeightSlider.keyboxHeight.slider(type="range" min=50 max=200 step=1 value=150)
-												| &nbsp;
-												input#keyboxHeightValue.keyboxHeight.value
-												br
-											br
 											label &nbsp; width, px:
 											.horizontal-flex
 												input#keyboxWidhSlider.keyboxWidth.slider(type="range" min=50 max=200 step=1 value=150)
 												| &nbsp;
 												input#keyboxWidthValue.keyboxWidth.value
-										br
+											br
+											label &nbsp; height, px:
+											.horizontal-flex
+												input#keyboxHeightSlider.keyboxHeight.slider(type="range" min=50 max=200 step=1 value=150)
+												| &nbsp;
+												input#keyboxHeightValue.keyboxHeight.value
+											br
 										fieldset.vertical-flex
 											legend viewport
 											br
@@ -104,6 +150,38 @@ html.light(manifest="manifest.appcache")
 				fieldset#motion.vertical-flex
 					legend motion parameters
 					.horizontal-flex
+						table
+							tr
+								td
+									label duration of one animation cycle
+								td
+									.horizontal-flex
+										input#animationDurationSlider.slider.animationDuration(type="range" min="5" max="20" step="1" value="10")
+										|&nbsp;
+										input#animationDurationValue.value.animationDuration(value="10")
+										|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+						table
+							tr
+								td
+									label left edge frame shift
+								td
+									.horizontal-flex
+										input#leftShiftSlider.slider.leftShift(type="range" min="-1" max="1" step="0.1" value="0")
+										|&nbsp;
+										input#leftShiftValue.value.leftShift(value="0")
+							tr
+								td
+									label right edge frame shift
+								td
+									.horizontal-flex
+										input#rightShiftSlider.slider.rightShift(type="range" min="-1" max="1" step="0.1" value="0")
+										|&nbsp;
+										input#rightShiftValue.value.rightShift(value="0")
+					.horizontal-flex
+						label move all sliders as one
+						input#speed-scales-locker(type="checkbox")
+					hr
+					.horizontal-flex
 						.scale
 							label speed scale
 						.motion
@@ -115,8 +193,8 @@ html.light(manifest="manifest.appcache")
 						.bezier
 							label bezier
 					.horizontal-flex
-						label joint movement of speed controls
-						input#speed-scales-locker(type="checkbox")
+					hr
+					#sliders
 				br
 				#buttons.centered
 					.horizontal-flex-centered
