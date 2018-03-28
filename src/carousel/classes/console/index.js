@@ -165,7 +165,7 @@ class Console extends Window {
           this.emit('keyboardChange', this.keyboard);
         });
     }
-    window.resizeTo(900, 850 + this.keyboard.viewport.rows * 32);//todo>> remove hard coding and maybe change to resizeBy
+    window.resizeTo(900, 1050 + this.keyboard.viewport.rows * 32);//todo>> remove hard coding and maybe change to resizeBy
   };
   
   //PUBLIC METHODS

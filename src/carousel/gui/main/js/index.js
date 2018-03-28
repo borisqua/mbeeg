@@ -2,7 +2,7 @@
 // noinspection JSUnusedLocalSymbols
 const
   {remote, ipcRenderer} = require('electron')
-  , {Window}= new require('carousel')
+  , {Window} = new require('carousel')
   , $ = require('jquery')
   , jQuery = $
 ;
@@ -47,6 +47,4 @@ $(() => {
   
 });
 
-// window.onbeforeunload = function (e) {
-//   return false;
-// };
+// ipcRenderer.send(`ipcConsole-command`, ipcCommand);

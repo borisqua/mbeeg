@@ -13,6 +13,7 @@ class Keyboard extends Window {
                 parametersOfStimulation,
                 stimuli
               }) {
+    // noinspection JSCheckFunctionSignatures
     super({colorScheme});
     
     this.keyboard = Tools.copyObject(keyboard);
@@ -21,20 +22,19 @@ class Keyboard extends Window {
     
     this.stimuli = stimuli;
     
-    //DOM elements //todo?? check if there isn't unused properties in this. context
+    // ----- DOM elements ----- //todo?? check if there isn't unused properties in this. context
+    
     this.html = $('html');
     this.viewport = $("#keyboard");
     this.formMonitor = $('form#monitor');
     this.output = $('.line');
     this.window = $(window);
+    this.monitor = $(`#monitor`);
+    this.keyboxes = $('.keybox');
     this.windowVerticalFramesWidth = window.outerWidth - window.innerWidth;
     this.windowHorizontalFramesWidth = window.outerHeight - window.innerHeight;
     this.windowOuterWidth = window.outerWidth;
-    this.monitor = $(`#monitor`);
     this.styleSheets = document.styleSheets;
-    
-    //debug
-    // this.prevStimTStamp = 0;
     
     // ----- EVENT HANDLERS -----
     
@@ -100,8 +100,9 @@ class Keyboard extends Window {
    * @private
    */
   _stimulusOn(keybox) {
+    // noinspection JSUnresolvedVariable
     keybox.addClass(`stimulated
-      ${this.colorScheme.available[this.colorScheme.selected].usingPics ? (' stimulated-background' + +keybox.attr('index')) : ''}`);
+      ${this.colorScheme.available[this.colorScheme.selected].usePics ? (' stimulated-background' + +keybox.attr('index')) : ''}`);
     
     if (this.keyboard.stimulation.animation.selected !== "none") {
       keybox.addClass(this.keyboard.stimulation.animation.selected);
@@ -109,34 +110,55 @@ class Keyboard extends Window {
   };
   
   /**
-   * add norman-backgroundIndex for each keybox with index when colorScheme with pics loaded "on the fly"
+   * add norman-background{Index} for each keybox with index
    * @private
    */
-  _addNormalBackgroundClassToKeyboxesWithPics(){
-    for(let i = 0; i< this.keyboard.keys.length; i++){
+  _addNormalBackgroundClassToKeyboxesWithPics() {
+    for (let i = 0; i < this.keyboard.keys.length; i++) {
       $(`.keybox[index="${i}"]`).addClass(`normal-background${i}`)
     }
     return this;
   }
   
   /**
-   * remove all classes but not keybox|bordered|normal|faded|selected
+   * add faded-background{Index} for each keybox with index
    * @private
    */
-  _removeStimulusClasses(jquery) {
-    let regexp = new RegExp('(?!(\\b(keybox|bordered|normal|faded|selected|background\\d*)(-background\\d*)?\\b))\\b(\\w+(-\\w*)|\\w+)\\b', 'g');
-    jquery.removeClass(function (index, className) {
-      return (className.match(regexp) || []).join(' ');
-    });
+  _addFadedBackgroundClassToKeyboxesWithPics() {
+    for (let i = 0; i < this.keyboxes.length; i++) {
+      this.keyboxes[i].className += ` faded-background${this.keyboxes[i].getAttribute('index')}`;
+    }
   }
   
   /**
    * remove all classes but not keybox|bordered|normal|faded|selected
    * @private
    */
-  _removeFadedClasses(jquery) {
+  _removeStimulusClasses() {
+    let regexp = new RegExp('(?!(\\b(keybox|bordered|normal|faded|selected|background\\d*)(-background\\d*)?\\b))\\b(\\w+(-\\w*)|\\w+)\\b', 'g');
+    this.keyboxes.removeClass(function (index, className) {
+      return (className.match(regexp) || []).join(' ');
+    });
+  }
+  
+  /**
+   * remove faded classes
+   * @private
+   */
+  _removeFadedClasses() {
     let regexp = new RegExp('faded(-\\w+)*', 'g');
-    jquery.removeClass(function (index, className) {
+    this.keyboxes.removeClass(function (index, className) {
+      return (className.match(regexp) || []).join(' ');
+    });
+  }
+  
+  /**
+   * remove normal classes for keyboxes with and without pics
+   * @private
+   */
+  _removeNormalClasses() {
+    let regexp = new RegExp('normal(-\\w+)*', 'g');
+    this.keyboxes.removeClass(function (index, className) {
       return (className.match(regexp) || []).join(' ');
     });
   }
@@ -169,25 +191,43 @@ class Keyboard extends Window {
   };
   
   /**
+   * unbind stimuli from the keyboard
+   * @private
+   */
+  _unbindStimuli() {
+    this.stimuli.removeAllListeners();
+    this.stimuli.unbind();
+    this._removeStimulusClasses(this.keyboxes);
+    this.keyboxes.addClass('faded');
+    this._removeNormalClasses();
+    // noinspection JSUnresolvedVariable
+    if (this.colorScheme.available[this.colorScheme.selected].usePics) {
+      this._addFadedBackgroundClassToKeyboxesWithPics();
+    }
+  }
+  
+  /**
+   * bind stimuli to the keyboard
+   * @private
+   */
+  _bindStimuli() {
+    this._removeFadedClasses(this.keyboxes);
+    this.keyboxes.addClass(`normal`);
+    // noinspection JSUnresolvedVariable
+    if (this.colorScheme.available[this.colorScheme.selected].usePics) {
+      this._addNormalBackgroundClassToKeyboxesWithPics();
+    }
+    this.stimuli.bind();
+    this.stimuli.on('data', stimulus => this._stimulate(stimulus));
+  }
+  
+  /**
    * switch off stimulation and darken keys while pause after next decision
    * @private
    */
-  _unboundStimuli() {
-    let keys = $('.keybox');
-    this.stimuli.removeAllListeners();
-    this.stimuli.unbound();
-    this._removeStimulusClasses(keys);
-    keys.addClass('faded');
-    if (this.colorScheme.available[this.colorScheme.selected].usingPics) {
-      for (let i = 0; i < keys.length; i++) {
-        keys[i].className += ` faded-background${keys[i].getAttribute('index')}`;
-      }
-    }
-    setTimeout(() => {
-      this._removeFadedClasses(keys);
-      this.stimuli.bound();
-      this.stimuli.on('data', stimulus => this._stimulate(stimulus));
-    }, this.pauseAfterDecision);
+  _pauseStimulation() {
+    this._unbindStimuli();
+    setTimeout(() => this._bindStimuli(), this.pauseAfterDecision);
   };
   
   /**
@@ -206,12 +246,10 @@ class Keyboard extends Window {
     } else {
       inputField.value = inputField.value + this.keyboard.keys[keyIndex].symbol;
     }
-    this._unboundStimuli();
-    this._removeFadedClasses(key);
-    key.addClass(`selected ${this.colorScheme.available[this.colorScheme.selected].usingPics ? 'selected-background' + keyIndex : ''}`);
-    setTimeout(() => {
-      key.removeClass(`selected selected-background${keyIndex}`);
-    }, this.pauseAfterDecision);
+    // noinspection JSUnresolvedVariable
+    key.addClass(`selected ${this.colorScheme.available[this.colorScheme.selected].usePics ? 'selected-background' + keyIndex : ''}`);
+    this._pauseStimulation();
+    setTimeout(() => key.removeClass(`selected selected-background${keyIndex}`), this.pauseAfterDecision);
     inputField.focus();
     inputField.scrollTop = inputField.scrollHeight;
   };
@@ -224,17 +262,22 @@ class Keyboard extends Window {
    * @private
    */
   _getKeybox(keyIndex) {//create div & tween for it (keyIndex - key index in Keys array)
-    let keybox = $(`<div class="keybox" index="${keyIndex}">${this.keyboard.keys[keyIndex].symbol}</div>`);
+    let
+      keybox = $(`<div class="keybox" index="${keyIndex}">${this.keyboard.keys[keyIndex].symbol}</div>`)
+      , defaultMode = this.keyboard.stimulation.autostart ? `normal` : `faded`
+    ;
+    // noinspection JSUnresolvedVariable
     keybox
       .css({
         width: this.keyboard.keybox.width,
         height: this.keyboard.keybox.height
       })
-      .addClass(`normal ${this.colorScheme.available[this.colorScheme.selected].usingPics ? 'normal-background' + keyIndex : ''}`)
+      .addClass(`${defaultMode} ${this.colorScheme.available[this.colorScheme.selected].usePics ? defaultMode + '-background' + keyIndex : ''}`)
     ;
     
     this.viewport.append(keybox);
     
+    // noinspection JSUnresolvedVariable
     let
       startVars = {
         top: this.keyboard.keys[keyIndex].row * this.verticalKeyboxDelta
@@ -253,8 +296,10 @@ class Keyboard extends Window {
       }
     ;
     
+    // noinspection JSUnresolvedFunction
     TweenMax.set(keybox, startVars);
     
+    // noinspection JSUnresolvedVariable
     Draggable.create(keybox, {
       type: "left,top",
       onPress: () => {
@@ -270,7 +315,7 @@ class Keyboard extends Window {
   /**
    * build timeline for specific school of keys
    * @param schoolIndex - index in array of groups of elements with same movement rules
-   * @return TimelineMax object
+   * @return Definition.TimelineMax object
    * @private
    */
   _buildTimeline(schoolIndex) {
@@ -283,22 +328,27 @@ class Keyboard extends Window {
           , index = row * this.keyboard.viewport.columns
           + this.keyboard.viewport.columns - column - 1 //last column in each row moves first
         ;
+        // noinspection JSUnresolvedFunction
         timeline.add(this._getKeybox(index), column * this.horizontalKeyboxPeriod);
       }
     }
+    this.windowVerticalFramesWidth = window.outerWidth - window.innerWidth;
     this.keyboxes = $(".keybox");
+    // noinspection JSUnresolvedFunction
     timeline.addLabel(`initialPosition${schoolIndex}`, this.initialTimePosition);
     return timeline;
   };
   
   /**
-   *
+   * recreating styleSheet rules for stimulation the behaviour of the keyboxes
    * @private
    */
-  _reloadSchemeStyles() {//todo>> when loading, this method is called twice. draw UML diagram for clarifying keyboard loading process
+  _reloadSchemeStyles() {
+    //todo>> when loading, this method is called twice. draw UML diagram for clarifying keyboard loading process
+    // noinspection JSUnresolvedVariable
     let
-      usingFonts = this.colorScheme.available[this.colorScheme.selected].usingFonts,
-      usingPics = this.colorScheme.available[this.colorScheme.selected].usingPics
+      useFonts = this.colorScheme.available[this.colorScheme.selected].useFonts,
+      usePics = this.colorScheme.available[this.colorScheme.selected].usePics
     ;
     for (let i = this.styleSheets[1].cssRules.length - 1; i > -1; i--) {
       this.styleSheets[1].deleteRule(i);
@@ -309,7 +359,7 @@ class Keyboard extends Window {
       color: ${this.keyboard.stimulation.color ?
       this.colorScheme.available[this.colorScheme.selected]['stimulated']['color'] :
       this.colorScheme.available[this.colorScheme.selected]['normal']['color']} !important;
-      font-size: ${usingFonts * this.fontScaleFactor * (this.keyboard.stimulation.size ?
+      font-size: ${useFonts * this.fontScaleFactor * (this.keyboard.stimulation.size ?
       this.colorScheme.available[this.colorScheme.selected]['stimulated']['size'] :
       this.colorScheme.available[this.colorScheme.selected]['normal']['size'])}px !important;
       font-weight: ${this.keyboard.stimulation.weight ?
@@ -323,36 +373,36 @@ class Keyboard extends Window {
     this.styleSheets[1].insertRule(`
     .selected {
       color: ${this.colorScheme.available[this.colorScheme.selected]['selected']['color']} !important;
-      font-size: ${usingFonts * this.fontScaleFactor * this.colorScheme.available[this.colorScheme.selected]['selected']['size']}px !important;
+      font-size: ${useFonts * this.fontScaleFactor * this.colorScheme.available[this.colorScheme.selected]['selected']['size']}px !important;
       font-weight: ${this.colorScheme.available[this.colorScheme.selected]['selected']['fontWeight']} !important;
       text-shadow: ${this.colorScheme.available[this.colorScheme.selected]['selected']['textShadow']} !important;
     }`, 1);
     
     this.styleSheets[1].insertRule(`
     .faded {
-      color: ${this.colorScheme.available[this.colorScheme.selected]['faded']['color']} !important;
-      font-size: ${usingFonts * this.fontScaleFactor * this.colorScheme.available[this.colorScheme.selected]['faded']['size']}px !important;
-      font-weight: ${this.colorScheme.available[this.colorScheme.selected]['faded']['fontWeight']} !important;
-      text-shadow: ${this.colorScheme.available[this.colorScheme.selected]['faded']['textShadow']} !important;
+      color: ${this.colorScheme.available[this.colorScheme.selected]['faded']['color']};
+      font-size: ${useFonts * this.fontScaleFactor * this.colorScheme.available[this.colorScheme.selected]['faded']['size']}px;
+      font-weight: ${this.colorScheme.available[this.colorScheme.selected]['faded']['fontWeight']};
+      text-shadow: ${this.colorScheme.available[this.colorScheme.selected]['faded']['textShadow']};
     }`, 2);
     
     this.styleSheets[1].insertRule(`
     .normal {
       color: ${this.colorScheme.available[this.colorScheme.selected]['normal']['color']};
-      font-size: ${usingFonts * this.fontScaleFactor * this.colorScheme.available[this.colorScheme.selected]['normal']['size']}px;
+      font-size: ${useFonts * this.fontScaleFactor * this.colorScheme.available[this.colorScheme.selected]['normal']['size']}px;
       font-weight: ${this.colorScheme.available[this.colorScheme.selected]['normal']['fontWeight']};
       text-shadow: ${this.colorScheme.available[this.colorScheme.selected]['normal']['textShadow']};
     }`, 3);
     
-    if (usingPics) {
+    if (usePics) {
       let
-        maxKeysLenght = this.keyboard.viewport.columns * this.keyboard.viewport.rows,
+        maxKeysLength = this.keyboard.viewport.columns * this.keyboard.viewport.rows,
         normalPathFilePrefix = `${this.colorScheme.available[this.colorScheme.selected]['picsFolder']}/${this.colorScheme.available[this.colorScheme.selected]['normal']['pngFilePrefix']}`,
         stimulatedPathFilePrefix = `${this.colorScheme.available[this.colorScheme.selected]['picsFolder']}/${this.colorScheme.available[this.colorScheme.selected]['stimulated']['pngFilePrefix']}`,
         fadedPathFilePrefix = `${this.colorScheme.available[this.colorScheme.selected]['picsFolder']}/${this.colorScheme.available[this.colorScheme.selected]['faded']['pngFilePrefix']}`,
         selectedPathFilePrefix = `${this.colorScheme.available[this.colorScheme.selected]['picsFolder']}/${this.colorScheme.available[this.colorScheme.selected]['selected']['pngFilePrefix']}`
       ;
-      for (let k = 0; k <= maxKeysLenght; k++) {
+      for (let k = 0; k <= maxKeysLength; k++) {
         this.styleSheets[1].insertRule(`
       .normal-background${k} {
         background-image: url("../../${normalPathFilePrefix}${k}.png");
@@ -444,6 +494,7 @@ class Keyboard extends Window {
    * @private
    */
   _resetStimuli() {
+    // noinspection JSUnresolvedVariable
     this.stimuli.reset({
       stimuliIdArray: this.stimulation.sequence.stimuli,
       duration: this.stimulation.duration,
@@ -496,6 +547,21 @@ class Keyboard extends Window {
   }
   
   //PUBLIC METHODS
+  /**
+   * start stimulation
+   */
+  startStimulation() {
+    // this.setImmediate(this._bindStimuli());
+    this._bindStimuli();
+  }
+  
+  /**
+   * stop stimulation
+   */
+  stopStimulation() {
+    // this.setImmediate(this._unbindStimuli());
+    this._unbindStimuli();
+  }
   
   /**
    * reload color scheme properties
@@ -647,7 +713,7 @@ class Keyboard extends Window {
    * @param keybox - object literal with new keybox width & height
    */
   updateKeyboxSize(keybox) {
-    Tools.runDebounced(() => {//unbounced actions
+    Tools.runDebounced(() => {//debounced actions
         this.keyboard.keybox.width = keybox.width;
         this.keyboard.keybox.height = keybox.height;
         this.keyboxes
@@ -663,6 +729,7 @@ class Keyboard extends Window {
       }, 200
     );
   }
+  
 }
 
 module.exports = Keyboard;

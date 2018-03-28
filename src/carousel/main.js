@@ -5,7 +5,15 @@ const
   , {app, BrowserWindow, Menu, ipcMain, globalShortcut} = require('electron')
   , template = require('./menu')
   , window = require('./window')
+  , ntStimuli = new require('stream').PassThrough({objectMode: true})
+  , ntFlashes = new require('stream').Transform({
+    objectMode: true,
+    transform(chunk, encoding, cb) {
+      cb(null, `Flash:${chunk[1]};${chunk[0]};${chunk[3]}\r\n`);
+    }
+  })
 ;
+
 let
   winMain, winKeyboard, winConsole //winDebuggerLog;// Keep a global reference of the windows objects, if you don't, the window will be closed automatically when the JavaScript object is garbage collected.
   , menuTemplate = Menu.buildFromTemplate(template)
@@ -24,7 +32,7 @@ const
   , fs = require('fs')
   , openVibeClient = new Net.Socket() //3. Create TCP client for openViBE eeg data server
   , tcp2ebmlFeeder = (context, tcpchunk) => {//todo rewrite this with closure (instead of context parameter use privateContext closure variable)
-  
+    
     if (context.tcpbuffer === undefined) {
       context.tcpbuffer = Buffer.alloc(0);
       context.tcpcursor = 0;
@@ -96,8 +104,95 @@ const
       winMain.focus();
     }
   })
+  , serverForNT = Net.createServer(socket => {
+    console.log(`client ${socket.remoteAddress}:${socket.remotePort} connected`);
+    //todo>> handling client connections and disconnections
+    socket
+      .on(`end`, () => {
+        ntStimuli.unpipe();
+        console.log('end: client disconnected');
+      })
+      .on(`close`, () => {
+        ntStimuli.unpipe();
+        console.log('close: client disconnected');
+      })
+      .on(`error`, () => {
+        ntStimuli.unpipe();
+        console.log('error: client disconnected');
+      })
+      .on('data', chunk => {
+        let
+          messages = chunk.toString().split(`\r\n`)
+          , request = "none"
+          , response = "none"
+        ;
+        for (let m = 0; m < messages.length; m++) {
+          if (messages[m]) {
+            
+            try {
+              let
+                action = messages[m].split(':')[0]
+                , params = messages[m].split(':')[1].split(";").slice(0, -1).map((e, i, a) => a[i] = JSON.parse(e))
+              ;
+              
+              //translating commands received by tcp into ipcConsole commands
+              switch (action) {
+                case "Start":
+                  winKeyboard.show();
+                  response = "200 OK Keyboard started";
+                  break;
+                case "Flash":
+                  config.mbeeg.stimulation.duration = params[0];
+                  config.mbeeg.stimulation.pause = params[1];
+                  // noinspection JSPrimitiveTypeWrapperUsage
+                  config.mbeeg.stimulation.sequence.stimuli = params[2];
+                  // ipcRenderer.send(`ipcConsole-command`, "stimuliChange");
+                  winKeyboard.webContents.send(`ipcConsole-command`, "stimuliChange");
+                  request = "keyboardStart";
+                  response = "200 OK Stimulation started";
+                  break;
+                case "Reset":
+                  request = "keyboardRestart";
+                  response = "200 OK Keyboard reset was successful";
+                  break;
+                case "StopFlash":
+                  request = "keyboardStop";
+                  response = "200 OK Stimulation stopped";
+                  break;
+                case "Decision":
+                  winKeyboard.webContents.send(`ipcApp-decision`, params[0]);
+                  response = "200 OK the decision was successfully came";
+                  break;
+                default:
+                  request = "none";
+                  response = "409 wrong command";
+                  console.log("undefined message...");
+              }
+              winKeyboard.webContents.send(`ipcConsole-command`, request);
+            } catch (e) {
+              console.error(e);
+              response = "500 internal server error";
+            } finally {
+              socket.write(response);
+            }
+          }
+        }
+      });
+    serverForNT.getConnections((err, count) => {
+      console.log(`Connections count is ${count}`);
+      if (count === 1) {//first connection
+        // stimuli.pipe(ntFlashes).on('data', data => console.log(data));
+        stimuli.pipe(ntFlashes).pipe(socket);
+      }
+    });
+  })
+  .listen({port: config.carousel.tcpserver.port, host: config.carousel.tcpserver.host, exclusive: true}, () => {
+    console.log(`\r\n ... carousel nt TCP server started at ${config.carousel.tcpserver.host}:${config.carousel.tcpserver.port} ...\n`);
+  })
+  .on('close', () => {
+    console.log(`carousel nt sever closed.`)
+  })
 ;
-if (isSecondInstance) { app.quit(); }
 
 /**
  * create application windows and run them all in hidden mode (except winMain)
@@ -209,18 +304,20 @@ app //<< entry point is in the .on('ready', callback)
     // to stay active until the user quits explicitly with Cmd + Q
     if (process.platform !== 'darwin') { app.quit() }
   })
-  .on('ready', () => {//<< it is entry point here
+  .on('ready', () => {//<< entry point here
     stimuli.pause();
-    epochs //<< run mbeeg decision cycle
-      .pipe(butterworth4)
-      .pipe(detrend)
-      .pipe(epochSeries)
-      .pipe(features)
-      .pipe(classifier)
-      .pipe(decisions)
-      .pipe(stringifier)
-      .pipe(process.stdout)
-    ;
+    if (!config.mbeeg.tcpserver.active) {
+      epochs //<< run internal mbeeg decision cycle
+        .pipe(butterworth4)
+        .pipe(detrend)
+        .pipe(epochSeries)
+        .pipe(features)
+        .pipe(classifier)
+        .pipe(decisions)
+        .pipe(stringifier)
+        .pipe(process.stdout)
+      ;
+    }
     createWindows(); //<< then create all application windows and show main window
     
     globalShortcut.register(`CommandOrControl+W`, () => {
@@ -253,11 +350,14 @@ ipcMain
     }
   })
   .on(`ipcKeyboard-stimulus`, (e, stimulus) => {
-    if (!keyboardHidden)
+    if (!keyboardHidden) {
       stimuli.write(stimulus);
+      //or
+      // ntServer.write(stimulus);
+    }
   })
   .on(`ipcKeyboard-command`, (e, command) => {
-    switch (command){
+    switch (command) {
       case "stimulationChange":
         epochs.reset(config.mbeeg.stimulation.sequence.stimuli.length);
         epochSeries.reset(config.mbeeg.stimulation.sequence.stimuli);
@@ -272,4 +372,6 @@ ipcMain
     winMain.webContents.send(`ipcConsole-command`, command);
     winKeyboard.webContents.send(`ipcConsole-command`, command);
   });
+
+if (isSecondInstance) { app.quit(); }
 

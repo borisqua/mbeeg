@@ -36,6 +36,15 @@ $(() => {
       console.colorSchemeConfiguration = config.carousel.appearance.colorScheme;
     });
   
+  console.addEventHandling('mbeegChange', 'change', $('#remote-mbeeg'), 'checked', config.mbeeg.tcpserver.active,
+    v => {
+      config.mbeeg.tcpserver.active = v;
+      alert("You need to restart main application window to get changes in effect.");
+    });
+  
+  console.addEventHandling('keyboardStimulationChange', 'change', $('#stimulation-autostart'), 'checked', config.carousel.keyboard.stimulation.autostart,
+    v => config.carousel.keyboard.stimulation.autostart = v);
+  
   console.addEventHandling('keyboardStimulationChange', 'change', $('#color'), 'checked', config.carousel.keyboard.stimulation.color,
     v => config.carousel.keyboard.stimulation.color = v);
   
@@ -108,6 +117,12 @@ $(() => {
   
   console.addEventHandling('keyboardRestart', 'click', $('#restart-button'), "", "",
     () => { });//todo?? why when restarting keyboard redraws twice ?? To clarify draw UML diagrams of keyboard restart process
+  
+  console.addEventHandling('keyboardStart', 'click', $('#start-button'), "", "",
+    () => { });
+  
+  console.addEventHandling('keyboardStop', 'click', $('#stop-button'), "", "",
+    () => { });
   
   ipcRenderer.on('ipcKeyboard-command', (e, command) => {
     switch (command) {

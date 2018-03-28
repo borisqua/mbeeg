@@ -297,7 +297,7 @@ class Tools {
   static pad(l, v) {// l - length of zero-leading string number, v - number value
     return new Array(l).fill(0).concat(v).join('').substr(v.toString().length > l ? -v.toString().length : -l);
   }
-
+  
   /**
    * deleteLeadZeros - deletes leading zeros from the string that represents uint64
    *
@@ -556,7 +556,18 @@ class Objectifier extends Transform {
   }
 }
 
+/**
+ * The responsibility of this class instances is converting and formatting stream objects into a string representation
+ */
 class Stringifier extends Transform {
+  /**
+   * @param {String} beginWith - the whole string stream will begin with this string (appears only once in the beginning of the stream)
+   * @param {String} chunkBegin - each chunk of stream will begin with this string
+   * @param {String} chunksDelimiter - this string will be a separator between chunks of stream
+   * @param {String} chunkEnd - each chunk of stream will end with this string
+   * @param {String} endWith - the whole string stream will end with this string (appears only once in the ending of the stream)
+   * @param {Number} indentationSpace - the number of spaces used for one indentation step. This parameter will have effect only if the result of stringifier work will be in JSON format.
+   */
   constructor({
                 beginWith = ``
                 , chunkBegin = ``
@@ -564,7 +575,6 @@ class Stringifier extends Transform {
                 , chunkEnd = ``
                 , endWith = ``
                 , indentationSpace = 0
-                , stringifyAll = false
               } = {}) {
     super({objectMode: true});
     this.chunkBegin = chunkBegin;
@@ -577,13 +587,11 @@ class Stringifier extends Transform {
     });
     this.running = false;
     this.space = indentationSpace;
-    this.stringifyAll = stringifyAll;
   }
   
   // noinspection JSUnusedGlobalSymbols
   _transform(chunk, encoding, cb) {
-    if (this.stringifyAll) cb(null, `${this.running ? this.delimiter : ''}${this.chunkBegin}${JSON.stringify(chunk)}${this.chunkEnd}`);
-    else cb(null, `${this.running ? this.delimiter : ''}${this.chunkBegin}${JSON.stringify(chunk, null, this.space)}${this.chunkEnd}`);
+    cb(null, `${this.running ? this.delimiter : ''}${this.chunkBegin}${JSON.stringify(chunk, null, this.space)}${this.chunkEnd}`);
     this.running = true;
   }
 }

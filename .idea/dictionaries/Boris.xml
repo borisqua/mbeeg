@@ -1,81 +1,40 @@
 <component name="ProjectDictionaryState">
   <dictionary name="Boris">
     <words>
-      <w>addon</w>
-      <w>appcache</w>
       <w>autofit</w>
-      <w>bestfit</w>
+      <w>autostart</w>
+      <w>bronovitsky</w>
       <w>butterworth</w>
-      <w>classificator</w>
-      <w>cloudflare</w>
-      <w>dataflow</w>
-      <w>dataflows</w>
-      <w>dataset</w>
+      <w>darkula</w>
+      <w>debounced</w>
       <w>detrend</w>
-      <w>detrended</w>
-      <w>detrending</w>
-      <w>dspclient</w>
-      <w>dsprocessor</w>
-      <w>dspsteps</w>
-      <w>ebml</w>
-      <w>endian</w>
-      <w>endianness</w>
-      <w>endians</w>
-      <w>epoching</w>
-      <w>epochizator</w>
-      <w>featurizator</w>
-      <w>fili</w>
-      <w>fullscreen</w>
-      <w>gsap</w>
-      <w>idarray</w>
       <w>ipcserver</w>
-      <w>jsons</w>
+      <w>jsunusedlocalsymbols</w>
       <w>keybox</w>
       <w>keyboxes</w>
-      <w>laurin</w>
-      <w>lightgrey</w>
-      <w>lowpass</w>
-      <w>mberp</w>
-      <w>minmax</w>
-      <w>nbsp</w>
-      <w>neuro</w>
-      <w>objectifier</w>
-      <w>olength</w>
-      <w>ovprovider</w>
-      <w>passthrough</w>
-      <w>passtrough</w>
-      <w>precalculate</w>
-      <w>precalculated</w>
-      <w>preprocessing</w>
-      <w>raweeg</w>
-      <w>rereference</w>
-      <w>rereferenced</w>
-      <w>rereferencing</w>
-      <w>rerefernce</w>
-      <w>revalidate</w>
+      <w>kiddy</w>
+      <w>kiddyfont</w>
+      <w>mbeegntsrv</w>
+      <w>mbeegxchg</w>
+      <w>neurotrainer</w>
+      <w>nonflash</w>
+      <w>ntemulator</w>
+      <w>ntstims</w>
+      <w>openvibe</w>
+      <w>parcus</w>
       <w>samplingrate</w>
-      <w>speedscale</w>
-      <w>strikethrough</w>
-      <w>stringified</w>
+      <w>startgradients</w>
+      <w>startweights</w>
+      <w>stim</w>
       <w>stringifiers</w>
-      <w>sumx</w>
-      <w>sumxx</w>
-      <w>sumxy</w>
-      <w>sumy</w>
-      <w>symbox</w>
+      <w>stubnt</w>
+      <w>tcpclient</w>
       <w>tcpserver</w>
       <w>timeline</w>
       <w>timelines</w>
-      <w>timeseries</w>
-      <w>tomove</w>
-      <w>tuples</w>
       <w>tweenbox</w>
-      <w>tweens</w>
-      <w>uint</w>
+      <w>unbounce</w>
       <w>unbounced</w>
-      <w>vmin</w>
-      <w>xsize</w>
-      <w>ysize</w>
     </words>
   </dictionary>
 </component>

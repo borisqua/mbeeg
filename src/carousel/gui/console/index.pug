@@ -14,6 +14,7 @@ html(manifest="manifest.appcache")
 				fieldset
 					.vertical-flex
 						fieldset
+							legend appearance
 							.horizontal-flex
 								div
 									label &nbsp color scheme &nbsp
@@ -63,9 +64,18 @@ html(manifest="manifest.appcache")
 								//						label(for="textShadow") text shadow
 								//					td
 								//						input#textShadow
+						fieldset
+							legend mbeeg
+							.horizontal-flex
+								.horizontal-flex
+									label &nbsp; use remote mbeeg &nbsp;
+									input#remote-mbeeg(type="checkbox")
 						.horizontal-flex
 							fieldset
 								legend stimulation
+								.horizontal-flex
+									label.label-after-field &nbsp run when keyboard starts
+									input#stimulation-autostart(type="checkbox")
 								.horizontal-flex
 									fieldset
 										legend stimulus
@@ -163,7 +173,7 @@ html(manifest="manifest.appcache")
 						table
 							tr
 								td
-									label left edge frame shift
+									label left edge shift
 								td
 									.horizontal-flex
 										input#leftShiftSlider.slider.leftShift(type="range" min="-1" max="1" step="0.1" value="0")
@@ -171,14 +181,14 @@ html(manifest="manifest.appcache")
 										input#leftShiftValue.value.leftShift(value="0")
 							tr
 								td
-									label right edge frame shift
+									label right edge shift
 								td
 									.horizontal-flex
 										input#rightShiftSlider.slider.rightShift(type="range" min="-1" max="1" step="0.1" value="0")
 										|&nbsp;
 										input#rightShiftValue.value.rightShift(value="0")
 					.horizontal-flex
-						label move all sliders as one
+						label move all sliders simultaneously
 						input#speed-scales-locker(type="checkbox")
 					hr
 					.horizontal-flex
@@ -201,5 +211,7 @@ html(manifest="manifest.appcache")
 						button#initial-button.footer-button Initial state
 						button#autofit-button.footer-button Autofit
 						button#restart-button.footer-button Restart
+						button#start-button.footer-button Start stimuli
+						button#stop-button.footer-button Stop stimuli
 
 		footer

@@ -1,7 +1,7 @@
 {
   "name": {
-    "usingFonts": false,
-    "usingPics": true,
+    "useFonts": false,
+    "usePics": true,
     "background": "#2b2b2b",
     "picsFolder": "../res/kiddyfont1",
     "normal": {

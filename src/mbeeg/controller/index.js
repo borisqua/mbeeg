@@ -25,13 +25,17 @@ class Controller {
                   , channels: config.mbeeg.signal.channels
                   , duration: config.mbeeg.signal.epoch.duration
                 },
-                vdspFilterParameters = {
-                  method: Tools.butterworth4Bulanov,
-                  parameters: config.mbeeg.signal.dsp.vertical.methods.butterworth4Bulanov
-                },
-                vdspDetrendParameters = {
-                  method: Tools.detrend,
-                  parameters: config.mbeeg.signal.dsp.vertical.methods.detrend
+                verticalProcessingParameters = {
+                 steps: [
+                   {
+                     method: Tools.butterworth4Bulanov,
+                     parameters: config.config.mbeeg.signal.dsp.vertical.methods.butterworth4Bulanov
+                   },
+                   {
+                     method: Tools.detrend,
+                     parameters: config.mbeeg.signal.dsp.vertical.methods.detrend
+                   }
+                 ]
                 },
                 epochSeriesParameters = {
                   stimuliIdArray: config.mbeeg.stimulation.sequence.stimuli
@@ -52,7 +56,7 @@ class Controller {
               } = {}) {
     const
       Net = require('net')
-      , {EBMLReader, OVReader, Stimuli, Epochs, DSVProcessor, EpochSeries, DSHProcessor, Stringifier, Classifier, Decisions} = require('mbeeg/index')
+      , {EBMLReader, OVReader, Stimuli, Epochs, DSVProcessor, EpochSeries, DSHProcessor, Stringifier, Classifier, Decisions} = require('../')
       , stringifier = new Stringifier({chunkEnd: `\r\n`})
       , openVibeClient = new Net.Socket() //3. Create TCP client for openViBE eeg data server
       , tcp2ebmlFeeder = (context, tcpchunk) => {
@@ -131,11 +135,13 @@ class Controller {
       .pipe(epochSeries)
       .pipe(features)
       .pipe(classifier)
-      .pipe(decisions)
-      .pipe(stringifier)
-      .pipe(process.stdout);
+      .pipe(decisions);
+      // .pipe(stringifier)
+      // .pipe(process.stdout);
     
   }
+  
+  get
 }
 
 module.exports = Controller;

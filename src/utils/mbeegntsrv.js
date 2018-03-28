@@ -38,8 +38,8 @@ const
   } = require('mbeeg')
   , stimuler = new Sampler()
   , sampler = new Sampler()
-  , config = Tools.loadConfiguration(`./config.json`)
-  // , config = Tools.loadConfiguration(`../../config.json`)
+  // , config = Tools.loadConfiguration(`./config.json`)
+  , config = Tools.loadConfiguration(`../../config.json`)
   , ntDecisionStringifier = new Stringifier({
     chunkBegin: `{"class": "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegEventCellConceived", "cellId": `
     , chunkEnd: `, "timestamp": ${new Date().getTime()}}\r\n`
@@ -49,7 +49,6 @@ const
     , chunkEnd: `]}`
     , chunksDelimiter: `,`
     // , indentationSpace: 2
-    // , stringifyAll: true
     // , endWith: `\r\n`
     , fields: [
       {
@@ -161,17 +160,18 @@ const
 ;
 
 let
-  stimuliIdArray = []
+  sequence = []
   , stimulusNumber = -1
   , lastEpoch = 0
   , stimulus = []
   , running = false
+  , mode = config.utilities.ntemulator.messages
 ;
 
 const
   mbEEGServer = Net.createServer(socket => {
       console.log(`client ${socket.remoteAddress}:${socket.remotePort} connected`);
-      //todo handling client connections and disconnections
+      //todo>> handling client connections and disconnections
       socket
         .on(`end`, () => {
           ntStimuli.unpipe();
@@ -188,28 +188,57 @@ const
         .on('data', chunk => {//to unpipe delete listener
           let messages = chunk.toString().split(`\r\n`);
           for (let m = 0; m < messages.length; m++) {
+            
             if (messages[m]) {
               // console.log(`Incoming-> ${messages[m]}`);
-              let message = JSON.parse(messages[m]);
+              
+              let
+                action = 'none'
+                , params = []
+                , sequence = []
+                , duration = 0
+                , pause = 0
+              ;
+              
+              if (mode === 'jc') {
+                let parse = JSON.parse(messages[m]);
+                action = parse.class;
+                sequence = parse.objects; //array with stimuli IDs in order of appearance
+              } else if (mode === 'nt') {
+                action = messages[m].split(':')[0];
+                params = messages[m].split(':')[1].split(";").slice(0, -1).map((e, i, a) => a[i] = JSON.parse(e));
+              } else {
+                console.log(`Error: message handling failed - unknown message mode selected;`);
+                //todo>> throw error
+                return false;
+              }
+              
               // console.log(JSON.stringify(message, null, 0));
-              switch (message.class) {
+              // noinspection FallThroughInSwitchStatementJS
+              switch (action) {
+                case "ModeChange":
+                  mode = params[0];
                 case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings"://SETTINGS
                   log(`  ::mbeegntsrv::OnData::: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSettings`);
                   console.log(`NT have started.`);
                   break;
+                case "Flash":
+                  duration = params[0];//messages[m].split(':')[1].split(';')[0];
+                  pause = params[1];//messages[m].split(':')[1].split(';')[1];
+                  sequence = params[2];//messages[m].split('[')[1].split(']')[0].split(',');
                 case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings"://SCENE SETTINGS
-                  stimuliIdArray = message.objects;
                   if (!lastEpoch)
-                    lastEpoch = config.mbeeg.signal.cycles ? config.mbeeg.signal.cycles * stimuliIdArray.length - 1 : 0;
+                    lastEpoch = config.mbeeg.signal.cycles ? config.mbeeg.signal.cycles * sequence.length - 1 : 0;
                   log(`::NT scene settings:: ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegSceneSettings`);
-                  log(`::NT scene settings:: stimuli idarray: ${JSON.stringify(stimuliIdArray)}`);
-                  epochs.reset(stimuliIdArray.length);
-                  epochSeries.reset(stimuliIdArray);
-                  featuresH.setStimuliIdArray(stimuliIdArray);
-                  featuresWindowedH.setStimuliIdArray(stimuliIdArray);
+                  log(`::NT scene settings:: stimuli idarray: ${JSON.stringify(sequence)}`);
+                  epochs.reset(sequence.length);
+                  epochSeries.reset(sequence);
+                  featuresH.setStimuliIdArray(sequence);
+                  featuresWindowedH.setStimuliIdArray(sequence);
                   // featuresV.setStimuliIdArray(stimuliIdArray);
                   running = true;
                   break;
+                case "StopFlash":
                 case "ru.itu.parcus.modules.neurotrainer.modules.mbeegxchg.dto.MbeegFlashStop":
                   log(`::NT stops stimulation`);
                   running = false;
@@ -220,9 +249,9 @@ const
                     stimulusNumber++;
                     stimulus = [message.timestamp, message.cellId, 0];
                     ntStimuli.write(stimulus);
-                    
+        
                     if (lastEpoch) {
-                      log(`  ::NT has sent next stimulus [${[stimulus]}] key/#/cycle ${stimulus[1]}/${stimulusNumber}/${Math.floor(stimulusNumber / stimuliIdArray.length)}; last epoch/cycle set to ${lastEpoch}/${Math.floor(lastEpoch / stimuliIdArray.length)}`);
+                      log(`  ::NT has sent next stimulus [${[stimulus]}] key/#/cycle ${stimulus[1]}/${stimulusNumber}/${Math.floor(stimulusNumber / sequence.length)}; last epoch/cycle set to ${lastEpoch}/${Math.floor(lastEpoch / sequence.length)}`);
                       if (stimulusNumber > lastEpoch) {
                         log(`  ::Exit due to reaching cycles limit set by config.mbeeg.signal.cycles`);
                         fileStimuli.end();
@@ -241,7 +270,7 @@ const
                         process.exit(0);
                       }
                     } else
-                      log(`  ::NT has sent next stimulus [${[stimulus]}]; key/#/cycle ${stimulus[1]}/${stimulusNumber}/${Math.floor(stimulusNumber / stimuliIdArray.length)}; `);
+                      log(`  ::NT has sent next stimulus [${[stimulus]}]; key/#/cycle ${stimulus[1]}/${stimulusNumber}/${Math.floor(stimulusNumber / sequence.length)}; `);
                   }
                   break;
                 default:
@@ -308,7 +337,7 @@ const
           classifier.pipe(ntVerdictStringifier).pipe(socket);
           classifier.pipe(decisions).pipe(ntDecisionStringifier).pipe(socket);
           decisions.on(`data`, () => {
-            epochSeries.reset(stimuliIdArray);
+            epochSeries.reset(sequence);
           });
           
         } else {
@@ -320,8 +349,8 @@ const
       })
       ;
     }
-  ).listen({port: config.tcpserver.port, host: config.tcpserver.host, exclusive: true}, () => {
-    console.log(`\r\n ... mbEEG TCP server started at ${config.tcpserver.host}:${config.tcpserver.port} ...\n
+  ).listen({port: config.mbeeg.tcpserver.port, host: config.mbeeg.tcpserver.host, exclusive: true}, () => {
+    console.log(`\r\n ... mbEEG TCP server started at ${config.mbeeg.tcpserver.host}:${config.mbeeg.tcpserver.port} ...\n
     \r - to change server configuration use file config.json in the same directory as mbeegntsrv.exe
     \r - to get help run with -h or --help option
     \r\n\r\n`)

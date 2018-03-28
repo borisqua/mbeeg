@@ -20,11 +20,11 @@ const
 ;
 
 setTimeout(() => {
-  stimuli.unbound();
+  stimuli.unbind();
   console.log(`stimuli is paused`)
 }, 5000);
 setTimeout(() => {
-  stimuli.bound();
+  stimuli.bind();
   console.log(`stimuli is resumed`);
 }, 10000);
 setTimeout(() => {

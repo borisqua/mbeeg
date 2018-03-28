@@ -1,12 +1,30 @@
 "use strict";
-//todo>> experiment what if replace old stimuli instance with new one instead of use "bound/unbound" methods
 
+//todo>> experiment what if replace old stimuli instance with new one instead of use "bind/unbind" methods
+
+/**
+ * class "Stimuli" describes generator of stimuli and process of stimuli generation
+ */
 class Stimuli extends require('stream').Readable {
+  /**
+   * @param duration - duration of single stimulus in ms
+   * @param pause - duration of pause between two adjacent stimuli in ms
+   * @param pauseBetweenCycles - pauseBetweenCycles - duration of pause between two adjacent cycles of stimuli in ms (cycle is one whole sequence as described by stimuliIdArray parameter)
+   * @param stimuliIdArray - array with some id of stimuli that describes a sequence of stimuli appearance
+   * @param bound - flag that indicates if timestamp biding is required (default - true)
+   * @param learning - flag that indicates if learning mode is required (default - false).
+   *        In learning mode instance of Stimuli class generate also information about a target element in each sequence
+   * @param learningCycleDuration - quantity of stimuli cycles from start to end in learning mode
+   * @param learningArray - learningArray - learning sequence of stimuli id (available in stimuliIdArray)
+   * @param nextSequence - a callback function that generates new order in stimuliIdArray once the current cycle of stimuli is finished
+   * @param nextTarget - a callback function that returns stimulus id of the next target once current learning cycle is finished
+   */
   constructor({
                 duration,
                 pause,
                 pauseBetweenCycles = 0,
                 stimuliIdArray,
+                bound = true,
                 learning = false,
                 learningCycleDuration = 0,
                 learningArray = stimuliIdArray,
@@ -32,6 +50,7 @@ class Stimuli extends require('stream').Readable {
     this.stimulusCycleDuration = duration + pause;
     this.stimulusCycle = -1;
     this.currentStimulus = 0;
+    this.bound = bound;
     this.learning = learning;
     this.learningDuration = learningCycleDuration;
     this.currentLearningCycle = 0;
@@ -41,8 +60,10 @@ class Stimuli extends require('stream').Readable {
     this._nextTarget = nextTarget;
     // this.stimuliScheduled = [];
     
-    this.bounded = true;
     this._resetStimuli();
+    if(!this.bound){
+      this.unbind();
+    }
   }
   
   /**
@@ -57,37 +78,42 @@ class Stimuli extends require('stream').Readable {
     // this.pauseDuration = pause;
     this.stimulusCycleDuration = duration + pause;
     this._reset();
+    return this;
   }
   
   _reset() {
     this.stimulusCycle = -1;
     this._resetStimuli();
+    return this;
   }
   
   /**
    * returns reference on stimuliIdArray property of stimuli generator
    * @return {Stimuli.stimuliIdArray}
    */
-  stimuliIdArray() {
+  stimuliIdArray() {//todo>> declare as getter and check if it works properly
     return this.stimuliIdArray;
   }
   
   delay(duration) {
-    this.bounded = false;
+    this.bound = false;
     // this._clearTimeouts();
     setTimeout(() => {
       this._reset();
-      this.bounded = true;
+      this.bound = true;
     }, duration);
+    return this;
   }
   
-  bound() {
+  bind() {
     this._reset();
-    this.bounded = true;
+    this.bound = true;
+    return this;
   }
   
-  unbound() {
-    this.bounded = false;
+  unbind() {
+    this.bound = false;
+    return this;
   }
   
   // noinspection JSUnusedGlobalSymbols
@@ -97,7 +123,7 @@ class Stimuli extends require('stream').Readable {
     setTimeout(() => {
       
       this.stimulus = [
-        this.bounded ? new Date().getTime() : 0
+        this.bound ? new Date().getTime() : 0
         , this.stimuliIdArray[this.currentStimulus]
         , this.learning && this.currentStimulus === this.currentTargetStimulus ? 1 : 0 //target field = in learning mode - true if target key, false if not, and null in online mode
         , this.stimulusCycle//todo>> consider problems with cycles counting from stimuli/samples to classification/decision levels
