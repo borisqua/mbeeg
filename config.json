@@ -245,7 +245,7 @@
             }
           }
         },
-        "selected": "dark-kiddy"
+        "selected": "coal-black"
       }
     },
     "main": {
@@ -278,13 +278,13 @@
         "weight": true,
         "size": true
       },
-      "alphabet": "АБВГ",
+      "alphabet": "АБВГДЕЖЗИКЛМНОПРСТУФХЦЧШЩЬЫЪЭЮЯЭ_",
       "keybox": {
         "borderWidth": 1,
-        "height": 80,
+        "height": 50,
         "margin": 5,
         "showBorder": false,
-        "width": 80
+        "width": 50
       },
       "keys": [
         {
@@ -302,18 +302,221 @@
           "symbol": "Б"
         },
         {
+          "column": 2,
+          "row": 0,
+          "school": 0,
+          "stimulus": 2,
+          "symbol": "В"
+        },
+        {
+          "column": 3,
+          "row": 0,
+          "school": 0,
+          "stimulus": 3,
+          "symbol": "Г"
+        },
+        {
+          "column": 4,
+          "row": 0,
+          "school": 0,
+          "stimulus": 4,
+          "symbol": "Д"
+        },
+        {
+          "column": 5,
+          "row": 0,
+          "school": 0,
+          "stimulus": 5,
+          "symbol": "Е"
+        },
+        {
+          "column": 6,
+          "row": 0,
+          "school": 0,
+          "stimulus": 6,
+          "symbol": "Ж"
+        },
+        {
+          "column": 7,
+          "row": 0,
+          "school": 0,
+          "stimulus": 7,
+          "symbol": "З"
+        },
+        {
+          "column": 8,
+          "row": 0,
+          "school": 0,
+          "stimulus": 8,
+          "symbol": "И"
+        },
+        {
+          "column": 9,
+          "row": 0,
+          "school": 0,
+          "stimulus": 9,
+          "symbol": "К"
+        },
+        {
+          "column": 10,
+          "row": 0,
+          "school": 0,
+          "stimulus": 10,
+          "symbol": "Л"
+        },
+        {
           "column": 0,
           "row": 1,
           "school": 1,
-          "stimulus": 2,
-          "symbol": "В"
+          "stimulus": 11,
+          "symbol": "М"
         },
         {
           "column": 1,
           "row": 1,
           "school": 1,
-          "stimulus": 3,
-          "symbol": "Г"
+          "stimulus": 12,
+          "symbol": "Н"
+        },
+        {
+          "column": 2,
+          "row": 1,
+          "school": 1,
+          "stimulus": 13,
+          "symbol": "О"
+        },
+        {
+          "column": 3,
+          "row": 1,
+          "school": 1,
+          "stimulus": 14,
+          "symbol": "П"
+        },
+        {
+          "column": 4,
+          "row": 1,
+          "school": 1,
+          "stimulus": 15,
+          "symbol": "Р"
+        },
+        {
+          "column": 5,
+          "row": 1,
+          "school": 1,
+          "stimulus": 16,
+          "symbol": "С"
+        },
+        {
+          "column": 6,
+          "row": 1,
+          "school": 1,
+          "stimulus": 17,
+          "symbol": "Т"
+        },
+        {
+          "column": 7,
+          "row": 1,
+          "school": 1,
+          "stimulus": 18,
+          "symbol": "У"
+        },
+        {
+          "column": 8,
+          "row": 1,
+          "school": 1,
+          "stimulus": 19,
+          "symbol": "Ф"
+        },
+        {
+          "column": 9,
+          "row": 1,
+          "school": 1,
+          "stimulus": 20,
+          "symbol": "Х"
+        },
+        {
+          "column": 10,
+          "row": 1,
+          "school": 1,
+          "stimulus": 21,
+          "symbol": "Ц"
+        },
+        {
+          "column": 0,
+          "row": 2,
+          "school": 2,
+          "stimulus": 22,
+          "symbol": "Ч"
+        },
+        {
+          "column": 1,
+          "row": 2,
+          "school": 2,
+          "stimulus": 23,
+          "symbol": "Ш"
+        },
+        {
+          "column": 2,
+          "row": 2,
+          "school": 2,
+          "stimulus": 24,
+          "symbol": "Щ"
+        },
+        {
+          "column": 3,
+          "row": 2,
+          "school": 2,
+          "stimulus": 25,
+          "symbol": "Ь"
+        },
+        {
+          "column": 4,
+          "row": 2,
+          "school": 2,
+          "stimulus": 26,
+          "symbol": "Ы"
+        },
+        {
+          "column": 5,
+          "row": 2,
+          "school": 2,
+          "stimulus": 27,
+          "symbol": "Ъ"
+        },
+        {
+          "column": 6,
+          "row": 2,
+          "school": 2,
+          "stimulus": 28,
+          "symbol": "Э"
+        },
+        {
+          "column": 7,
+          "row": 2,
+          "school": 2,
+          "stimulus": 29,
+          "symbol": "Ю"
+        },
+        {
+          "column": 8,
+          "row": 2,
+          "school": 2,
+          "stimulus": 30,
+          "symbol": "Я"
+        },
+        {
+          "column": 9,
+          "row": 2,
+          "school": 2,
+          "stimulus": 31,
+          "symbol": "Э"
+        },
+        {
+          "column": 10,
+          "row": 2,
+          "school": 2,
+          "stimulus": 32,
+          "symbol": "_"
         }
       ],
       "animation": {
@@ -339,6 +542,15 @@
             "reverse": false,
             "randomSpeed": false
           }
+        },
+        {
+          "id": 2,
+          "motion": {
+            "easing": "slow motion",
+            "speedScale": 0,
+            "reverse": false,
+            "randomSpeed": false
+          }
         }
       ],
       "window": {
@@ -346,10 +558,10 @@
         "left": 100
       },
       "viewport": {
-        "columns": 2,
-        "height": 180,
-        "rows": 2,
-        "width": 432
+        "columns": 11,
+        "height": 198,
+        "rows": 3,
+        "width": 660
       }
     }
   },
@@ -471,7 +683,38 @@
         "repetition": false,
         "stimuli": [
           0,
-          1
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9,
+          10,
+          11,
+          12,
+          13,
+          14,
+          15,
+          16,
+          17,
+          18,
+          19,
+          20,
+          21,
+          22,
+          23,
+          24,
+          25,
+          26,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32
         ]
       }
     }
