@@ -326,7 +326,7 @@
           "id": 0,
           "motion": {
             "easing": "slow motion",
-            "speedScale": 2.4,
+            "speedScale": 0,
             "reverse": false,
             "randomSpeed": false
           }
@@ -335,7 +335,7 @@
           "id": 1,
           "motion": {
             "easing": "slow motion",
-            "speedScale": 2.4,
+            "speedScale": 0,
             "reverse": false,
             "randomSpeed": false
           }
@@ -347,9 +347,9 @@
       },
       "viewport": {
         "columns": 2,
-        "height": 232,
+        "height": 180,
         "rows": 2,
-        "width": 276
+        "width": 432
       }
     }
   },
@@ -450,11 +450,11 @@
       "provider": "openViBE 1.3.0"
     },
     "stimulation": {
-      "duration": 500,
+      "duration": 130,
       "learning": {
         "type": "consecutive"
       },
-      "pause": 500,
+      "pause": 170,
       "pauseAfterDecision": 2000,
       "pauseBetweenCycles": 1000,
       "port": 9350,
@@ -471,9 +471,7 @@
         "repetition": false,
         "stimuli": [
           0,
-          1,
-          2,
-          3
+          1
         ]
       }
     }

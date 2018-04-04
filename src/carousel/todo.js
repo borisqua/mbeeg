@@ -1,3 +1,15 @@
+//Carousel TCP interface
+//>>requests
+//>>Start:\r\n - start keyboard
+//>>Flash:flashDuration;nonflashDuration;flashOrder;repeatCount\r\n - start stimulation
+//>>StopFlash:\r\n - stop stimulation
+//>>Reset:\r\n - reset stimulation
+//>>Decision:Id\r\n - the decision came
+
+//todo>>responses
+//todo>>Flash:Id;Timestamp;Cycle\r\n - stimulus echo
+//todo>>FlashDone:
+
 
 //==================CAROUSEL=====================================
 //>> make global.config in main.js and access them from renderers by remote property of electron

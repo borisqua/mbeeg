@@ -68,14 +68,19 @@ html(manifest="manifest.appcache")
 							legend mbeeg
 							.horizontal-flex
 								.horizontal-flex
-									label &nbsp; use remote mbeeg &nbsp;
-									input#remote-mbeeg(type="checkbox")
+									label &nbsp; use external mbeeg service &nbsp;
+									input#external-mbeeg(type="checkbox")
 						.horizontal-flex
 							fieldset
 								legend stimulation
-								.horizontal-flex
-									label.label-after-field &nbsp run when keyboard starts
+								.vertical-flex
+									label.label-after-field &nbsp; run when keyboard starts
 									input#stimulation-autostart(type="checkbox")
+								.vertical-flex
+									label &nbsp; type of stimulation behaviour
+									select#stimulation-cycle
+										option(value="one straight pass") one straight pass
+										option(value="random order infinite cycle") random order infinite cycle
 								.horizontal-flex
 									fieldset
 										legend stimulus

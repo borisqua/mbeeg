@@ -80,7 +80,9 @@ class Keyboard extends Window {
       });
     
     //show stimulus animation on stimuli data received event
-    this.stimuli.on('data', stimulus => this._stimulate(stimulus));
+    if(this.keyboard.stimulation.autostart) {
+      this.stimuli.on('data', stimulus => this._stimulate(stimulus));
+    }
     
     //ipc messaging
     ipcRenderer.on('ipcApp-decision', (e, decision) => {
@@ -248,7 +250,9 @@ class Keyboard extends Window {
     }
     // noinspection JSUnresolvedVariable
     key.addClass(`selected ${this.colorScheme.available[this.colorScheme.selected].usePics ? 'selected-background' + keyIndex : ''}`);
-    this._pauseStimulation();
+    if(this.stimuli.isBound) {
+      this._pauseStimulation();
+    }
     setTimeout(() => key.removeClass(`selected selected-background${keyIndex}`), this.pauseAfterDecision);
     inputField.focus();
     inputField.scrollTop = inputField.scrollHeight;
