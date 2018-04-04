@@ -9,8 +9,8 @@
 
 const
   {Stimuli, /*Stringifier,*/ NTStimuliStringifier, Tools} = require('mbeeg')
-  , config = Tools.loadConfiguration(`config.json`)
-  // , config = Tools.loadConfiguration(`../../config.json`)
+  // , config = Tools.loadConfiguration(`config.json`)
+  , config = Tools.loadConfiguration(`../../config.json`)
   , stimuli = new Stimuli({
     duration: config.mbeeg.stimulation.duration
     , pause: config.mbeeg.stimulation.pause

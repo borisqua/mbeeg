@@ -1,6 +1,6 @@
 "use strict";
 
-//todo>> experiment what if replace old stimuli instance with new one instead of use "bind/unbind" methods
+//todo>> experiment - what if replace old stimuli instance with new one instead of use "bind/unbind" methods
 
 /**
  * class "Stimuli" describes generator of stimuli and process of stimuli generation
@@ -66,6 +66,13 @@ class Stimuli extends require('stream').Readable {
     }
   }
   
+  /**
+   * getter for a bound flag that indicates if stimuli are bound with timestamps
+   * @return {*|boolean}
+   */
+  get isBound(){
+    return this.bound;
+  }
   /**
    * restarts stimuli generation process with new stimuliIdArray, new duration of each stimulus and pause
    * @param stimuliIdArray

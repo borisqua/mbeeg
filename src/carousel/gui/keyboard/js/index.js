@@ -11,16 +11,19 @@ $(() => {
   /** @namespace config.mbeeg.stimulation.sequence.stimuli */
   let
     config = remote.getGlobal('config')
+    , stimuliEnd = false
     , stimuli = new Stimuli({
       stimuliIdArray: config.mbeeg.stimulation.sequence.stimuli,
       duration: config.mbeeg.stimulation.duration,
       pause: config.mbeeg.stimulation.pause,
       bound: config.carousel.keyboard.stimulation.autostart,
-      nextSequence: arr => {
-        let last = arr[arr.length - 1];
-        arr.sort(() => Math.random() - 0.5);
-        return arr[0] === last ? arr.push(arr.shift()) : arr;
-      }
+      // nextSequence: arr => {
+      //   let last = arr[arr.length - 1];
+      //   arr.sort(() => Math.random() - 0.5);
+      //   return arr[0] === last ? arr.push(arr.shift()) : arr;
+      // }
+      nextSequence: arr => arr
+      // ipcRenderer.send('ipcKeyboard-command', 'stimulationDone');
     })
     , keyboard = new Keyboard({
       keyboard: config.carousel.keyboard,
