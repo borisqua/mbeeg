@@ -3,4 +3,7 @@
   <component name="JavaScriptSettings">
     <option name="languageLevel" value="ES6" />
   </component>
+  <component name="ProjectResources">
+    <resource url="http://www.w3.org/Math/DTD/mathml2/mathml2.dtd" location="$PROJECT_DIR$" />
+  </component>
 </project>
