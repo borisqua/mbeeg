@@ -173,7 +173,7 @@
 
   Usage: whosthewinner [option]
 
-  Analyzing verdicts stream and making decision wick of keys had been chosen.
+  Analyzing verdicts stream and making decision wich of keys had been chosen.
   
 
   Options:
