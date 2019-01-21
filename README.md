@@ -1,8 +1,8 @@
 # mbEEG 0.0.0
 
-js tools and library to prepare and classify EEG dataflow from 
-openViBE acquisition server and associated by timestamps with 
-stimuli dataflow from some stimuli source by abstract interface
+js tools and library to prepare and classify an EEG dataflow from the 
+"OpenViBE" acquisition server, associated by the timestamps with a stimuli
+dataflow from some stimuli source by an abstract interface
 
 ## Contents
 1. Structure
