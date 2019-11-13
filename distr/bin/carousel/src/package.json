@@ -37,7 +37,7 @@
     "carousel": "latest",
     "colors": "^1.1.2",
     "commander": "^2.11.0",
-    "electron": "^1.6.11",
+    "electron": "^5.0.0",
     "fili": "^2.0.0",
     "gsap": "^1.20.2",
     "jquery": "^3.2.1",
