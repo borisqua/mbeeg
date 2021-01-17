@@ -145,7 +145,8 @@ function detrend(timeseries, passtrough = false) {
   return {trend: trend, detrend: detrend};
 }
 
-/** converts matrix of channels values into sequence (vector) of consecutive chains of channels data
+/** converts matrix of values from the channels into the sequence (vector) of the consecutive chains of
+ * the channels data
  *
  * @param {Array} series - stream, buffer or object that contains set of vectors [timestamp, ch0, ch1, ... , chN]
  * with values of N EEG channels
@@ -166,7 +167,7 @@ function reshape(series, start = 0) {
   return result;
 }
 
-/** common average reference filter (CAR-filter) filters noise common for all channels by subtracting sum of channels
+/** The common average reference filter (CAR-filter) filters noise common for all channels by subtracting sum of channels
  * from each channel multiplied to channels number
  *
  * @param {Array} series - stream, buffer or object that contains set vectors {timestamp, ch0, ch1, ... , chN} with values of N EEG channels
