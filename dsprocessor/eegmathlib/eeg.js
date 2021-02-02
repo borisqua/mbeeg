@@ -145,7 +145,8 @@ function detrend(timeseries, passtrough = false) {
   return {trend: trend, detrend: detrend};
 }
 
-/** converts matrix of channels values into sequence (vector) of consecutive chains of channels data
+/** converts matrix of values from the channels into the sequence (vector) of the consecutive chains of
+ * the channels data
  *
  * @param {Array} series - stream, buffer or object that contains set of vectors [timestamp, ch0, ch1, ... , chN]
  * with values of N EEG channels
@@ -166,7 +167,7 @@ function reshape(series, start = 0) {
   return result;
 }
 
-/** common average reference filter (CAR-filter) filters noise common for all channels by subtracting sum of channels
+/** The common average reference filter (CAR-filter) filters noise common for all channels by subtracting sum of channels
  * from each channel multiplied to channels number
  *
  * @param {Array} series - stream, buffer or object that contains set vectors {timestamp, ch0, ch1, ... , chN} with values of N EEG channels
@@ -202,9 +203,9 @@ function seriesCARExtension(series, start = 0, car = null) {
   return arr;
 }
 
-/** calculates rereferenced value equals to current value minus mean value calculated for current epoch
+/** Calculates re-referenced value equals to current value minus average value calculated for the current epoch
  *
- * @param {Array} epochs - array of epoch objects - {key: id, channels:[ch][values]}, where key - selected key (assosiated with epoch),
+ * @param {Array} epochs - array of epoch objects - {key: id, channels:[ch][values]}, where key - selected key (associated with epoch),
  * ch - channel of signal, [values] - set of digital signal values for distinct channel
  * @return {Array} epochs array with rereferenced channel values
  */
@@ -224,9 +225,8 @@ function rereference(epochs) {
   return results;
 }
 
-/** avgEpochs calculates avg sample values for each channel (sum of ch from all epochs for given key divided by number
+/**todo>> avgEpochs calculates avg sample values for each channel (sum of ch from all epochs for given key divided by number
  *  of epochs for given key)
- * of that key epochs)
  *
  * @param {Array} epochs
  * @return {Array}
